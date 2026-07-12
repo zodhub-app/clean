@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Nombre visible de la app (dock, barra de menús, "Forzar salida", tooltip).
+       Sin esto, macOS usa el nombre del binario ("macup", en minúscula). -->
+  <key>CFBundleName</key>
+  <string>ZodHub Clean</string>
+  <key>CFBundleDisplayName</key>
+  <string>ZodHub Clean</string>
+</dict>
+</plist>

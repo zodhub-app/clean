@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apoya ZodHub Clean — Donaciones</title>
+<meta name="description" content="Ayuda a mantener ZodHub Clean gratis para todo el mundo. Donaciones transparentes y 100% opcionales. Descubre a dónde va cada euro.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; } :target { scroll-margin-top: 7.5rem; }
+  body { font-family: 'Inter', sans-serif; background: #f3f5f8; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  @keyframes zDriftOne { 0%,100%{transform:translate3d(0,0,0) scale(1);} 35%{transform:translate3d(4vw,3vh,0) scale(1.06);} 70%{transform:translate3d(-2vw,5vh,0) scale(.98);} }
+  @keyframes zDriftTwo { 0%,100%{transform:translate3d(0,0,0) scale(1);} 40%{transform:translate3d(-4vw,-3vh,0) scale(1.08);} 75%{transform:translate3d(3vw,-5vh,0) scale(.96);} }
+  @keyframes zDots { 0%{background-position:0 0;} 100%{background-position:4rem 4rem;} }
+  .z-blob-1 { animation: zDriftOne 26s ease-in-out infinite; }
+  .z-blob-2 { animation: zDriftTwo 32s ease-in-out infinite; }
+  .z-dots  { animation: zDots 38s linear infinite; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 120ms; } .d2 { transition-delay: 240ms; }
+  /* Heart pulse */
+  @keyframes zPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
+  .z-pulse { animation: zPulse 2.4s ease-in-out infinite; }
+  /* Amount buttons */
+  .amt { transition: all .25s cubic-bezier(.22,1,.36,1); }
+  .amt.sel { border-color:#3b82f6; background:linear-gradient(to bottom,#3b82f6,#2563eb); color:#fff; box-shadow:0 14px 30px -16px rgba(59,130,246,.7); transform:translateY(-2px); }
+  /* Progress bar */
+  .bar-fill { width:0; transition: width 1.6s cubic-bezier(.16,1,.3,1); }
+  .bar-fill.go { width: var(--w); }
+  /* Donor marquee */
+  @keyframes zScroll { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .marquee { animation: zScroll 42s linear infinite; }
+  .marquee:hover { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce){ .z-blob-1,.z-blob-2,.z-dots,.z-pulse,.marquee{animation:none;} .reveal{opacity:1;transform:none;transition:none;} .bar-fill{transition:none;} }
+</style>
+</head>
+<body class="text-slate-900 min-h-screen relative overflow-x-hidden antialiased selection:bg-blue-100 selection:text-blue-900">
+
+<!-- Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+  <div class="z-blob-1 absolute top-[-12%] left-[-12%] w-[52vw] h-[52vw] rounded-full bg-rose-200/25 blur-[7.5rem]"></div>
+  <div class="z-blob-2 absolute bottom-[-18%] right-[-10%] w-[62vw] h-[62vw] rounded-full bg-blue-200/30 blur-[8.75rem]"></div>
+  <div class="z-dots absolute inset-0 opacity-[0.22]" style="background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.09) 1px, transparent 0); background-size: 2rem 2rem;"></div>
+</div>
+
+<!-- Nav -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 pt-5">
+    <div class="relative overflow-hidden rounded-full bg-white/84 backdrop-blur-2xl border border-white/90 shadow-[0_14px_38px_-22px_rgba(15,23,42,0.42),inset_0_1px_0_rgba(255,255,255,1)] px-4 py-3">
+      <div class="absolute inset-0 rounded-full bg-white/36 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_2px_8px_rgba(59,130,246,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] flex items-center justify-center"><span class="mono text-xs font-semibold tracking-[-0.08em] text-white">ZC</span></span>
+          <span class="flex flex-col justify-center leading-none">
+            <span class="mono text-sm font-semibold tracking-[-0.06em] text-slate-950 group-hover:text-blue-600 transition-colors">ZodHub Clean</span>
+            <span class="mt-0.5 text-[10px] font-light tracking-[-0.02em] text-slate-400" data-i18n="nav.tagline">Mantenimiento honesto</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-7 text-xs text-slate-600 font-normal">
+          <a href="index.html#funciones" class="hover:text-blue-600 transition-colors" data-i18n="nav.features">Funciones</a>
+          <a href="index.html#como" class="hover:text-blue-600 transition-colors" data-i18n="nav.how">Cómo funciona</a>
+          <a href="index.html#seguridad" class="hover:text-blue-600 transition-colors" data-i18n="nav.security">Seguridad</a>
+          <a href="descargas.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.download">Descargar</a>
+          <a href="donar.html" class="text-blue-600 font-medium" data-i18n="nav.support">Apoyar</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="langToggle" class="mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">EN</button>
+          <a href="descargas.html" class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_5px_14px_rgba(59,130,246,0.28),inset_0_1px_0_rgba(255,255,255,0.35)] hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-sm"></iconify-icon><span data-i18n="nav.cta">Descargar</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="relative z-10 max-w-6xl mx-auto px-6 pt-32 md:pt-40 pb-16">
+
+  <!-- Hero -->
+  <div class="text-center max-w-3xl mx-auto reveal">
+    <span class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-b from-rose-400 to-rose-500 text-white flex items-center justify-center shadow-[0_18px_40px_-18px_rgba(244,63,94,0.7)] mb-6 z-pulse"><iconify-icon icon="solar:heart-bold" class="text-3xl"></iconify-icon></span>
+    <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="do.badge">APOYA EL PROYECTO</p>
+    <h1 class="text-4xl md:text-6xl font-light tracking-[-0.06em] leading-[0.98] text-slate-950" data-i18n="do.title">Ayúdanos a mantenerlo gratis para todos.</h1>
+    <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="do.sub">ZodHub Clean es y será gratis. No hay muros ni funciones de pago. Si te ha ahorrado un dolor de cabeza y quieres que siga creciendo, un pequeño gesto ayuda muchísimo — y es 100% opcional.</p>
+  </div>
+
+  <!-- Donation module + goal -->
+  <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 mt-12 items-start">
+
+    <!-- Module -->
+    <div class="reveal rounded-[2rem] bg-white/90 border border-slate-200 p-6 sm:p-8 shadow-[0_30px_70px_-45px_rgba(15,23,42,0.4)]">
+      <!-- Frequency toggle -->
+      <div class="inline-flex rounded-full bg-slate-100 p-1.5 mb-6">
+        <button id="freqOnce" class="freq px-6 py-2 rounded-full text-sm font-medium bg-white text-slate-900 shadow-[0_2px_8px_rgba(15,23,42,0.06)]" data-i18n="do.once">Una vez</button>
+        <button id="freqMonth" class="freq px-6 py-2 rounded-full text-sm font-medium text-slate-500" data-i18n="do.monthly">Cada mes</button>
+      </div>
+
+      <!-- Amounts -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button class="amt rounded-2xl border-2 border-slate-200 bg-white py-4 text-lg font-medium mono" data-amt="3">3 €</button>
+        <button class="amt sel rounded-2xl border-2 border-slate-200 bg-white py-4 text-lg font-medium mono" data-amt="5">5 €</button>
+        <button class="amt rounded-2xl border-2 border-slate-200 bg-white py-4 text-lg font-medium mono" data-amt="10">10 €</button>
+        <button class="amt rounded-2xl border-2 border-slate-200 bg-white py-4 text-lg font-medium mono" data-amt="25">25 €</button>
+      </div>
+
+      <!-- Custom -->
+      <div class="mt-3 flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white px-4 py-3">
+        <iconify-icon icon="solar:pen-linear" class="text-lg text-slate-400"></iconify-icon>
+        <input id="customAmt" type="number" min="1" placeholder="Otra cantidad" class="min-w-0 flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none mono" data-i18n-ph="do.custom">
+        <span class="mono text-slate-400">€</span>
+      </div>
+
+      <!-- Donate button -->
+      <a id="donateBtn" href="#" class="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 bg-gradient-to-b from-rose-400 to-rose-500 border border-rose-600 text-white text-base font-medium shadow-[0_16px_34px_-16px_rgba(244,63,94,0.7),inset_0_1px_0_rgba(255,255,255,0.3)] hover:-translate-y-0.5 transition-all">
+        <iconify-icon icon="solar:heart-bold" class="text-lg"></iconify-icon>
+        <span data-donate-label>Donar 5 €</span>
+      </a>
+
+      <!-- Methods -->
+      <div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <span class="text-xs text-slate-400 font-light" data-i18n="do.methods">Métodos disponibles:</span>
+        <div class="flex items-center gap-4 text-slate-400">
+          <iconify-icon icon="simple-icons:paypal" class="text-xl" title="PayPal"></iconify-icon>
+          <iconify-icon icon="simple-icons:stripe" class="text-xl" title="Tarjeta / Stripe"></iconify-icon>
+          <iconify-icon icon="simple-icons:kofi" class="text-xl" title="Ko-fi"></iconify-icon>
+          <iconify-icon icon="simple-icons:githubsponsors" class="text-xl" title="GitHub Sponsors"></iconify-icon>
+        </div>
+      </div>
+      <p class="mt-4 text-[11px] text-slate-400 font-light text-center" data-i18n="do.safe">Pago seguro a través del proveedor. Sin recompensas de pago ni funciones bloqueadas: donar no desbloquea nada, solo nos ayuda a seguir.</p>
+    </div>
+
+    <!-- Goal -->
+    <div class="reveal d1 rounded-[2rem] bg-gradient-to-b from-[#172033] to-[#101827] text-white border border-white/10 p-7 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="relative">
+        <p class="mono text-[11px] text-blue-300 mb-4" data-i18n="do.goalLabel">META DEL MES · COSTES</p>
+        <div class="flex items-end justify-between mb-2">
+          <span class="mono text-3xl">64%</span>
+          <span class="text-xs text-white/50 font-light mono">128 € / 200 €</span>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/10 overflow-hidden">
+          <div class="bar-fill h-full rounded-full bg-gradient-to-r from-blue-400 to-sky-400" style="--w:64%"></div>
+        </div>
+        <p class="mt-4 text-sm text-white/60 font-light leading-7" data-i18n="do.goalDesc">Esto cubre el servidor de descargas, el dominio y las horas de desarrollo. Cuando llegamos a la meta, todo lo demás va a mejorar la app.</p>
+        <p class="mt-3 text-[11px] text-white/35 font-light" data-i18n="do.goalNote">Cifras de ejemplo; publicaremos las reales en cuanto abramos donaciones.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transparency: where each euro goes -->
+  <section class="mt-16 reveal">
+    <div class="max-w-3xl">
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-4" data-i18n="do.trLabel">TRANSPARENCIA</p>
+      <h2 class="text-3xl md:text-4xl font-normal tracking-tight text-slate-950 leading-[1.1]" data-i18n="do.trHead">A dónde va cada euro.</h2>
+      <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="do.trSub">Sin sueldos millonarios ni humo. Esto es lo que sostiene el proyecto:</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+      <div class="rounded-3xl bg-white/85 border border-slate-200 p-6">
+        <iconify-icon icon="solar:server-linear" class="text-2xl text-blue-500"></iconify-icon>
+        <p class="mono text-2xl text-slate-900 mt-3">45%</p>
+        <p class="text-sm font-medium text-slate-900 mt-1" data-i18n="do.tr1t">Servidor y CDN</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr1d">Alojar y servir las descargas rápido en todo el mundo.</p>
+      </div>
+      <div class="rounded-3xl bg-white/85 border border-slate-200 p-6">
+        <iconify-icon icon="solar:global-linear" class="text-2xl text-blue-500"></iconify-icon>
+        <p class="mono text-2xl text-slate-900 mt-3">10%</p>
+        <p class="text-sm font-medium text-slate-900 mt-1" data-i18n="do.tr2t">Dominio</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr2d">Mantener zodhub.pro y los correos activos.</p>
+      </div>
+      <div class="rounded-3xl bg-white/85 border border-slate-200 p-6">
+        <iconify-icon icon="solar:code-linear" class="text-2xl text-blue-500"></iconify-icon>
+        <p class="mono text-2xl text-slate-900 mt-3">35%</p>
+        <p class="text-sm font-medium text-slate-900 mt-1" data-i18n="do.tr3t">Desarrollo</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr3d">Horas para nuevas funciones, Linux y Windows.</p>
+      </div>
+      <div class="rounded-3xl bg-white/85 border border-slate-200 p-6">
+        <iconify-icon icon="solar:cup-hot-linear" class="text-2xl text-blue-500"></iconify-icon>
+        <p class="mono text-2xl text-slate-900 mt-3">10%</p>
+        <p class="text-sm font-medium text-slate-900 mt-1" data-i18n="do.tr4t">Café e imprevistos</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr4d">Lo que mantiene despierto a quien lo programa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent donors -->
+  <section class="mt-16 reveal">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-2" data-i18n="do.dnLabel">ÚLTIMOS APOYOS</p>
+        <h2 class="text-2xl md:text-3xl font-normal tracking-tight text-slate-950" data-i18n="do.dnHead">Gracias a quienes lo hacen posible.</h2>
+      </div>
+    </div>
+    <div class="relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <div class="marquee flex gap-4 w-max">
+        <!-- set A -->
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">LM</span><div><p class="text-sm font-medium text-slate-800 leading-none">Laura M. <span class="mono text-blue-600 ml-1">5 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Sencilla y honesta, gracias»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-semibold">DR</span><div><p class="text-sm font-medium text-slate-800 leading-none">David R. <span class="mono text-blue-600 ml-1">10 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Por fin sin humo»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-semibold">AC</span><div><p class="text-sm font-medium text-slate-800 leading-none">Ana C. <span class="mono text-blue-600 ml-1">3 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Café pagado ☕»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-semibold">JP</span><div><p class="text-sm font-medium text-slate-800 leading-none">Jon P. <span class="mono text-blue-600 ml-1">25 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Seguid así»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center text-xs font-semibold">MS</span><div><p class="text-sm font-medium text-slate-800 leading-none">María S. <span class="mono text-blue-600 ml-1">5 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Gracias por el radar»</p></div></div>
+        <!-- set B (dup) -->
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">LM</span><div><p class="text-sm font-medium text-slate-800 leading-none">Laura M. <span class="mono text-blue-600 ml-1">5 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Sencilla y honesta, gracias»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-semibold">DR</span><div><p class="text-sm font-medium text-slate-800 leading-none">David R. <span class="mono text-blue-600 ml-1">10 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Por fin sin humo»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-semibold">AC</span><div><p class="text-sm font-medium text-slate-800 leading-none">Ana C. <span class="mono text-blue-600 ml-1">3 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Café pagado ☕»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-semibold">JP</span><div><p class="text-sm font-medium text-slate-800 leading-none">Jon P. <span class="mono text-blue-600 ml-1">25 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Seguid así»</p></div></div>
+        <div class="donor-chip flex items-center gap-3 rounded-full bg-white/85 border border-slate-200 pl-2 pr-5 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"><span class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center text-xs font-semibold">MS</span><div><p class="text-sm font-medium text-slate-800 leading-none">María S. <span class="mono text-blue-600 ml-1">5 €</span></p><p class="text-[11px] text-slate-400 font-light mt-1">«Gracias por el radar»</p></div></div>
+      </div>
+    </div>
+    <p class="mt-4 text-[11px] text-slate-400 font-light text-center" data-i18n="do.dnNote">Ejemplos ilustrativos. Aquí aparecerán los apoyos reales (con tu permiso) en cuanto abramos donaciones.</p>
+  </section>
+
+  <!-- Ways to help without money -->
+  <section class="mt-16 reveal">
+    <div class="rounded-[2rem] bg-white/85 border border-slate-200 p-8 sm:p-10">
+      <div class="max-w-2xl">
+        <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="do.freeLabel">¿SIN PRESUPUESTO? IGUAL AYUDAS</p>
+        <h2 class="text-2xl md:text-3xl font-normal tracking-tight text-slate-950" data-i18n="do.freeHead">Ayudar es gratis. Cualquiera de estas suma.</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+        <a href="https://twitter.com/intent/tweet?text=ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%2C%20100%25%20gratis&url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
+          <iconify-icon icon="ri:twitter-x-fill" class="text-2xl text-slate-900"></iconify-icon>
+          <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f1t">Compártelo en X</p>
+          <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f1d">Un tuit hace que llegue a más gente que cualquier anuncio.</p>
+        </a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
+          <iconify-icon icon="ri:linkedin-fill" class="text-2xl text-blue-600"></iconify-icon>
+          <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f2t">Compártelo en LinkedIn</p>
+          <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f2d">Ideal si trabajas rodeado de gente con Mac o PC.</p>
+        </a>
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+          <iconify-icon icon="solar:bug-linear" class="text-2xl text-blue-500"></iconify-icon>
+          <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f3t">Reporta fallos</p>
+          <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f3d">Cuéntanos qué falla o qué echas en falta. Nos hace mejores.</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+          <iconify-icon icon="solar:chat-round-like-linear" class="text-2xl text-blue-500"></iconify-icon>
+          <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f4t">Cuéntaselo a alguien</p>
+          <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f4d">El boca a boca de siempre sigue siendo lo que más funciona.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Thank you -->
+  <div class="mt-14 text-center reveal">
+    <p class="text-lg font-medium text-slate-700" data-i18n="do.thanks">Donéis o no, gracias por usar ZodHub Clean. De verdad.</p>
+    <p class="mt-2 text-slate-500 font-light" data-i18n="do.thanks2">Ese es, al final, todo el propósito: que la gente lo disfrute.</p>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="relative z-10 max-w-7xl mx-auto px-6 pb-14">
+  <div class="rounded-[2rem] bg-white/70 border border-slate-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+    <a href="index.html" class="flex items-center gap-3">
+      <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
+      <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub Clean</span>
+    </a>
+    <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.pro</span></p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  // reveal + progress bar
+  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');var b=e.target.querySelector('.bar-fill');if(b)b.classList.add('go');o.unobserve(e.target);}});},{threshold:.12});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+
+  // Donation logic
+  var amount = 5, monthly = false;
+  function labels(){ return currentLang==='en'
+    ? {once:'Donate '+amount+' €', month:'Donate '+amount+' € / mo'}
+    : {once:'Donar '+amount+' €', month:'Donar '+amount+' € / mes'}; }
+  function updateBtn(){ var el=document.querySelector('[data-donate-label]'); if(el) el.textContent = monthly?labels().month:labels().once; }
+  document.querySelectorAll('.amt').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.amt').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel'); amount = parseInt(b.dataset.amt,10);
+      document.getElementById('customAmt').value=''; updateBtn();
+    });
+  });
+  document.getElementById('customAmt').addEventListener('input', function(){
+    var v = parseInt(this.value,10);
+    if(!isNaN(v) && v>0){ document.querySelectorAll('.amt').forEach(function(x){x.classList.remove('sel');}); amount=v; updateBtn(); }
+  });
+  function setFreq(m){ monthly=m;
+    document.getElementById('freqOnce').classList.toggle('bg-white', !m);
+    document.getElementById('freqOnce').classList.toggle('text-slate-900', !m);
+    document.getElementById('freqOnce').classList.toggle('text-slate-500', m);
+    document.getElementById('freqOnce').classList.toggle('shadow-[0_2px_8px_rgba(15,23,42,0.06)]', !m);
+    document.getElementById('freqMonth').classList.toggle('bg-white', m);
+    document.getElementById('freqMonth').classList.toggle('text-slate-900', m);
+    document.getElementById('freqMonth').classList.toggle('text-slate-500', !m);
+    document.getElementById('freqMonth').classList.toggle('shadow-[0_2px_8px_rgba(15,23,42,0.06)]', m);
+    updateBtn();
+  }
+  document.getElementById('freqOnce').addEventListener('click', function(){setFreq(false);});
+  document.getElementById('freqMonth').addEventListener('click', function(){setFreq(true);});
+
+  // i18n
+  var I18N = { en: {
+    "nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
+    "do.badge":"SUPPORT THE PROJECT","do.title":"Help us keep it free for everyone.",
+    "do.sub":"ZodHub Clean is and will stay free. No walls, no paid features. If it saved you a headache and you'd like it to keep growing, a small gesture helps a lot — and it's 100% optional.",
+    "do.once":"One-time","do.monthly":"Monthly","do.custom":"Other amount","do.methods":"Available methods:",
+    "do.safe":"Secure payment through the provider. No paid perks or locked features: donating unlocks nothing, it just helps us keep going.",
+    "do.goalLabel":"MONTH GOAL · COSTS","do.goalDesc":"This covers the download server, the domain and development hours. Once we hit the goal, everything else goes into improving the app.",
+    "do.goalNote":"Sample figures; we'll publish the real ones as soon as donations open.",
+    "do.trLabel":"TRANSPARENCY","do.trHead":"Where every euro goes.","do.trSub":"No huge salaries, no smoke. This is what keeps the project alive:",
+    "do.tr1t":"Server & CDN","do.tr1d":"Hosting and serving downloads fast worldwide.","do.tr2t":"Domain","do.tr2d":"Keeping zodhub.pro and email running.",
+    "do.tr3t":"Development","do.tr3d":"Hours for new features, Linux and Windows.","do.tr4t":"Coffee & extras","do.tr4d":"What keeps the person coding awake.",
+    "do.dnLabel":"RECENT SUPPORTERS","do.dnHead":"Thanks to those who make it possible.",
+    "do.dnNote":"Illustrative examples. Real supporters (with your permission) will appear here once donations open.",
+    "do.freeLabel":"NO BUDGET? YOU STILL HELP","do.freeHead":"Helping is free. Any of these counts.",
+    "do.f1t":"Share it on X","do.f1d":"One post reaches more people than any ad.","do.f2t":"Share it on LinkedIn","do.f2d":"Great if you work around people with Macs or PCs.",
+    "do.f3t":"Report bugs","do.f3d":"Tell us what breaks or what's missing. It makes us better.","do.f4t":"Tell someone","do.f4d":"Good old word of mouth still works best.",
+    "do.thanks":"Whether you donate or not, thanks for using ZodHub Clean. Truly.","do.thanks2":"That's the whole point, in the end: that people enjoy it."
+  }};
+  var currentLang='es', esCache={};
+  function cacheES(){document.querySelectorAll('[data-i18n]').forEach(function(el){esCache[el.getAttribute('data-i18n')]=el.textContent;});document.querySelectorAll('[data-i18n-ph]').forEach(function(el){esCache['ph::'+el.getAttribute('data-i18n-ph')]=el.getAttribute('placeholder');});}
+  function applyLang(lang){var d=lang==='en'?I18N.en:null;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(lang==='es'){if(esCache[k]!==undefined)el.textContent=esCache[k];}else if(d&&d[k]!==undefined)el.textContent=d[k];});
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var k=el.getAttribute('data-i18n-ph');if(lang==='es'){if(esCache['ph::'+k]!==undefined)el.setAttribute('placeholder',esCache['ph::'+k]);}else if(d&&d[k]!==undefined)el.setAttribute('placeholder',d[k]);});
+    document.documentElement.lang=lang;currentLang=lang;var b=document.getElementById('langToggle');if(b)b.textContent=lang==='es'?'EN':'ES';updateBtn();}
+  cacheES(); updateBtn();
+  document.getElementById('langToggle').addEventListener('click',function(){applyLang(currentLang==='es'?'en':'es');});
+</script>
+</body>
+</html>

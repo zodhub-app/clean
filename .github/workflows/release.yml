@@ -1,0 +1,75 @@
+# CI/CD — ZodHub Clean (build universal de macOS)
+#
+# Qué hace: en cada tag `v*` (y a mano vía "Run workflow") compila el .app/.dmg
+# UNIVERSAL (Intel x86_64 + Apple Silicon aarch64) y publica una Release de
+# GitHub con los artefactos adjuntos.
+#
+# Sin firma de código de momento: el .dmg se genera sin firmar ni notarizar. En
+# el Mac del usuario final macOS pedirá botón derecho > Abrir la primera vez
+# (Gatekeeper). Cuando tengas cuenta de Apple Developer, descomenta el bloque de
+# firma/notarización de abajo y añade los secrets al repo.
+name: release
+
+on:
+  push:
+    tags:
+      - "v*" # se dispara al empujar un tag como v0.1.0, v1.0.0, etc.
+  workflow_dispatch: {} # permite lanzarlo a mano desde la pestaña Actions
+
+# Permiso para que la acción pueda crear la Release y subir binarios.
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest # runner Apple Silicon (arm64) de GitHub
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # cachea ~/.npm según package-lock.json
+
+      - name: Configurar Rust (targets Intel + Apple Silicon)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Caché de Rust (acelera compilaciones sucesivas)
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Instalar dependencias JS
+        run: npm ci
+
+      # Compila el frontend (beforeBuildCommand: npm run build) y el binario
+      # Rust para ambas arquitecturas, y ensambla el .app/.dmg universal.
+      - name: Build universal + Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # --- FIRMA DEL UPDATER (obligatoria para las actualizaciones) ---
+          # Clave generada con `npm run tauri signer generate`. La privada va como
+          # secret; la pública ya está en tauri.conf.json (plugins.updater.pubkey).
+          # Con esto, tauri-action firma los artefactos y genera/sube `latest.json`.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # --- FIRMA / NOTARIZACIÓN APPLE (dejar comentado hasta tener Developer ID) ---
+          # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}                 # .p12 en base64
+          # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          # APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}       # "Developer ID Application: Nombre (TEAMID)"
+          # APPLE_ID: ${{ secrets.APPLE_ID }}                                   # correo de la cuenta de desarrollador
+          # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}                       # contraseña específica de app (notarización)
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}                         # Team ID de 10 caracteres
+        with:
+          # tagName/releaseName usan el tag que disparó el workflow.
+          tagName: ${{ github.ref_name }}
+          releaseName: "ZodHub Clean ${{ github.ref_name }}"
+          releaseBody: "Build universal de macOS (Intel + Apple Silicon). Sin firmar todavía: la primera vez, botón derecho sobre la app > Abrir."
+          releaseDraft: true # se crea como borrador para que revises antes de publicar
+          prerelease: false
+          args: --target universal-apple-darwin

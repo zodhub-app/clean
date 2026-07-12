@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descargar ZodHub Clean — Mac, Linux y Windows</title>
+<meta name="description" content="Descarga ZodHub Clean gratis y directo, sin intermediarios. Guía de instalación clara para Mac (Apple Silicon e Intel). Linux y Windows muy pronto.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; } :target { scroll-margin-top: 7.5rem; }
+  body { font-family: 'Inter', sans-serif; background: #f3f5f8; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  @keyframes zDriftOne { 0%,100%{transform:translate3d(0,0,0) scale(1);} 35%{transform:translate3d(4vw,3vh,0) scale(1.06);} 70%{transform:translate3d(-2vw,5vh,0) scale(.98);} }
+  @keyframes zDriftTwo { 0%,100%{transform:translate3d(0,0,0) scale(1);} 40%{transform:translate3d(-4vw,-3vh,0) scale(1.08);} 75%{transform:translate3d(3vw,-5vh,0) scale(.96);} }
+  @keyframes zDots { 0%{background-position:0 0;} 100%{background-position:4rem 4rem;} }
+  .z-blob-1 { animation: zDriftOne 26s ease-in-out infinite; }
+  .z-blob-2 { animation: zDriftTwo 32s ease-in-out infinite; }
+  .z-dots  { animation: zDots 38s linear infinite; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 120ms; } .d2 { transition-delay: 240ms; } .d3 { transition-delay: 360ms; }
+  .plat-card { transition: all .3s cubic-bezier(.22,1,.36,1); }
+  .plat-card.active { border-color: #3b82f6; box-shadow: 0 24px 50px -30px rgba(59,130,246,.55); transform: translateY(-4px); }
+  .panel { display: none; } .panel.show { display: block; animation: fadeUp .5s cubic-bezier(.22,1,.36,1); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ .z-blob-1,.z-blob-2,.z-dots{animation:none;} .reveal{opacity:1;transform:none;transition:none;} }
+</style>
+</head>
+<body class="text-slate-900 min-h-screen relative overflow-x-hidden antialiased selection:bg-blue-100 selection:text-blue-900">
+
+<!-- Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+  <div class="z-blob-1 absolute top-[-12%] left-[-12%] w-[52vw] h-[52vw] rounded-full bg-blue-200/35 blur-[7.5rem]"></div>
+  <div class="z-blob-2 absolute bottom-[-18%] right-[-10%] w-[62vw] h-[62vw] rounded-full bg-sky-200/25 blur-[8.75rem]"></div>
+  <div class="z-dots absolute inset-0 opacity-[0.22]" style="background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.09) 1px, transparent 0); background-size: 2rem 2rem;"></div>
+</div>
+
+<!-- Nav -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 pt-5">
+    <div class="relative overflow-hidden rounded-full bg-white/84 backdrop-blur-2xl border border-white/90 shadow-[0_14px_38px_-22px_rgba(15,23,42,0.42),inset_0_1px_0_rgba(255,255,255,1)] px-4 py-3">
+      <div class="absolute inset-0 rounded-full bg-white/36 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_2px_8px_rgba(59,130,246,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] flex items-center justify-center"><span class="mono text-xs font-semibold tracking-[-0.08em] text-white">ZC</span></span>
+          <span class="flex flex-col justify-center leading-none">
+            <span class="mono text-sm font-semibold tracking-[-0.06em] text-slate-950 group-hover:text-blue-600 transition-colors">ZodHub Clean</span>
+            <span class="mt-0.5 text-[10px] font-light tracking-[-0.02em] text-slate-400" data-i18n="nav.tagline">Mantenimiento honesto</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-7 text-xs text-slate-600 font-normal">
+          <a href="index.html#funciones" class="hover:text-blue-600 transition-colors" data-i18n="nav.features">Funciones</a>
+          <a href="index.html#como" class="hover:text-blue-600 transition-colors" data-i18n="nav.how">Cómo funciona</a>
+          <a href="index.html#seguridad" class="hover:text-blue-600 transition-colors" data-i18n="nav.security">Seguridad</a>
+          <a href="descargas.html" class="text-blue-600 font-medium" data-i18n="nav.download">Descargar</a>
+          <a href="donar.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.support">Apoyar</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="langToggle" class="mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">EN</button>
+          <a href="donar.html" class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_5px_14px_rgba(59,130,246,0.28),inset_0_1px_0_rgba(255,255,255,0.35)] hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:heart-linear" class="text-sm"></iconify-icon><span data-i18n="nav.donate">Donar</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="relative z-10 max-w-6xl mx-auto px-6 pt-32 md:pt-40 pb-16">
+
+  <!-- Hero -->
+  <div class="text-center max-w-3xl mx-auto reveal">
+    <div class="inline-flex items-center gap-2 rounded-full bg-white/75 border border-white px-3.5 py-2 shadow-[0_6px_18px_-12px_rgba(15,23,42,0.3),inset_0_1px_0_white] mb-6">
+      <iconify-icon icon="solar:download-minimalistic-linear" class="text-base text-blue-500"></iconify-icon>
+      <span class="mono text-xs font-medium tracking-[-0.02em] text-slate-500" data-i18n="d.badge">DESCARGA DIRECTA · SIN INTERMEDIARIOS</span>
+    </div>
+    <h1 class="text-4xl md:text-6xl font-light tracking-[-0.06em] leading-[0.98] text-slate-950" data-i18n="d.title">Descarga ZodHub Clean.</h1>
+    <p class="mt-5 text-lg font-medium text-slate-700" data-i18n="d.lema">Tu equipo, sencillamente limpio y seguro.</p>
+    <p class="mt-4 text-slate-600 font-light leading-8" data-i18n="d.sub">Gratis, directo desde nuestro proveedor y sin intermediarios. Elige tu plataforma y sigue la guía: en un minuto lo tienes funcionando.</p>
+  </div>
+
+  <!-- Platform selector -->
+  <div class="grid sm:grid-cols-3 gap-4 mt-12 reveal d1">
+    <!-- macOS -->
+    <button data-plat="mac" class="plat-card active text-left rounded-3xl bg-white/85 border-2 border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center"><iconify-icon icon="ri:apple-fill" class="text-2xl"></iconify-icon></span>
+        <span class="mono text-[10px] px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100" data-i18n="d.avail">DISPONIBLE</span>
+      </div>
+      <h3 class="text-lg font-medium text-slate-900">macOS</h3>
+      <p class="text-sm text-slate-500 font-light mt-1" data-i18n="d.macdesc">Apple Silicon (M1–M4) e Intel</p>
+    </button>
+    <!-- Linux -->
+    <button data-plat="linux" class="plat-card text-left rounded-3xl bg-white/85 border-2 border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center"><iconify-icon icon="ri:ubuntu-fill" class="text-2xl"></iconify-icon></span>
+        <span class="mono text-[10px] px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-100" data-i18n="d.soon">MUY PRONTO</span>
+      </div>
+      <h3 class="text-lg font-medium text-slate-900">Linux</h3>
+      <p class="text-sm text-slate-500 font-light mt-1" data-i18n="d.linuxdesc">AppImage y .deb en camino</p>
+    </button>
+    <!-- Windows -->
+    <button data-plat="win" class="plat-card text-left rounded-3xl bg-white/85 border-2 border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center"><iconify-icon icon="ri:windows-fill" class="text-2xl"></iconify-icon></span>
+        <span class="mono text-[10px] px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-100" data-i18n="d.soon2">MUY PRONTO</span>
+      </div>
+      <h3 class="text-lg font-medium text-slate-900">Windows</h3>
+      <p class="text-sm text-slate-500 font-light mt-1" data-i18n="d.windesc">Instalador .msi en camino</p>
+    </button>
+  </div>
+
+  <!-- ===== macOS panel ===== -->
+  <div id="panel-mac" class="panel show mt-8">
+    <div class="rounded-[2rem] bg-white/85 border border-slate-200 p-6 sm:p-9 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <!-- Download buttons -->
+      <div class="grid sm:grid-cols-2 gap-4">
+        <a href="#" class="group rounded-2xl bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white p-5 shadow-[0_14px_30px_-16px_rgba(59,130,246,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:-translate-y-0.5 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs text-blue-100 font-light" data-i18n="d.recommended">Recomendado para tu Mac</p>
+              <p class="text-lg font-medium mt-0.5">Apple Silicon</p>
+              <p class="text-xs text-blue-100 font-light mono mt-0.5">.dmg · M1 · M2 · M3 · M4</p>
+            </div>
+            <iconify-icon icon="solar:download-minimalistic-bold" class="text-3xl"></iconify-icon>
+          </div>
+        </a>
+        <a href="#" class="group rounded-2xl bg-white border border-slate-200 text-slate-900 p-5 shadow-[inset_0_1px_0_white] hover:-translate-y-0.5 hover:border-blue-300 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-400 font-light" data-i18n="d.forintel">Para Mac más antiguos</p>
+              <p class="text-lg font-medium mt-0.5">Intel</p>
+              <p class="text-xs text-slate-400 font-light mono mt-0.5">.dmg · x86_64</p>
+            </div>
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-3xl text-blue-500"></iconify-icon>
+          </div>
+        </a>
+      </div>
+
+      <!-- Which chip -->
+      <div class="mt-6 rounded-2xl bg-blue-50/60 border border-blue-100 p-5">
+        <div class="flex items-start gap-3">
+          <iconify-icon icon="solar:cpu-linear" class="text-xl text-blue-500 shrink-0 mt-0.5"></iconify-icon>
+          <div>
+            <p class="text-sm font-medium text-slate-900" data-i18n="d.whichchip">¿No sabes qué chip tiene tu Mac?</p>
+            <p class="text-sm text-slate-600 font-light leading-6 mt-1" data-i18n="d.whichchip2">Menú Apple () → «Acerca de este Mac». Si ves «Chip Apple M1/M2/M3/M4», elige Apple Silicon. Si ves «Procesador Intel», elige Intel. Ante la duda, Apple Silicon es lo más habitual desde 2020.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Install steps -->
+      <h3 class="text-xl font-normal tracking-tight text-slate-900 mt-9 mb-5" data-i18n="d.stepsHead">Instalación en 3 pasos</h3>
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+          <span class="mono inline-flex h-8 w-8 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-sm text-blue-600">1</span>
+          <p class="mt-3 text-sm font-medium text-slate-900" data-i18n="d.s1t">Abre el .dmg</p>
+          <p class="mt-1.5 text-sm text-slate-500 font-light leading-6" data-i18n="d.s1d">Haz doble clic en el archivo descargado para montarlo.</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+          <span class="mono inline-flex h-8 w-8 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-sm text-blue-600">2</span>
+          <p class="mt-3 text-sm font-medium text-slate-900" data-i18n="d.s2t">Arrastra a Aplicaciones</p>
+          <p class="mt-1.5 text-sm text-slate-500 font-light leading-6" data-i18n="d.s2d">Suelta el icono de ZodHub Clean en la carpeta Aplicaciones.</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+          <span class="mono inline-flex h-8 w-8 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-sm text-blue-600">3</span>
+          <p class="mt-3 text-sm font-medium text-slate-900" data-i18n="d.s3t">Ábrela con clic derecho</p>
+          <p class="mt-1.5 text-sm text-slate-500 font-light leading-6" data-i18n="d.s3d">La primera vez: clic derecho (o Control-clic) sobre la app → «Abrir» → «Abrir».</p>
+        </div>
+      </div>
+
+      <!-- The Gatekeeper warning explained -->
+      <div class="mt-8 rounded-[1.5rem] bg-gradient-to-b from-[#172033] to-[#101827] text-white p-6 sm:p-8 border border-white/10 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="relative">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-300/30 text-amber-300 flex items-center justify-center"><iconify-icon icon="solar:shield-warning-linear" class="text-xl"></iconify-icon></span>
+            <h3 class="text-lg font-medium" data-i18n="d.gkHead">¿Te sale «desarrollador no identificado»? Es normal.</h3>
+          </div>
+          <p class="text-white/70 font-light leading-8 text-sm" data-i18n="d.gk1">macOS muestra ese aviso con cualquier app que no haya pasado por el registro y sellado (notarización) de Apple. No significa que sea peligrosa: solo que no hemos pagado ese peaje. ZodHub no pierde tiempo con políticas de terceros que sirven para asustar al usuario con etiquetas de «proveedor no autorizado». Preferimos entregarte la app directa, sin intermediarios, y explicarte exactamente qué pasa.</p>
+          <div class="mt-5 grid sm:grid-cols-2 gap-4">
+            <div class="rounded-2xl bg-white/[0.05] border border-white/10 p-4">
+              <p class="mono text-[11px] text-blue-300 mb-2" data-i18n="d.gkway1">OPCIÓN A · CLIC DERECHO</p>
+              <p class="text-sm text-white/80 font-light leading-6" data-i18n="d.gkway1d">Clic derecho sobre la app → «Abrir» → «Abrir». Solo la primera vez; después se abre normal.</p>
+            </div>
+            <div class="rounded-2xl bg-white/[0.05] border border-white/10 p-4">
+              <p class="mono text-[11px] text-blue-300 mb-2" data-i18n="d.gkway2">OPCIÓN B · AJUSTES</p>
+              <p class="text-sm text-white/80 font-light leading-6" data-i18n="d.gkway2d">Ajustes del Sistema → «Privacidad y seguridad» → baja hasta ver ZodHub Clean → «Abrir de todos modos».</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integrity -->
+      <div class="mt-6 rounded-2xl bg-white border border-slate-200 p-5 shadow-[inset_0_1px_0_white]">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+          <div class="flex items-start gap-3">
+            <iconify-icon icon="solar:check-read-linear" class="text-xl text-emerald-500 shrink-0 mt-0.5"></iconify-icon>
+            <div>
+              <p class="text-sm font-medium text-slate-900" data-i18n="d.shaHead">Verifica la descarga (opcional)</p>
+              <p class="text-sm text-slate-500 font-light leading-6 mt-1" data-i18n="d.shaDesc">Comprueba que el archivo es íntegro con su huella SHA-256:</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 rounded-xl bg-slate-900 p-3.5 overflow-x-auto">
+          <p class="mono text-[11px] text-emerald-300/90 whitespace-nowrap"><span class="text-white/40">$</span> shasum -a 256 ~/Downloads/ZodHubClean.dmg</p>
+        </div>
+        <p class="mt-2 mono text-[11px] text-slate-400 break-all">SHA-256: 0000…0000 <span class="text-slate-300" data-i18n="d.shaNote">(se publicará con cada versión)</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Linux panel ===== -->
+  <div id="panel-linux" class="panel mt-8">
+    <div class="rounded-[2rem] bg-white/85 border border-slate-200 p-8 sm:p-12 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <span class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mb-5"><iconify-icon icon="ri:ubuntu-fill" class="text-3xl"></iconify-icon></span>
+      <h3 class="text-2xl font-normal tracking-tight text-slate-900" data-i18n="d.linuxHead">Linux está en camino.</h3>
+      <p class="mt-3 text-slate-600 font-light leading-8 max-w-lg mx-auto" data-i18n="d.linuxSub">Estamos preparando paquetes AppImage y .deb. Déjanos tu correo y te avisamos en cuanto esté listo — sin spam, solo ese aviso.</p>
+      <form class="mt-6 flex max-w-md mx-auto rounded-full bg-white border border-slate-200 p-1.5 shadow-[inset_0_1px_0_white]" onsubmit="return false;">
+        <input type="email" placeholder="Email" class="min-w-0 flex-1 bg-transparent px-4 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" data-i18n-ph="d.ph">
+        <button class="shrink-0 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white text-xs font-medium px-4 py-2" data-i18n="d.notify">Avisadme</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Windows panel ===== -->
+  <div id="panel-win" class="panel mt-8">
+    <div class="rounded-[2rem] bg-white/85 border border-slate-200 p-8 sm:p-12 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <span class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mb-5"><iconify-icon icon="ri:windows-fill" class="text-3xl"></iconify-icon></span>
+      <h3 class="text-2xl font-normal tracking-tight text-slate-900" data-i18n="d.winHead">Windows, muy pronto.</h3>
+      <p class="mt-3 text-slate-600 font-light leading-8 max-w-lg mx-auto" data-i18n="d.winSub">Llevamos ZodHub Clean a Windows con un instalador nativo y ligero. Déjanos tu correo y serás de los primeros en probarlo.</p>
+      <form class="mt-6 flex max-w-md mx-auto rounded-full bg-white border border-slate-200 p-1.5 shadow-[inset_0_1px_0_white]" onsubmit="return false;">
+        <input type="email" placeholder="Email" class="min-w-0 flex-1 bg-transparent px-4 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" data-i18n-ph="d.ph2">
+        <button class="shrink-0 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white text-xs font-medium px-4 py-2" data-i18n="d.notify2">Avisadme</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Trust strip -->
+  <div class="grid sm:grid-cols-3 gap-4 mt-10 reveal">
+    <div class="rounded-2xl bg-white/70 border border-slate-200 p-5 flex items-start gap-3">
+      <iconify-icon icon="solar:server-path-linear" class="text-xl text-blue-500 shrink-0"></iconify-icon>
+      <div><p class="text-sm font-medium text-slate-900" data-i18n="d.t1t">Descarga directa</p><p class="text-xs text-slate-500 font-light mt-1" data-i18n="d.t1d">Desde nuestro proveedor, sin tiendas ni intermediarios.</p></div>
+    </div>
+    <div class="rounded-2xl bg-white/70 border border-slate-200 p-5 flex items-start gap-3">
+      <iconify-icon icon="solar:lock-keyhole-linear" class="text-xl text-blue-500 shrink-0"></iconify-icon>
+      <div><p class="text-sm font-medium text-slate-900" data-i18n="d.t2t">Sin cuenta ni datos</p><p class="text-xs text-slate-500 font-light mt-1" data-i18n="d.t2d">No pedimos registro. Nada de telemetría.</p></div>
+    </div>
+    <div class="rounded-2xl bg-white/70 border border-slate-200 p-5 flex items-start gap-3">
+      <iconify-icon icon="solar:tag-price-linear" class="text-xl text-blue-500 shrink-0"></iconify-icon>
+      <div><p class="text-sm font-medium text-slate-900" data-i18n="d.t3t">100% gratis</p><p class="text-xs text-slate-500 font-light mt-1" data-i18n="d.t3d">Todas las funciones, sin límites ni versiones recortadas.</p></div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="relative z-10 max-w-7xl mx-auto px-6 pb-14">
+  <div class="rounded-[2rem] bg-white/70 border border-slate-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+    <a href="index.html" class="flex items-center gap-3">
+      <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
+      <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub Clean</span>
+    </a>
+    <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.pro</span></p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.12});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+
+  // Platform tabs
+  document.querySelectorAll('.plat-card').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.plat-card').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('show');});
+      var p=document.getElementById('panel-'+btn.dataset.plat);
+      if(p) p.classList.add('show');
+    });
+  });
+
+  // i18n
+  var I18N = { en: {
+    "nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.donate":"Donate",
+    "d.badge":"DIRECT DOWNLOAD · NO MIDDLEMEN","d.title":"Download ZodHub Clean.","d.lema":"Your machine, simply clean and safe.",
+    "d.sub":"Free, straight from our provider and with no middlemen. Pick your platform and follow the guide: you'll be up and running in a minute.",
+    "d.avail":"AVAILABLE","d.soon":"COMING SOON","d.soon2":"COMING SOON",
+    "d.macdesc":"Apple Silicon (M1–M4) and Intel","d.linuxdesc":"AppImage and .deb on the way","d.windesc":".msi installer on the way",
+    "d.recommended":"Recommended for your Mac","d.forintel":"For older Macs",
+    "d.whichchip":"Not sure which chip your Mac has?","d.whichchip2":"Apple menu () → “About This Mac”. If you see “Apple M1/M2/M3/M4 chip”, pick Apple Silicon. If you see “Intel Processor”, pick Intel. When in doubt, Apple Silicon is the norm since 2020.",
+    "d.stepsHead":"Install in 3 steps","d.s1t":"Open the .dmg","d.s1d":"Double-click the downloaded file to mount it.",
+    "d.s2t":"Drag to Applications","d.s2d":"Drop the ZodHub Clean icon into the Applications folder.",
+    "d.s3t":"Open with right-click","d.s3d":"First time only: right-click (or Control-click) the app → “Open” → “Open”.",
+    "d.gkHead":"Getting “unidentified developer”? That's normal.",
+    "d.gk1":"macOS shows that notice for any app that hasn't gone through Apple's registration and notarization. It doesn't mean it's dangerous: it just means we haven't paid that toll. ZodHub won't waste time on third-party policies designed to scare users with “unauthorized provider” labels. We'd rather hand you the app directly, no middlemen, and explain exactly what's going on.",
+    "d.gkway1":"OPTION A · RIGHT-CLICK","d.gkway1d":"Right-click the app → “Open” → “Open”. Only the first time; after that it opens normally.",
+    "d.gkway2":"OPTION B · SETTINGS","d.gkway2d":"System Settings → “Privacy & Security” → scroll to ZodHub Clean → “Open Anyway”.",
+    "d.shaHead":"Verify your download (optional)","d.shaDesc":"Check the file's integrity with its SHA-256 fingerprint:","d.shaNote":"(published with each release)",
+    "d.linuxHead":"Linux is on the way.","d.linuxSub":"We're preparing AppImage and .deb packages. Leave your email and we'll ping you the moment it's ready — no spam, just that one heads-up.",
+    "d.winHead":"Windows, very soon.","d.winSub":"We're bringing ZodHub Clean to Windows with a lightweight native installer. Leave your email and be among the first to try it.",
+    "d.ph":"Email","d.ph2":"Email","d.notify":"Notify me","d.notify2":"Notify me",
+    "d.t1t":"Direct download","d.t1d":"From our provider, no stores or middlemen.","d.t2t":"No account, no data","d.t2d":"We ask for no sign-up. No telemetry.","d.t3t":"100% free","d.t3d":"Every feature, no limits or cut-down versions."
+  }};
+  var currentLang='es', esCache={};
+  function cacheES(){document.querySelectorAll('[data-i18n]').forEach(function(el){esCache[el.getAttribute('data-i18n')]=el.textContent;});document.querySelectorAll('[data-i18n-ph]').forEach(function(el){esCache['ph::'+el.getAttribute('data-i18n-ph')]=el.getAttribute('placeholder');});}
+  function applyLang(lang){var d=lang==='en'?I18N.en:null;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(lang==='es'){if(esCache[k]!==undefined)el.textContent=esCache[k];}else if(d&&d[k]!==undefined)el.textContent=d[k];});
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var k=el.getAttribute('data-i18n-ph');if(lang==='es'){if(esCache['ph::'+k]!==undefined)el.setAttribute('placeholder',esCache['ph::'+k]);}else if(d&&d[k]!==undefined)el.setAttribute('placeholder',d[k]);});
+    document.documentElement.lang=lang;currentLang=lang;var b=document.getElementById('langToggle');if(b)b.textContent=lang==='es'?'EN':'ES';}
+  cacheES();
+  document.getElementById('langToggle').addEventListener('click',function(){applyLang(currentLang==='es'?'en':'es');});
+</script>
+</body>
+</html>

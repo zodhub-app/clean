@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- =========================================================
+     ZodHub Clean — Landing (estética AURA)
+     Utilidad de mantenimiento honesta, local-first, gratis.
+     Sin imágenes externas: toda la UI es HTML/CSS/SVG.
+========================================================== -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZodHub Clean — Tu equipo, a punto y sin humo. Gratis.</title>
+<meta name="description" content="ZodHub Clean: mantenimiento honesto para Mac y Windows. Limpia cachés, libera memoria, ordena y automatiza. Local-first, sin telemetría, 100% gratis.">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root { --z-blue: #3b82f6; }
+  html { scroll-behavior: smooth; }
+  :target { scroll-margin-top: 7.5rem; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f3f5f8;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Ambient background */
+  @keyframes zDriftOne { 0%,100%{transform:translate3d(0,0,0) scale(1);} 35%{transform:translate3d(4vw,3vh,0) scale(1.06);} 70%{transform:translate3d(-2vw,5vh,0) scale(.98);} }
+  @keyframes zDriftTwo { 0%,100%{transform:translate3d(0,0,0) scale(1);} 40%{transform:translate3d(-4vw,-3vh,0) scale(1.08);} 75%{transform:translate3d(3vw,-5vh,0) scale(.96);} }
+  @keyframes zDriftThree { 0%,100%{transform:translate3d(0,0,0) scale(1);} 50%{transform:translate3d(2vw,-4vh,0) scale(1.05);} }
+  @keyframes zDots { 0%{background-position:0 0;} 100%{background-position:4rem 4rem;} }
+  .z-blob-1 { animation: zDriftOne 26s ease-in-out infinite; }
+  .z-blob-2 { animation: zDriftTwo 32s ease-in-out infinite; }
+  .z-blob-3 { animation: zDriftThree 30s ease-in-out infinite; }
+  .z-dots  { animation: zDots 38s linear infinite; }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); will-change: opacity, transform; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 120ms; } .d2 { transition-delay: 240ms; } .d3 { transition-delay: 360ms; } .d4 { transition-delay: 480ms; }
+
+  /* Floating hero bubbles */
+  @keyframes zFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+  @keyframes zBubbleIn { 0%{opacity:0;transform:translateX(18px) translateY(8px) scale(.96);filter:blur(6px);} 100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0);} }
+  .z-bubble { opacity: 0; animation: zBubbleIn 700ms cubic-bezier(.22,1,.36,1) forwards, zFloat 4.5s ease-in-out infinite; }
+  .z-bubble:nth-child(1){ animation-delay: 300ms, 1100ms; }
+  .z-bubble:nth-child(2){ animation-delay: 600ms, 1400ms; }
+  .z-bubble:nth-child(3){ animation-delay: 900ms, 1700ms; }
+  .z-bubble:nth-child(4){ animation-delay: 1200ms, 2000ms; }
+
+  /* Radar sweep */
+  @keyframes zSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .radar-sweep { transform-origin: center; animation: zSweep 4s linear infinite; }
+  @keyframes zPing { 0%{ r: 2; opacity: .9; } 100%{ r: 26; opacity: 0; } }
+  .radar-ping { animation: zPing 3s ease-out infinite; }
+
+  /* Live bar shimmer */
+  @keyframes zBar { 0%,100%{ opacity:.85; } 50%{ opacity:1; } }
+  .live-bar { animation: zBar 2.4s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .z-blob-1,.z-blob-2,.z-blob-3,.z-dots,.z-bubble,.radar-sweep,.radar-ping,.live-bar { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+
+<body class="text-slate-900 min-h-screen relative overflow-x-hidden antialiased selection:bg-blue-100 selection:text-blue-900">
+
+<!-- =========================================================
+     Ambient Background
+========================================================== -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+  <div class="z-blob-1 absolute top-[-12%] left-[-12%] w-[52vw] h-[52vw] rounded-full bg-blue-200/35 blur-[7.5rem]"></div>
+  <div class="z-blob-2 absolute bottom-[-18%] right-[-10%] w-[62vw] h-[62vw] rounded-full bg-sky-200/25 blur-[8.75rem]"></div>
+  <div class="z-blob-3 absolute top-[36%] left-[36%] w-[30vw] h-[30vw] rounded-full bg-white/55 blur-[5rem]"></div>
+  <div class="z-dots absolute inset-0 opacity-[0.22]" style="background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.09) 1px, transparent 0); background-size: 2rem 2rem;"></div>
+</div>
+
+<!-- =========================================================
+     Header / Navigation
+========================================================== -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 pt-5">
+    <div class="relative overflow-hidden rounded-full bg-white/84 backdrop-blur-2xl border border-white/90 shadow-[0_14px_38px_-22px_rgba(15,23,42,0.42),inset_0_1px_0_rgba(255,255,255,1)] px-4 py-3">
+      <div class="absolute inset-0 rounded-full bg-white/36 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#" class="flex items-center gap-3 group">
+          <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_2px_8px_rgba(59,130,246,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] flex items-center justify-center">
+            <span class="mono text-xs font-semibold tracking-[-0.08em] text-white">ZC</span>
+          </span>
+          <span class="flex flex-col justify-center leading-none">
+            <span class="mono text-sm font-semibold tracking-[-0.06em] text-slate-950 group-hover:text-blue-600 transition-colors">ZodHub Clean</span>
+            <span class="mt-0.5 text-[10px] font-light tracking-[-0.02em] text-slate-400" data-i18n="nav.tagline">Mantenimiento honesto</span>
+          </span>
+        </a>
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-7 text-xs text-slate-600 font-normal">
+          <a href="#funciones" class="relative transition-colors hover:text-blue-600" data-i18n="nav.features">Funciones</a>
+          <a href="#como" class="relative transition-colors hover:text-blue-600" data-i18n="nav.how">Cómo funciona</a>
+          <a href="#seguridad" class="relative transition-colors hover:text-blue-600" data-i18n="nav.security">Seguridad</a>
+          <a href="#precio" class="relative transition-colors hover:text-blue-600" data-i18n="nav.price">Precio</a>
+          <a href="donar.html" class="relative transition-colors hover:text-blue-600" data-i18n="nav.support">Apoyar</a>
+        </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-2">
+          <button id="langToggle" class="mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all" aria-label="Toggle language">EN</button>
+          <a href="descargas.html" class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_5px_14px_rgba(59,130,246,0.28),inset_0_1px_0_rgba(255,255,255,0.35)] hover:from-blue-400 hover:to-blue-500 hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-sm"></iconify-icon>
+            <span data-i18n="nav.cta">Descargar gratis</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="relative z-10">
+
+  <!-- =====================================================
+       Section 01 — Hero
+  ====================================================== -->
+  <section class="max-w-7xl mx-auto px-6 pt-32 md:pt-40 pb-16">
+    <div class="grid lg:grid-cols-[1.02fr_0.98fr] gap-12 lg:gap-16 items-center">
+      <!-- Copy -->
+      <div class="text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full bg-white/75 border border-white px-3.5 py-2 shadow-[0_6px_18px_-12px_rgba(15,23,42,0.3),inset_0_1px_0_white] mb-8 reveal">
+          <span class="w-7 h-7 rounded-full bg-gradient-to-b from-blue-50 to-white border border-blue-100 shadow-[inset_0_1px_0_white] flex items-center justify-center">
+            <iconify-icon icon="solar:shield-check-linear" class="text-base text-blue-500"></iconify-icon>
+          </span>
+          <span class="mono text-xs font-medium tracking-[-0.02em] text-slate-500" data-i18n="hero.badge">100% GRATIS · LOCAL-FIRST · SIN HUMO</span>
+        </div>
+
+        <h1 class="text-[3.4rem] md:text-[4.6rem] lg:text-[5.4rem] font-light tracking-[-0.06em] leading-[0.94] text-slate-950 reveal d1" style="text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
+          <span class="block" data-i18n="hero.h1">Tu equipo,</span>
+          <span class="block mt-2" data-i18n="hero.h2">a punto y</span>
+          <span class="inline-flex whitespace-nowrap mt-4 rounded-[1.35rem] bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 px-4 md:px-5 pb-2.5 pt-1.5 text-white font-normal shadow-[0_18px_38px_-20px_rgba(59,130,246,0.55),inset_0_1px_0_rgba(255,255,255,0.38)]" data-i18n="hero.h3">sin humo.</span>
+        </h1>
+
+        <p class="mt-6 text-lg md:text-xl font-medium tracking-tight text-slate-700 max-w-2xl mx-auto lg:mx-0 reveal d1" data-i18n="hero.lema">Tu equipo, sencillamente limpio y seguro.</p>
+
+        <p class="mt-6 text-base md:text-lg leading-8 text-slate-600 font-light max-w-2xl mx-auto lg:mx-0 reveal d2" data-i18n="hero.sub">
+          ZodHub Clean limpia cachés, libera memoria, ordena tus archivos y automatiza el mantenimiento. Nada de rituales de miedo ni promesas mágicas: hace lo que dice, en tu equipo, y te enseña cada número real.
+        </p>
+
+        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 reveal d3">
+          <a href="descargas.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white text-sm font-normal shadow-[0_10px_24px_rgba(59,130,246,0.26),inset_0_1px_0_rgba(255,255,255,0.35)] hover:from-blue-400 hover:to-blue-500 hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-lg"></iconify-icon>
+            <span data-i18n="hero.cta1">Descargar gratis</span>
+          </a>
+          <a href="#como" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-slate-700 text-sm font-normal shadow-[0_4px_12px_rgba(15,23,42,0.05),inset_0_1px_0_white] hover:from-slate-50 hover:to-slate-100 hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:play-circle-linear" class="text-lg text-blue-500"></iconify-icon>
+            <span data-i18n="hero.cta2">Ver cómo funciona</span>
+          </a>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-2 text-xs text-slate-500 font-light reveal d4">
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:lock-keyhole-linear" class="text-base text-blue-500"></iconify-icon><span data-i18n="hero.trust1">Sin telemetría</span></span>
+          <span class="hidden sm:block w-1 h-1 rounded-full bg-slate-300"></span>
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:cpu-linear" class="text-base text-blue-500"></iconify-icon><span data-i18n="hero.trust2">Motor en Rust</span></span>
+          <span class="hidden sm:block w-1 h-1 rounded-full bg-slate-300"></span>
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:devices-linear" class="text-base text-blue-500"></iconify-icon><span data-i18n="hero.trust3">Mac y Windows (muy pronto)</span></span>
+        </div>
+      </div>
+
+      <!-- Product Mockup -->
+      <div class="relative lg:pl-4 reveal d2">
+        <div class="absolute -inset-8 rounded-[3rem] bg-gradient-to-br from-blue-200/40 via-white/20 to-sky-200/30 blur-3xl"></div>
+        <div class="relative rounded-[2rem] bg-[#f8fafc] border border-white shadow-[0_30px_80px_-35px_rgba(15,23,42,0.35),inset_0_2px_0_rgba(255,255,255,1)] p-4 sm:p-5">
+
+          <!-- Floating bubbles -->
+          <div class="hidden md:block absolute inset-0 z-20 pointer-events-none">
+            <div class="z-bubble absolute -right-7 top-8 rounded-2xl bg-white/90 backdrop-blur border border-white px-4 py-3 shadow-[0_18px_38px_-20px_rgba(15,23,42,0.45),inset_0_1px_0_white] min-w-[12rem]">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center"><iconify-icon icon="solar:trash-bin-trash-linear" class="text-lg text-blue-500"></iconify-icon></div>
+                <div><p class="text-xs text-slate-900 font-medium" data-i18n="bub1.t">Caché encontrada</p><p class="text-xs text-slate-400 font-light mono">12,4 GB liberables</p></div>
+              </div>
+            </div>
+            <div class="z-bubble absolute -right-7 top-[38%] rounded-2xl bg-white/90 backdrop-blur border border-white px-4 py-3 shadow-[0_18px_38px_-20px_rgba(15,23,42,0.45),inset_0_1px_0_white] min-w-[12rem]">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center"><iconify-icon icon="solar:lock-keyhole-minimalistic-linear" class="text-lg text-emerald-500"></iconify-icon></div>
+                <div><p class="text-xs text-slate-900 font-medium" data-i18n="bub2.t">Sin telemetría</p><p class="text-xs text-slate-400 font-light" data-i18n="bub2.s">Nada sale de tu equipo</p></div>
+              </div>
+            </div>
+            <div class="z-bubble absolute -right-7 bottom-[24%] rounded-2xl bg-white/90 backdrop-blur border border-white px-4 py-3 shadow-[0_18px_38px_-20px_rgba(15,23,42,0.45),inset_0_1px_0_white] min-w-[12rem]">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center"><iconify-icon icon="solar:folder-check-linear" class="text-lg text-indigo-500"></iconify-icon></div>
+                <div><p class="text-xs text-slate-900 font-medium mono">.DS_Store</p><p class="text-xs text-slate-400 font-light"><span class="mono">342</span> <span data-i18n="bub3.s">ordenados</span></p></div>
+              </div>
+            </div>
+            <div class="z-bubble absolute left-8 -bottom-6 rounded-2xl bg-white/90 backdrop-blur border border-white px-4 py-3 shadow-[0_18px_38px_-20px_rgba(15,23,42,0.45),inset_0_1px_0_white] min-w-[12rem]">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><iconify-icon icon="solar:calendar-mark-linear" class="text-lg text-slate-600"></iconify-icon></div>
+                <div><p class="text-xs text-slate-900 font-medium" data-i18n="bub4.t">Tarea programada</p><p class="text-xs text-slate-400 font-light" data-i18n="bub4.s">Limpieza semanal</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- App window -->
+          <div class="rounded-[1.5rem] bg-gradient-to-b from-white to-slate-50 border border-slate-200 shadow-[inset_0_1px_0_white] overflow-hidden">
+            <div class="px-5 py-4 flex items-center justify-between border-b border-slate-200/80">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-300"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-300"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-300"></span>
+              </div>
+              <div class="mono text-xs text-slate-400 tracking-[-0.03em]" data-i18n="mock.title">RESUMEN DEL SISTEMA</div>
+            </div>
+
+            <div class="p-5 sm:p-6">
+              <div class="flex items-start justify-between gap-4 mb-6">
+                <div>
+                  <p class="text-xs text-slate-400 font-light mb-1" data-i18n="mock.today">Ahora mismo</p>
+                  <h2 class="text-2xl md:text-3xl font-normal tracking-tight text-slate-900" data-i18n="mock.head">Tu equipo está a punto.</h2>
+                </div>
+                <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-[inset_0_1px_0_white]">
+                  <iconify-icon icon="solar:cpu-bolt-linear" class="text-2xl"></iconify-icon>
+                </div>
+              </div>
+
+              <div class="grid gap-3">
+                <!-- Live metrics -->
+                <div class="rounded-2xl bg-white border border-slate-200 p-4 shadow-[0_2px_8px_rgba(15,23,42,0.03),inset_0_1px_0_white]">
+                  <div class="grid grid-cols-3 gap-4">
+                    <div>
+                      <p class="text-[10px] text-slate-400 font-light mb-1 mono">CPU</p>
+                      <p class="mono text-lg text-slate-900">18%</p>
+                      <div class="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden"><div class="live-bar h-full w-[18%] rounded-full bg-blue-500"></div></div>
+                    </div>
+                    <div>
+                      <p class="text-[10px] text-slate-400 font-light mb-1 mono" data-i18n="mock.mem">MEMORIA</p>
+                      <p class="mono text-lg text-slate-900">9,1 GB</p>
+                      <div class="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden"><div class="live-bar h-full w-[57%] rounded-full bg-indigo-500"></div></div>
+                    </div>
+                    <div>
+                      <p class="text-[10px] text-slate-400 font-light mb-1 mono" data-i18n="mock.disk">DISCO</p>
+                      <p class="mono text-lg text-slate-900">431 GB</p>
+                      <div class="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden"><div class="live-bar h-full w-[72%] rounded-full bg-sky-500"></div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <!-- Network radar -->
+                  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 to-slate-800 text-white border border-slate-700 p-4 shadow-[0_12px_28px_-16px_rgba(15,23,42,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                    <div class="flex items-center justify-between mb-2">
+                      <p class="text-[10px] text-slate-300 font-light mono" data-i18n="mock.radar">RADAR DE RED</p>
+                      <span class="inline-flex items-center gap-1 text-[10px] text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-bar"></span><span data-i18n="mock.live">en vivo</span></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <svg viewBox="0 0 80 80" class="w-16 h-16 shrink-0">
+                        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+                        <circle cx="40" cy="40" r="24" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+                        <circle cx="40" cy="40" r="14" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+                        <line class="radar-sweep" x1="40" y1="40" x2="40" y2="6" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="58" cy="30" r="2" fill="#38bdf8"><animate attributeName="opacity" values="1;.2;1" dur="2.2s" repeatCount="indefinite"/></circle>
+                        <circle cx="28" cy="54" r="2" fill="#34d399"><animate attributeName="opacity" values="1;.2;1" dur="2.8s" repeatCount="indefinite"/></circle>
+                        <circle cx="52" cy="52" r="2" fill="#a78bfa"><animate attributeName="opacity" values="1;.2;1" dur="3.2s" repeatCount="indefinite"/></circle>
+                      </svg>
+                      <div>
+                        <p class="mono text-xl">7</p>
+                        <p class="text-[11px] text-slate-300 font-light" data-i18n="mock.conn">conexiones activas</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cache tile -->
+                  <div class="rounded-2xl bg-gradient-to-b from-blue-400 to-blue-600 text-white border border-blue-700 p-4 shadow-[0_10px_24px_-14px_rgba(59,130,246,0.55),inset_0_1px_0_rgba(255,255,255,0.30)] flex flex-col justify-between">
+                    <div>
+                      <p class="text-xs text-blue-100 font-light" data-i18n="mock.cache">Caché limpiable</p>
+                      <p class="mt-1 mono text-2xl">12,4 GB</p>
+                    </div>
+                    <button class="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-white/90 text-blue-700 text-xs font-medium px-3 py-2 shadow-[inset_0_1px_0_white]">
+                      <iconify-icon icon="solar:magic-stick-3-linear" class="text-sm"></iconify-icon>
+                      <span data-i18n="mock.clean">Revisar y limpiar</span>
+                    </button>
+                  </div>
+                </div>
+
+                <p class="text-[11px] text-slate-400 font-light text-center pt-1">
+                  <iconify-icon icon="solar:info-circle-linear" class="text-xs align-[-1px]"></iconify-icon>
+                  <span data-i18n="mock.note">Presión de memoria: baja (aprox.). Cifras reales del sistema, nunca inventadas.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 02 — Por qué importa (anti-humo)
+  ====================================================== -->
+  <section class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-3xl reveal">
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-4" data-i18n="why.label">POR QUÉ IMPORTA</p>
+      <h2 class="text-4xl md:text-5xl font-normal tracking-tight text-slate-950 leading-[1.05]" data-i18n="why.head">La mayoría de "limpiadores" venden miedo. Nosotros no.</h2>
+      <p class="mt-6 text-slate-600 font-light leading-8" data-i18n="why.sub">Ya conoces el numerito: barras que corren, "amenazas" inventadas, un botón gigante y una suscripción al final. Mucho ritual, poca verdad. ZodHub Clean va al revés: te enseña qué hay, qué ocupa espacio y qué puedes hacer — y solo actúa cuando tú lo confirmas.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-12">
+      <div class="reveal rounded-3xl bg-white/80 border border-slate-200 p-7 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500"><iconify-icon icon="solar:masks-linear" class="text-xl"></iconify-icon></div>
+          <h3 class="text-lg font-medium text-slate-800" data-i18n="why.badTitle">El teatro de siempre</h3>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-500 font-light">
+          <li class="flex gap-3"><iconify-icon icon="solar:close-circle-linear" class="text-lg text-slate-400 shrink-0"></iconify-icon><span data-i18n="why.bad1">Animaciones y "escaneos" que fingen trabajar.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:close-circle-linear" class="text-lg text-slate-400 shrink-0"></iconify-icon><span data-i18n="why.bad2">"Amenazas" y "errores" exagerados para asustarte.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:close-circle-linear" class="text-lg text-slate-400 shrink-0"></iconify-icon><span data-i18n="why.bad3">Datos que se envían a servidores ajenos.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:close-circle-linear" class="text-lg text-slate-400 shrink-0"></iconify-icon><span data-i18n="why.bad4">Suscripción cara por lo que debería ser gratis.</span></li>
+        </ul>
+      </div>
+
+      <div class="reveal d1 rounded-3xl bg-gradient-to-b from-white to-blue-50/60 border border-blue-100 p-7 shadow-[0_18px_44px_-28px_rgba(59,130,246,0.4)]">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500 flex items-center justify-center text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)]"><iconify-icon icon="solar:shield-check-linear" class="text-xl"></iconify-icon></div>
+          <h3 class="text-lg font-medium text-slate-900" data-i18n="why.goodTitle">Lo que hace ZodHub Clean</h3>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-600 font-light">
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-lg text-blue-500 shrink-0"></iconify-icon><span data-i18n="why.good1">Muestra cifras reales del sistema, medidas en Rust.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-lg text-blue-500 shrink-0"></iconify-icon><span data-i18n="why.good2">Borra solo lo que confirmas, con rutas validadas.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-lg text-blue-500 shrink-0"></iconify-icon><span data-i18n="why.good3">Todo local: cero telemetría, nada sale de tu equipo.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-lg text-blue-500 shrink-0"></iconify-icon><span data-i18n="why.good4">Gratis de verdad, para siempre, sin letra pequeña.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 03 — Funciones
+  ====================================================== -->
+  <section id="funciones" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-3xl reveal">
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-4" data-i18n="feat.label">FUNCIONES</p>
+      <h2 class="text-4xl md:text-5xl font-normal tracking-tight text-slate-950 leading-[1.05]" data-i18n="feat.head">Lo esencial, hecho bien.</h2>
+      <p class="mt-6 text-slate-600 font-light leading-8" data-i18n="feat.sub">Sin funciones de relleno ni módulos que no usarás. Cada herramienta resuelve algo concreto — y toda la lógica pesada corre en Rust, en tu equipo.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+      <!-- Card -->
+      <div class="reveal rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-5"><iconify-icon icon="solar:trash-bin-trash-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2" data-i18n="feat.1t">Limpieza de caché</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.1d">Localiza cachés de apps y sistema, te dice cuánto ocupan y libera espacio solo cuando lo confirmas.</p>
+      </div>
+      <div class="reveal d1 rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-5"><iconify-icon icon="solar:ssd-square-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2" data-i18n="feat.2t">Liberar memoria</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.2d">Reduce la presión de memoria cuando el equipo va cargado. Marcamos las aproximaciones como tales, sin exagerar.</p>
+      </div>
+      <div class="reveal d2 rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 mb-5"><iconify-icon icon="solar:folder-with-files-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2 mono">.DS_Store</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.3d">Encuentra y ordena los archivos .DS_Store que macOS deja por todas partes, para carpetas más limpias.</p>
+      </div>
+      <div class="reveal rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-5"><iconify-icon icon="solar:radar-2-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2" data-i18n="feat.4t">Radar de red</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.4d">Visualiza conexiones, puertos a la escucha y actividad de red con datos reales del sistema. Una representación, no un adorno.</p>
+      </div>
+      <div class="reveal d1 rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-5"><iconify-icon icon="solar:calendar-mark-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2" data-i18n="feat.5t">Tareas automáticas</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.5d">Programa limpiezas periódicas con launchd. Configúralo una vez y olvídate; se ejecuta en segundo plano.</p>
+      </div>
+      <div class="reveal d2 rounded-3xl bg-white/85 border border-slate-200 p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_44px_-26px_rgba(59,130,246,0.4)] transition-all">
+        <div class="w-11 h-11 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 mb-5"><iconify-icon icon="solar:chart-2-linear" class="text-2xl"></iconify-icon></div>
+        <h3 class="text-lg font-medium text-slate-900 mb-2" data-i18n="feat.6t">Monitor del sistema</h3>
+        <p class="text-sm text-slate-500 font-light leading-6" data-i18n="feat.6d">CPU, memoria y procesos en vivo, al estilo del Monitor de Actividad, para ver qué está pasando de verdad.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 04 — Cómo funciona
+  ====================================================== -->
+  <section id="como" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-3xl reveal">
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-4" data-i18n="how.label">CÓMO FUNCIONA</p>
+      <h2 class="text-4xl md:text-5xl font-normal tracking-tight text-slate-950 leading-[1.05]" data-i18n="how.head">Cuatro pasos, cero sorpresas.</h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6 mt-12">
+      <div class="reveal relative">
+        <span class="mono inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200 bg-white text-sm text-blue-600 shadow-[inset_0_1px_0_white]">1</span>
+        <h3 class="mt-4 text-base font-medium text-slate-900" data-i18n="how.1t">Descarga e instala</h3>
+        <p class="mt-2 text-sm text-slate-500 font-light leading-6" data-i18n="how.1d">Gratis, sin cuenta ni tarjeta. Se abre y ya estás dentro.</p>
+      </div>
+      <div class="reveal d1 relative">
+        <span class="mono inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200 bg-white text-sm text-blue-600 shadow-[inset_0_1px_0_white]">2</span>
+        <h3 class="mt-4 text-base font-medium text-slate-900" data-i18n="how.2t">Analiza tu equipo</h3>
+        <p class="mt-2 text-sm text-slate-500 font-light leading-6" data-i18n="how.2d">Mide caché, memoria, red y espacio con datos reales, al instante.</p>
+      </div>
+      <div class="reveal d2 relative">
+        <span class="mono inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200 bg-white text-sm text-blue-600 shadow-[inset_0_1px_0_white]">3</span>
+        <h3 class="mt-4 text-base font-medium text-slate-900" data-i18n="how.3t">Revisa y confirma</h3>
+        <p class="mt-2 text-sm text-slate-500 font-light leading-6" data-i18n="how.3d">Tú decides qué se borra. El borrado es permanente y siempre se confirma.</p>
+      </div>
+      <div class="reveal d3 relative">
+        <span class="mono inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200 bg-white text-sm text-blue-600 shadow-[inset_0_1px_0_white]">4</span>
+        <h3 class="mt-4 text-base font-medium text-slate-900" data-i18n="how.4t">Limpia o automatiza</h3>
+        <p class="mt-2 text-sm text-slate-500 font-light leading-6" data-i18n="how.4d">Hazlo ahora o programa una tarea para que se repita sola.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 05 — Seguridad / Motor Rust (panel oscuro)
+  ====================================================== -->
+  <section id="seguridad" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="reveal overflow-hidden rounded-[2.75rem] bg-gradient-to-b from-[#172033] to-[#101827] text-white border border-white/10 relative shadow-[0_40px_90px_-45px_rgba(15,23,42,0.78),inset_0_1px_0_rgba(255,255,255,0.14)]">
+      <div class="absolute inset-0 opacity-[0.10]" style="background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="relative grid lg:grid-cols-2 gap-10 p-8 sm:p-12 lg:p-16 items-center">
+        <div>
+          <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-300 mb-4" data-i18n="sec.label">SEGURIDAD & MOTOR</p>
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-tight mb-6" data-i18n="sec.head">Toda la lógica pesada corre en Rust, en tu equipo.</h2>
+          <p class="text-white/60 font-light leading-8 mb-8" data-i18n="sec.sub">Enumerar, medir, borrar, comprimir, escanear la red: todo se hace con código nativo seguro y sin bloquear la interfaz. Y con reglas estrictas para que nunca toque lo que no debe.</p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 text-sm text-white/80"><iconify-icon icon="solar:shield-check-linear" class="text-lg text-blue-300 shrink-0"></iconify-icon><span data-i18n="sec.1">Valida que cada ruta esté dentro de los ámbitos permitidos.</span></div>
+            <div class="flex items-center gap-3 text-sm text-white/80"><iconify-icon icon="solar:link-broken-linear" class="text-lg text-blue-300 shrink-0"></iconify-icon><span data-i18n="sec.2">Nunca sigue enlaces simbólicos al calcular tamaños.</span></div>
+            <div class="flex items-center gap-3 text-sm text-white/80"><iconify-icon icon="solar:lock-keyhole-linear" class="text-lg text-blue-300 shrink-0"></iconify-icon><span data-i18n="sec.3">Nunca toca rutas del sistema protegidas por SIP.</span></div>
+            <div class="flex items-center gap-3 text-sm text-white/80"><iconify-icon icon="solar:key-minimalistic-linear" class="text-lg text-blue-300 shrink-0"></iconify-icon><span data-i18n="sec.4">Pide permisos de administrador solo cuando hace falta.</span></div>
+          </div>
+        </div>
+
+        <div class="rounded-[1.85rem] bg-white/[0.04] border border-white/10 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+          <p class="mono text-[10px] text-white/40 uppercase tracking-widest mb-5" data-i18n="sec.panel">GARANTÍAS EN NÚMEROS</p>
+          <div class="grid grid-cols-2 gap-5">
+            <div><p class="mono text-3xl text-white">0</p><p class="text-xs text-white/50 font-light mt-1" data-i18n="sec.m1">bytes de telemetría enviados</p></div>
+            <div><p class="mono text-3xl text-white">100%</p><p class="text-xs text-white/50 font-light mt-1" data-i18n="sec.m2">local, en tu propio equipo</p></div>
+            <div><p class="mono text-3xl text-white">1×</p><p class="text-xs text-white/50 font-light mt-1" data-i18n="sec.m3">confirmación antes de borrar</p></div>
+            <div><p class="mono text-3xl text-white">SIP</p><p class="text-xs text-white/50 font-light mt-1" data-i18n="sec.m4">rutas del sistema, intocables</p></div>
+          </div>
+          <div class="mt-6 rounded-2xl bg-slate-900/60 border border-white/10 p-4">
+            <p class="mono text-[11px] text-emerald-300/90 leading-relaxed"><span class="text-white/40">$</span> zodhub scan --local <span class="text-white/40">→</span> <span data-i18n="sec.code">sin conexiones salientes</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 06 — Precio (gratis) + comparativa
+  ====================================================== -->
+  <section id="precio" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-3xl reveal">
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-4" data-i18n="price.label">PRECIO</p>
+      <h2 class="text-4xl md:text-5xl font-normal tracking-tight text-slate-950 leading-[1.05]" data-i18n="price.head">Gratis. Para siempre. Para todo el mundo.</h2>
+      <p class="mt-6 text-slate-600 font-light leading-8" data-i18n="price.sub">Nadie se merece pagar barbaridades por algo tan sencillo como mantener su equipo a punto. Por eso ZodHub Clean es gratis para todo el mundo: sin plan de pago, sin funciones "premium" escondidas, sin muros. Primero, que la gente lo disfrute.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-6 mt-12 items-stretch">
+      <!-- Free card -->
+      <div class="reveal rounded-[2rem] bg-gradient-to-b from-blue-500 to-blue-600 text-white border border-blue-700 p-8 shadow-[0_30px_70px_-35px_rgba(59,130,246,0.7),inset_0_1px_0_rgba(255,255,255,0.3)] flex flex-col">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="mono text-xs bg-white/20 border border-white/30 rounded-full px-3 py-1" data-i18n="price.tag">PLAN ÚNICO</span>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-6xl font-light tracking-tight" data-i18n="price.free">Gratis</span>
+        </div>
+        <p class="mt-3 text-blue-100 font-light" data-i18n="price.forever">Hoy, mañana y siempre. Sin tarjeta.</p>
+        <ul class="mt-7 space-y-3 text-sm text-blue-50 flex-1">
+          <li class="flex items-center gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-lg"></iconify-icon><span data-i18n="price.f1">Todas las funciones, sin límites</span></li>
+          <li class="flex items-center gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-lg"></iconify-icon><span data-i18n="price.f2">Sin telemetría ni anuncios</span></li>
+          <li class="flex items-center gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-lg"></iconify-icon><span data-i18n="price.f3">Actualizaciones incluidas</span></li>
+          <li class="flex items-center gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-lg"></iconify-icon><span data-i18n="price.f4">Mac y Windows (muy pronto)</span></li>
+        </ul>
+        <a href="descargas.html" class="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-white text-blue-700 px-6 py-3.5 text-sm font-medium shadow-[inset_0_1px_0_white] hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="solar:download-minimalistic-linear" class="text-lg"></iconify-icon>
+          <span data-i18n="price.cta">Descargar gratis</span>
+        </a>
+      </div>
+
+      <!-- Comparison -->
+      <div class="reveal d1 rounded-[2rem] bg-white/85 border border-slate-200 p-8 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+        <h3 class="text-lg font-medium text-slate-900 mb-6" data-i18n="price.cmpHead">ZodHub Clean vs. los limpiadores de siempre</h3>
+        <div class="space-y-1">
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center pb-3 border-b border-slate-100 text-xs text-slate-400 mono uppercase">
+            <span></span><span class="text-blue-600 text-center">ZodHub</span><span class="text-center" data-i18n="price.others">Otros</span>
+          </div>
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-3 border-b border-slate-100 text-sm text-slate-600 font-light">
+            <span data-i18n="price.r1">Precio</span><span class="text-center text-blue-600 font-medium" data-i18n="price.r1a">Gratis</span><span class="text-center text-slate-400 mono">30–90 €/año</span>
+          </div>
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-3 border-b border-slate-100 text-sm text-slate-600 font-light">
+            <span data-i18n="price.r2">Telemetría</span><span class="text-center"><iconify-icon icon="solar:close-circle-bold" class="text-lg text-emerald-500"></iconify-icon></span><span class="text-center"><iconify-icon icon="solar:check-circle-linear" class="text-lg text-slate-300"></iconify-icon></span>
+          </div>
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-3 border-b border-slate-100 text-sm text-slate-600 font-light">
+            <span data-i18n="price.r3">Cifras reales (sin teatro)</span><span class="text-center"><iconify-icon icon="solar:check-circle-bold" class="text-lg text-blue-500"></iconify-icon></span><span class="text-center"><iconify-icon icon="solar:close-circle-linear" class="text-lg text-slate-300"></iconify-icon></span>
+          </div>
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-3 border-b border-slate-100 text-sm text-slate-600 font-light">
+            <span data-i18n="price.r4">Local-first</span><span class="text-center"><iconify-icon icon="solar:check-circle-bold" class="text-lg text-blue-500"></iconify-icon></span><span class="text-center"><iconify-icon icon="solar:minus-circle-linear" class="text-lg text-slate-300"></iconify-icon></span>
+          </div>
+          <div class="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-3 text-sm text-slate-600 font-light">
+            <span data-i18n="price.r5">Código nativo (Rust)</span><span class="text-center"><iconify-icon icon="solar:check-circle-bold" class="text-lg text-blue-500"></iconify-icon></span><span class="text-center"><iconify-icon icon="solar:minus-circle-linear" class="text-lg text-slate-300"></iconify-icon></span>
+          </div>
+        </div>
+        <p class="mt-5 text-[11px] text-slate-400 font-light" data-i18n="price.disc">Comparativa orientativa frente al patrón habitual de los limpiadores comerciales.</p>
+      </div>
+    </div>
+
+    <p class="mt-10 text-center text-sm text-slate-500 font-light max-w-2xl mx-auto reveal" data-i18n="price.mission">Hecho para que todo el mundo tenga algo bueno y gratis. Si algún día sacamos una versión Pro, ya se verá; mientras tanto, barra libre.</p>
+  </section>
+
+  <!-- =====================================================
+       Section 07 — Apoyar / Donaciones
+  ====================================================== -->
+  <section id="apoyar" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="reveal rounded-[2rem] bg-white/85 border border-slate-200 p-8 sm:p-12 shadow-[0_2px_10px_rgba(15,23,42,0.04)] text-center max-w-3xl mx-auto">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-b from-rose-50 to-white border border-rose-100 flex items-center justify-center text-rose-500 mb-6 shadow-[inset_0_1px_0_white]">
+        <iconify-icon icon="solar:heart-linear" class="text-2xl"></iconify-icon>
+      </div>
+      <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="sup.label">APOYA EL PROYECTO</p>
+      <h2 class="text-3xl md:text-4xl font-normal tracking-tight text-slate-950 leading-[1.1]" data-i18n="sup.head">Gratis para siempre. Solo te pedimos que lo compartas.</h2>
+      <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="sup.sub">Nadie se merece pagar barbaridades por algo tan sencillo, así que ZodHub Clean es gratis para todo el mundo. A cambio no te pedimos dinero: solo que, si te gusta, lo compartas en X o LinkedIn para que llegue a más gente. Y si te sobra un café, se agradece — pero es totalmente opcional.</p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="https://twitter.com/intent/tweet?text=ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%20y%20Windows%2C%20100%25%20gratis&url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-gradient-to-b from-slate-800 to-slate-950 border border-black text-white text-sm font-normal shadow-[0_10px_24px_-12px_rgba(15,23,42,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="ri:twitter-x-fill" class="text-base"></iconify-icon>
+          <span data-i18n="sup.x">Compartir en X</span>
+        </a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white text-sm font-normal shadow-[0_10px_24px_rgba(59,130,246,0.26),inset_0_1px_0_rgba(255,255,255,0.35)] hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="ri:linkedin-fill" class="text-base"></iconify-icon>
+          <span data-i18n="sup.li">Compartir en LinkedIn</span>
+        </a>
+        <a href="donar.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-slate-700 text-sm font-normal shadow-[inset_0_1px_0_white] hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="solar:cup-hot-linear" class="text-lg text-rose-400"></iconify-icon>
+          <span data-i18n="sup.cta1">Invitar a un café</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Section 08 — Descargar (CTA final)
+  ====================================================== -->
+  <section id="descargar" class="max-w-7xl mx-auto px-6 py-16">
+    <div class="reveal relative overflow-hidden rounded-[2.75rem] bg-gradient-to-b from-[#172033] to-[#101827] text-white border border-white/10 p-10 sm:p-16 text-center shadow-[0_40px_90px_-45px_rgba(15,23,42,0.78)]">
+      <div class="absolute inset-0 opacity-[0.10]" style="background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] rounded-full bg-blue-500/20 blur-[7rem] pointer-events-none"></div>
+      <div class="relative">
+        <h2 class="text-3xl md:text-5xl font-light tracking-tight leading-[1.05] max-w-2xl mx-auto" data-i18n="dl.head">Descarga ZodHub Clean y pon tu equipo a punto.</h2>
+        <p class="mt-5 text-white/60 font-light max-w-xl mx-auto" data-i18n="dl.sub">Gratis, sin cuenta, sin telemetría. Menos de un minuto para tener tu equipo más limpio y ligero.</p>
+
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a href="descargas.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 bg-white text-slate-900 text-sm font-medium shadow-[inset_0_1px_0_white] hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:apple-linear" class="text-xl"></iconify-icon>
+            <span data-i18n="dl.mac">Descargar para Mac</span>
+          </a>
+          <a href="#" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 bg-white/10 border border-white/20 text-white/80 text-sm font-medium hover:bg-white/15 transition-all cursor-not-allowed">
+            <iconify-icon icon="solar:widget-5-linear" class="text-xl"></iconify-icon>
+            <span data-i18n="dl.win">Windows · muy pronto</span>
+          </a>
+        </div>
+
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/50 font-light">
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:lock-keyhole-linear" class="text-base text-blue-300"></iconify-icon><span data-i18n="dl.t1">Sin telemetría</span></span>
+          <span class="w-1 h-1 rounded-full bg-white/30"></span>
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:tag-price-linear" class="text-base text-blue-300"></iconify-icon><span data-i18n="dl.t2">100% gratis</span></span>
+          <span class="w-1 h-1 rounded-full bg-white/30"></span>
+          <span class="inline-flex items-center gap-2"><iconify-icon icon="solar:cpu-linear" class="text-base text-blue-300"></iconify-icon><span data-i18n="dl.t3">Nativo y ligero</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       Footer
+  ====================================================== -->
+  <footer class="max-w-7xl mx-auto px-6 pt-8 pb-14">
+    <div class="rounded-[2rem] bg-white/70 border border-slate-200 p-8 sm:p-10 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <div class="grid gap-10 md:grid-cols-[1.4fr_0.8fr_0.8fr_1fr] border-b border-slate-200 pb-9">
+        <div>
+          <a href="#" class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
+            <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub Clean</span>
+          </a>
+          <p class="mt-4 max-w-xs text-sm text-slate-500 font-light leading-6" data-i18n="foot.blurb">Mantenimiento honesto para Mac y Windows. Local-first, sin telemetría, gratis para todo el mundo. Un producto de ZodHub.</p>
+        </div>
+        <div>
+          <h3 class="mono text-[11px] font-semibold uppercase tracking-widest text-slate-400" data-i18n="foot.c1">Producto</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-slate-500 font-light">
+            <li><a href="#funciones" class="hover:text-blue-600 transition-colors" data-i18n="nav.features">Funciones</a></li>
+            <li><a href="#como" class="hover:text-blue-600 transition-colors" data-i18n="nav.how">Cómo funciona</a></li>
+            <li><a href="#seguridad" class="hover:text-blue-600 transition-colors" data-i18n="nav.security">Seguridad</a></li>
+            <li><a href="#precio" class="hover:text-blue-600 transition-colors" data-i18n="nav.price">Precio</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="mono text-[11px] font-semibold uppercase tracking-widest text-slate-400" data-i18n="foot.c2">Proyecto</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-slate-500 font-light">
+            <li><a href="donar.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.support">Apoyar</a></li>
+            <li><a href="descargas.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.dl">Descargar</a></li>
+            <li><a href="#" class="hover:text-blue-600 transition-colors" data-i18n="foot.privacy">Privacidad</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="mono text-[11px] font-semibold uppercase tracking-widest text-slate-400" data-i18n="foot.c3">Novedades</h3>
+          <p class="mt-4 text-sm text-slate-500 font-light leading-6" data-i18n="foot.news">Avisos de nuevas versiones y la salida en Windows.</p>
+          <form class="mt-4 flex rounded-full bg-white border border-slate-200 p-1.5 shadow-[inset_0_1px_0_white]" onsubmit="return false;">
+            <input type="email" placeholder="Email" class="min-w-0 flex-1 bg-transparent px-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" data-i18n-ph="foot.ph">
+            <button type="submit" class="shrink-0 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 text-white text-xs font-medium px-4 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]" data-i18n="foot.join">Avisadme</button>
+          </form>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-xs text-slate-400 font-light">
+        <p>© <span id="year">2026</span> ZodHub. <span data-i18n="foot.rights">Todos los derechos reservados.</span></p>
+        <div class="flex items-center gap-5">
+          <a href="#" class="hover:text-slate-700 transition-colors" data-i18n="foot.privacy">Privacidad</a>
+          <a href="#" class="hover:text-slate-700 transition-colors" data-i18n="foot.terms">Términos</a>
+          <span class="mono">zodhub.pro</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- =========================================================
+     Scripts
+========================================================== -->
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Scroll reveal
+  (function () {
+    var io = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  })();
+
+  // ===== i18n (ES default / EN) =====
+  var I18N = {
+    en: {
+      "nav.tagline": "Honest maintenance", "nav.features": "Features", "nav.how": "How it works",
+      "nav.security": "Security", "nav.price": "Price", "nav.support": "Support", "nav.cta": "Download free",
+      "hero.badge": "100% FREE · LOCAL-FIRST · NO SMOKE",
+      "hero.h1": "Your machine,", "hero.h2": "tuned up and", "hero.h3": "no smoke.",
+      "hero.lema": "Your machine, simply clean and safe.",
+      "hero.sub": "ZodHub Clean clears caches, frees memory, tidies your files and automates maintenance. No scare rituals, no magic promises: it does what it says, on your machine, and shows you every real number.",
+      "hero.cta1": "Download free", "hero.cta2": "See how it works",
+      "hero.trust1": "No telemetry", "hero.trust2": "Rust engine", "hero.trust3": "Mac & Windows (soon)",
+      "bub1.t": "Cache found", "bub2.t": "No telemetry", "bub2.s": "Nothing leaves your machine",
+      "bub3.s": "tidied", "bub4.t": "Scheduled task", "bub4.s": "Weekly clean-up",
+      "mock.title": "SYSTEM OVERVIEW", "mock.today": "Right now", "mock.head": "Your machine is in shape.",
+      "mock.mem": "MEMORY", "mock.disk": "DISK", "mock.radar": "NETWORK RADAR", "mock.live": "live",
+      "mock.conn": "active connections", "mock.cache": "Cleanable cache", "mock.clean": "Review & clean",
+      "mock.note": "Memory pressure: low (approx.). Real system figures, never made up.",
+      "why.label": "WHY IT MATTERS", "why.head": "Most \"cleaners\" sell fear. We don't.",
+      "why.sub": "You know the act: racing bars, invented \"threats\", one huge button and a subscription at the end. Lots of ritual, little truth. ZodHub Clean does the opposite: it shows you what's there, what's taking up space and what you can do — and only acts when you confirm.",
+      "why.badTitle": "The usual theatre",
+      "why.bad1": "Animations and \"scans\" that fake working.", "why.bad2": "Exaggerated \"threats\" and \"errors\" to scare you.",
+      "why.bad3": "Data sent off to someone else's servers.", "why.bad4": "Pricey subscription for what should be free.",
+      "why.goodTitle": "What ZodHub Clean does",
+      "why.good1": "Shows real system figures, measured in Rust.", "why.good2": "Deletes only what you confirm, with validated paths.",
+      "why.good3": "Fully local: zero telemetry, nothing leaves your machine.", "why.good4": "Truly free, forever, no fine print.",
+      "feat.label": "FEATURES", "feat.head": "The essentials, done right.",
+      "feat.sub": "No filler features or modules you'll never use. Each tool solves something concrete — and all the heavy lifting runs in Rust, on your machine.",
+      "feat.1t": "Cache cleanup", "feat.1d": "Finds app and system caches, tells you how much they take, and frees space only when you confirm.",
+      "feat.2t": "Free up memory", "feat.2d": "Eases memory pressure when the machine is loaded. We flag approximations as such, without overstating.",
+      "feat.3d": "Finds and tidies the .DS_Store files macOS scatters everywhere, for cleaner folders.",
+      "feat.4t": "Network radar", "feat.4d": "Visualizes connections, listening ports and network activity with real system data. A representation, not decoration.",
+      "feat.5t": "Automatic tasks", "feat.5d": "Schedule periodic clean-ups with launchd. Set it once and forget it; it runs in the background.",
+      "feat.6t": "System monitor", "feat.6d": "Live CPU, memory and processes, Activity-Monitor style, to see what's really going on.",
+      "how.label": "HOW IT WORKS", "how.head": "Four steps, zero surprises.",
+      "how.1t": "Download & install", "how.1d": "Free, no account or card. It opens and you're in.",
+      "how.2t": "Analyze your machine", "how.2d": "Measures cache, memory, network and space with real data, instantly.",
+      "how.3t": "Review & confirm", "how.3d": "You decide what gets deleted. Deletion is permanent and always confirmed.",
+      "how.4t": "Clean or automate", "how.4d": "Do it now or schedule a task so it repeats on its own.",
+      "sec.label": "SECURITY & ENGINE", "sec.head": "All the heavy lifting runs in Rust, on your machine.",
+      "sec.sub": "Enumerating, measuring, deleting, compressing, scanning the network: it's all done with safe native code and without freezing the interface. And with strict rules so it never touches what it shouldn't.",
+      "sec.1": "Validates that every path is within allowed scopes.", "sec.2": "Never follows symbolic links when calculating sizes.",
+      "sec.3": "Never touches system paths protected by SIP.", "sec.4": "Requests admin privileges only when needed.",
+      "sec.panel": "GUARANTEES IN NUMBERS", "sec.m1": "bytes of telemetry sent", "sec.m2": "local, on your own machine",
+      "sec.m3": "confirmation before deleting", "sec.m4": "system paths, untouchable", "sec.code": "no outbound connections",
+      "price.label": "PRICE", "price.head": "Free. Forever. For everyone.",
+      "price.sub": "Nobody deserves to pay a fortune for something as simple as keeping their machine in shape. That's why ZodHub Clean is free for everyone: no paid plan, no hidden \"premium\" features, no walls. First, let people enjoy it.",
+      "price.tag": "SINGLE PLAN", "price.free": "Free", "price.forever": "Today, tomorrow and always. No card.",
+      "price.f1": "Every feature, no limits", "price.f2": "No telemetry, no ads", "price.f3": "Updates included", "price.f4": "Mac & Windows (soon)",
+      "price.cta": "Download free", "price.cmpHead": "ZodHub Clean vs. the usual cleaners", "price.others": "Others",
+      "price.r1": "Price", "price.r1a": "Free", "price.r2": "Telemetry", "price.r3": "Real figures (no theatre)",
+      "price.r4": "Local-first", "price.r5": "Native code (Rust)",
+      "price.disc": "Indicative comparison against the usual pattern of commercial cleaners.",
+      "price.mission": "Made so everyone has something good and free. If we ever release a Pro version, we'll see; until then, it's on the house.",
+      "sup.label": "SUPPORT THE PROJECT", "sup.head": "Free forever. All we ask is that you share it.",
+      "sup.sub": "Nobody deserves to pay a fortune for something this simple, so ZodHub Clean is free for everyone. In return we don't ask for money: just that, if you like it, you share it on X or LinkedIn so it reaches more people. And if you can spare a coffee, it's appreciated — but entirely optional.",
+      "sup.x": "Share on X", "sup.li": "Share on LinkedIn", "sup.cta1": "Buy us a coffee",
+      "dl.head": "Download ZodHub Clean and get your machine in shape.",
+      "dl.sub": "Free, no account, no telemetry. Under a minute to a cleaner, lighter machine.",
+      "dl.mac": "Download for Mac", "dl.win": "Windows · very soon",
+      "dl.t1": "No telemetry", "dl.t2": "100% free", "dl.t3": "Native & light",
+      "foot.blurb": "Honest maintenance for Mac and Windows. Local-first, no telemetry, free for everyone. A ZodHub product.",
+      "foot.c1": "Product", "foot.c2": "Project", "foot.c3": "Updates", "foot.dl": "Download", "foot.privacy": "Privacy",
+      "foot.news": "Alerts for new versions and the Windows release.", "foot.ph": "Email", "foot.join": "Notify me",
+      "foot.rights": "All rights reserved.", "foot.terms": "Terms"
+    }
+  };
+
+  var currentLang = 'es';
+  var esCache = {};
+  function cacheES() {
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      esCache[el.getAttribute('data-i18n')] = el.textContent;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+      esCache['ph::' + el.getAttribute('data-i18n-ph')] = el.getAttribute('placeholder');
+    });
+  }
+  function applyLang(lang) {
+    var dict = lang === 'en' ? I18N.en : null;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (lang === 'es') { if (esCache[key] !== undefined) el.textContent = esCache[key]; }
+      else if (dict && dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-ph');
+      if (lang === 'es') { if (esCache['ph::' + key] !== undefined) el.setAttribute('placeholder', esCache['ph::' + key]); }
+      else if (dict && dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+    });
+    document.documentElement.lang = lang;
+    currentLang = lang;
+    var btn = document.getElementById('langToggle');
+    if (btn) btn.textContent = lang === 'es' ? 'EN' : 'ES';
+  }
+  cacheES();
+  document.getElementById('langToggle').addEventListener('click', function () {
+    applyLang(currentLang === 'es' ? 'en' : 'es');
+  });
+</script>
+</body>
+</html>

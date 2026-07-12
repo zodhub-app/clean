@@ -1,0 +1,467 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./fonts.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   ZodHub Clean theme system
+   - Base (default) theme below in :root / .dark
+   - Additional selectable themes live in src/themes.css and are
+     applied via [data-theme="<name>"] on <html>.
+   - Paste tweakcn exports into src/themes.css to add more themes.
+   ============================================================ */
+
+:root {
+  --radius: 0.625rem;
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --tracking-normal: 0em;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@import "./themes.css";
+@import "./styles/materials.css";
+@import "./styles/skin-zeus.css";
+@import "./styles/skin-hera.css";
+
+/* ── Radio uniforme = esquinas de la ventana de macOS ────────────────────────
+   Igualamos el redondeo de TODOS los elementos (tarjetas, botones, campos…) al
+   de la ventana de la app, en todos los temas. Un solo valor para tunear.
+   (~12px es el redondeo suave típico de las ventanas de macOS.) */
+/* !important para ganar a la variante oscura de cada tema
+   ([data-theme="x"].dark { --radius }), que si no tiene más especificidad. */
+:root,
+[data-theme],
+[data-theme].dark {
+  --radius: 0.875rem !important; /* = 14px */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+}
+
+/* ── Scrollbars temáticas (sin capa, para que ganen siempre) ─────────────
+   Acento del tema mezclado con la superficie de tarjeta: oscuro en modo
+   oscuro, claro en modo claro, y cambia de tono con cada paleta. Nunca blanco.
+   Fallback a --primary por si el motor no soporta color-mix. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+  scrollbar-color: color-mix(in oklch, var(--primary) 50%, var(--card))
+    transparent;
+}
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  background: color-mix(in oklch, var(--primary) 45%, var(--card));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--primary) 65%, var(--card));
+  background-clip: padding-box;
+}
+/* Scrollbar del componente ScrollArea (Radix): mismo color del tema, nunca
+   el gris/blanco de `border`. !important para ganar a la utilidad bg-border. */
+[data-slot="scroll-area-thumb"] {
+  background: var(--primary) !important;
+  background: color-mix(in oklch, var(--primary) 45%, var(--card)) !important;
+}
+
+/* La barra lateral no muestra scrollbar nativo (era el blanco que salía). El
+   contenido sigue desplazable con el trackpad si hiciera falta. */
+[data-slot="sidebar-inner"],
+[data-slot="sidebar-content"] {
+  scrollbar-width: none;
+}
+[data-slot="sidebar-inner"]::-webkit-scrollbar,
+[data-slot="sidebar-content"]::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Hover suave (acento tenue), como el menú del sidebar ───────────────── */
+.soft-hover:hover {
+  background-color: color-mix(in oklch, var(--primary) 12%, transparent);
+}
+[data-slot="toggle-group-item"]:hover:not([data-state="on"]) {
+  background-color: color-mix(in oklch, var(--primary) 12%, transparent);
+  color: var(--foreground);
+}
+
+/* Tabs/toggles un pelín más bajos (−2px arriba/abajo) para reducir altura. */
+[data-slot="toggle-group-item"] {
+  height: 1.75rem;
+}
+
+/* ── Efecto de escaneo/proceso: haz que barre + rejilla animada ─────────── */
+.scan-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 32%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in oklch, var(--primary) 22%, transparent) 50%,
+    transparent 100%
+  );
+  filter: blur(1px);
+  animation: scan-beam-move 2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--primary),
+    transparent
+  );
+  box-shadow: 0 0 12px 2px color-mix(in oklch, var(--primary) 60%, transparent);
+  animation: scan-line-move 2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+/* Animamos `top` en % del contenedor (no translateY, que es relativo a la
+   altura del propio elemento y dejaba la línea casi inmóvil). */
+@keyframes scan-beam-move {
+  0% {
+    top: -34%;
+  }
+  100% {
+    top: 102%;
+  }
+}
+@keyframes scan-line-move {
+  0% {
+    top: -2%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+.scan-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in oklch, var(--primary) 8%, transparent) 0 1px,
+      transparent 1px 22px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--primary) 8%, transparent) 0 1px,
+      transparent 1px 22px
+    );
+}
+
+/* ── Marca: texto con gradiente animado (estilo MagicUI) + badge del logo ───
+   Los colores salen de los tokens del tema activo, así la marca cambia de
+   color con cada paleta. -webkit-text-fill-color es imprescindible en WKWebView
+   para que el clip de texto funcione. */
+@keyframes gradient-pan {
+  to {
+    background-position: var(--bg-size, 200%) 0;
+  }
+}
+.gradient-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--primary),
+    var(--chart-4) 38%,
+    var(--chart-2) 68%,
+    var(--primary)
+  );
+  background-size: var(--bg-size, 200%) 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-pan 6s linear infinite;
+}
+/* Cuadrado del logo: gradiente FIJO (no animado) con los colores del tema, igual
+   que el icono grande. Cambia con la paleta, pero sin moverse. */
+.logo-badge {
+  background-image: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--chart-4) 55%,
+    var(--chart-2)
+  );
+  box-shadow: 0 6px 16px -6px color-mix(in oklch, var(--primary) 60%, transparent);
+}
+
+/* ── Efecto de vaciado/liberación: partículas que se drenan + barra ─────────
+   Distinto del escaneo: representa que el espacio se libera (los bloques caen
+   y se encogen como si se vaciaran) acompañado de una barra de progreso. */
+.clean-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.clean-particles > span {
+  position: absolute;
+  border-radius: 2px;
+  background: color-mix(in oklch, var(--primary) 55%, transparent);
+  box-shadow: 0 0 9px color-mix(in oklch, var(--primary) 45%, transparent);
+  animation-name: clean-fall;
+  animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0.45);
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+}
+@keyframes clean-fall {
+  0% {
+    top: -8%;
+    opacity: 0;
+    transform: scale(1) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 108%;
+    opacity: 0;
+    transform: scale(0.25) rotate(120deg);
+  }
+}
+.clean-bar {
+  position: relative;
+  height: 4px;
+  width: 160px;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--primary) 15%, transparent);
+  overflow: hidden;
+}
+.clean-bar > span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklch, var(--primary) 55%, transparent),
+    var(--primary)
+  );
+  box-shadow: 0 0 8px color-mix(in oklch, var(--primary) 50%, transparent);
+  animation: clean-progress 3.8s cubic-bezier(0.35, 0, 0.2, 1) forwards;
+}
+@keyframes clean-progress {
+  0% {
+    right: 100%;
+  }
+  100% {
+    right: 0;
+  }
+}
+
+/* Hendidura elegante: fondo negro muy transparente + sombra interior. Para
+   las zonas de gráficos y el fondo del globo. */
+.chart-well {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.6rem;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+/* Rejilla de líneas (vertical + horizontal) como fondo, p. ej. tras el globo. */
+.grid-bg {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in oklch, var(--foreground) 6%, transparent) 0 1px,
+      transparent 1px 32px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--foreground) 6%, transparent) 0 1px,
+      transparent 1px 32px
+    );
+}
+
+/* Filas de datos tipo tabla: zebra + hover. Aplica a hijos directos. */
+.data-rows > * {
+  transition: background-color 0.12s ease;
+}
+.data-rows > *:nth-child(odd) {
+  background-color: color-mix(in oklch, var(--muted-foreground) 8%, transparent);
+}
+.data-rows > *:hover {
+  background-color: color-mix(in oklch, var(--primary) 12%, transparent);
+}
+
+/* ── Sliders: pista en muted, thumb con el color del tema ───────────────── */
+input[type="range"].macup-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--muted);
+}
+input[type="range"].macup-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--primary);
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+input[type="range"].macup-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--background);
+  border-radius: 9999px;
+  background: var(--primary);
+  cursor: pointer;
+}
+input[type="range"].macup-range:disabled {
+  opacity: 0.4;
+}

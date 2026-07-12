@@ -1,0 +1,45 @@
+# CI de verificación — ZodHub Clean
+#
+# En cada push/PR a main comprueba que TODO sigue compilando, sin generar
+# artefactos ni Release (rápido y barato). Así detectas roturas antes de taggear.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Caché de Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Instalar dependencias JS
+        run: npm ci
+
+      - name: Compilar frontend (tsc + vite build)
+        run: npm run build
+
+      - name: Verificar Rust (clippy)
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
