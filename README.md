@@ -33,9 +33,11 @@ mantenimiento— sin la monstruosidad ni el humo de los limpiadores comerciales.
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshot-ajustes.png" alt="Ajustes" /><br><sub><b>Ajustes</b> — temas, apariencia y escala de la interfaz.</sub></td>
-    <td width="50%" valign="middle"><sub>Y además: Almacenamiento, Explorador de archivos grandes, Instantáneas APFS, Cachés de desarrollo, Desinstalador y Duplicados.</sub></td>
+    <td width="50%"><img src="docs/screenshot-ds-store.png" alt=".DS_Store" /><br><sub><b>.DS_Store</b> — comprime en zip limpio y barre los .DS_Store.</sub></td>
   </tr>
 </table>
+
+<div align="center"><sub>Y además: Almacenamiento, Explorador de archivos grandes, Instantáneas APFS, Cachés de desarrollo, Desinstalador y Duplicados.</sub></div>
 
 ---
 
