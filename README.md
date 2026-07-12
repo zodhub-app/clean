@@ -21,11 +21,21 @@ mantenimiento— sin la monstruosidad ni el humo de los limpiadores comerciales.
 
 ---
 
-<!-- CAPTURA: sustituir por una captura real de la app (guardada en docs/). -->
 <div align="center">
-  <img src="docs/screenshot-resumen.png" alt="ZodHub Clean — pantalla de Resumen" width="820" />
-  <br><em>Pantalla de Resumen: telemetría en vivo y radar de red.</em>
+  <img src="docs/screenshot-resumen.png" alt="ZodHub Clean — pantalla de Resumen" width="860" />
+  <br><em>Resumen: telemetría en vivo, radar de red y monitor de procesos.</em>
 </div>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshot-memoria.png" alt="Memoria" /><br><sub><b>Memoria</b> — presión de RAM y desglose explicado.</sub></td>
+    <td width="50%"><img src="docs/screenshot-tareas.png" alt="Tareas" /><br><sub><b>Tareas</b> — mantenimiento programado con launchd.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshot-ajustes.png" alt="Ajustes" /><br><sub><b>Ajustes</b> — temas, apariencia y escala de la interfaz.</sub></td>
+    <td width="50%" valign="middle"><sub>Y además: Almacenamiento, Explorador de archivos grandes, Instantáneas APFS, Cachés de desarrollo, Desinstalador y Duplicados.</sub></td>
+  </tr>
+</table>
 
 ---
 
