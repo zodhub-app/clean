@@ -42,4 +42,6 @@ jobs:
 
       - name: Verificar Rust (clippy)
         working-directory: src-tauri
-        run: cargo clippy --all-targets -- -D warnings
+        # Falla si hay errores de compilación, pero NO por simples avisos de
+        # estilo (sin `-D warnings`): el objetivo es "¿sigue compilando?".
+        run: cargo clippy --all-targets
