@@ -1,46 +1,88 @@
-# MacUp
+<div align="center">
 
-Una app de mantenimiento del Mac, sencilla y honesta. Tauri 2 + React 19 +
-Tailwind v4 + shadcn/ui.
+<img src="src-tauri/icons/128x128@2x.png" width="96" alt="ZodHub Clean" />
 
-## Puesta en marcha (en tu Mac)
+# ZodHub Clean
 
-Requisitos: Node 20+, Rust (rustup) y Xcode Command Line Tools.
+**Tu Mac, sencillamente limpio y seguro.**
+
+Utilidad de mantenimiento y limpieza para macOS: directa, transparente y 100 % local.
+Hace lo esencial —limpiar cachés, liberar espacio, ordenar `.DS_Store`, automatizar el
+mantenimiento— sin la monstruosidad ni el humo de los limpiadores comerciales.
+
+[![Descargar para Mac](https://img.shields.io/badge/⬇%20Descargar%20para%20Mac-Intel%20%2B%20Apple%20Silicon-0A84FF?style=for-the-badge)](https://github.com/zodhub-app/clean/releases/latest)
+
+![macOS](https://img.shields.io/badge/macOS-11%2B-black?logo=apple)
+![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri)
+![local-first](https://img.shields.io/badge/local--first-privado-2ea44f)
+[![Última versión](https://img.shields.io/github/v/release/zodhub-app/clean?label=versión)](https://github.com/zodhub-app/clean/releases/latest)
+
+</div>
+
+---
+
+<!-- CAPTURA: sustituir por una captura real de la app (guardada en docs/). -->
+<div align="center">
+  <img src="docs/screenshot-resumen.png" alt="ZodHub Clean — pantalla de Resumen" width="820" />
+  <br><em>Pantalla de Resumen: telemetría en vivo y radar de red.</em>
+</div>
+
+---
+
+## Descargar
+
+Ve a **[la última versión](https://github.com/zodhub-app/clean/releases/latest)** y descarga
+`ZodHub.Clean_x.y.z_universal.dmg`. Un único archivo que funciona tanto en **Mac Intel** como
+en **Apple Silicon** (M1/M2/M3/M4).
+
+1. Abre el `.dmg` y arrastra la app a **Aplicaciones**.
+2. La primera vez, **clic derecho sobre la app › Abrir** (todavía no está firmada con Apple,
+   así que macOS pide esta confirmación una sola vez).
+3. A partir de ahí, la app **te avisa sola** cuando hay una versión nueva y se actualiza con un clic.
+
+## Qué hace
+
+- **Resumen** — telemetría en vivo (CPU, memoria, disco, temperatura), radar de red y un
+  monitor de procesos estilo Monitor de Actividad.
+- **Almacenamiento** — desglose del disco por categorías, con histórico de crecimiento.
+- **Explorador** — encuentra los archivos y carpetas más grandes; ábrelos en Finder.
+- **Instantáneas APFS** — lista y adelgaza las instantáneas locales que ocupan disco.
+- **Cachés** — escaneo y limpieza de `~/Library/Caches`, con tamaños reales.
+- **Memoria** — presión de RAM y purga opcional (con etiqueta honesta: macOS gestiona bien la memoria).
+- **Cachés de desarrollo** — Docker, `node_modules`, Xcode, npm/yarn/pnpm/pip/brew, modelos de IA…
+- **Desinstalador** — quita apps y sus restos.
+- **Duplicados** — buscador por hash de contenido (SHA-256).
+- **.DS_Store** — comprime en zip limpio y barre los `.DS_Store`.
+- **Tareas** — mantenimiento programado (diario/semanal/mensual) con `launchd`.
+
+## Principios
+
+- **Honestidad.** Nada de promesas absolutas ni «antivirus». Si un dato no existe (p. ej. un
+  sensor de temperatura), se muestra `—`, nunca un valor inventado.
+- **Privado y local.** Todo se ejecuta en tu Mac. Cero telemetría; tus datos nunca salen del equipo.
+- **Borrado responsable.** El borrado se previsualiza y se confirma; nunca se tocan rutas del sistema.
+
+## Actualizaciones automáticas
+
+ZodHub Clean lleva un actualizador integrado (Tauri): al arrancar comprueba si hay una versión
+nueva y, si la hay, la descarga, **verifica su firma** e instala con un clic. Nada de reinstalar a mano.
+
+## Para desarrolladores
+
+Requisitos: Node 20+, Rust (rustup) y las Command Line Tools de Xcode.
 
 ```bash
-# 1) Instala dependencias y añade los componentes de shadcn que usa la app
-npm run bootstrap
-
-# 2) Arranca en modo desarrollo
-npm run tauri dev
+npm run bootstrap      # npm install + componentes de shadcn
+npm run tauri dev      # arrancar en desarrollo
 ```
 
-`npm run bootstrap` hace `npm install` y luego `npx shadcn@latest add ...` con
-los componentes necesarios (sidebar, card, chart, etc.).
+Toda la lógica real (disco, red, sistema) vive en **Rust** (`src-tauri/src/*.rs`) como comandos
+Tauri; el frontend (React 19 + Tailwind v4 + shadcn/ui) solo hace interfaz. Para publicar una
+versión nueva, sube el número en `tauri.conf.json`, `Cargo.toml` y `package.json`, y empuja un
+tag `vX.Y.Z`: el CI compila el `.dmg` universal, lo firma y crea la release.
 
-## Estado actual (v0.1.0 — incremento 1)
+## Stack
 
-- Esqueleto de la app con navegación lateral.
-- **Resumen**: métricas en vivo (CPU, RAM, disco, uptime) y gráfico de área de
-  shadcn alimentado por `sysinfo` desde Rust.
-- **Ajustes**: selector de tema de color (tweakcn) y modo claro/oscuro/sistema.
-- Caché, Memoria, .DS_Store y Tareas: pantallas de próximamente; se construyen
-  una a una en los siguientes incrementos.
+Tauri 2 · React 19 · Vite · TypeScript · Tailwind v4 · shadcn/ui · Rust (sysinfo, walkdir, zip)
 
-## Temas
-
-El sistema de temas usa variables CSS. Para añadir un tema desde
-[tweakcn](https://tweakcn.com/editor/theme), pega su export en
-`src/themes.css` y regístralo en `src/lib/themes.ts` (ver cabecera de
-`themes.css`).
-
-## Arquitectura de la limpieza (próximos incrementos)
-
-- **Caché**: escaneo de `~/Library/Caches` con tamaños y selección; borrado
-  permanente; admin solo para rutas privilegiadas.
-- **Memoria**: gráfico de presión + purga opcional (`purge`) con etiqueta
-  honesta (macOS gestiona bien la RAM).
-- **.DS_Store**: comprimir limpio (sin `.DS_Store`/`__MACOSX`/resource forks),
-  barrido de `.DS_Store`, atajo de Finder «Comprimir con MacUp» (Servicio
-  macOS), y ajuste de unidades de red/USB.
-- **Tareas**: `launchd` LaunchAgents por tarea (diaria/semanal/mensual/manual).
+<div align="center"><sub>Hecho con cuidado por <a href="https://github.com/zodhub-app">ZodHub</a> · Tu Mac, sencillamente seguro.</sub></div>

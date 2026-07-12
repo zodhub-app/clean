@@ -1,0 +1,46 @@
+# Publica la web de ZodHub Clean (carpeta landing/) en GitHub Pages.
+# Resultado: https://zodhub-app.github.io/clean/
+#
+# Requiere activarlo una vez: repo → Settings → Pages → Source: "GitHub Actions".
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "landing/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch: {}
+
+# Permisos que necesita el despliegue de Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un despliegue a la vez; no cancelar el que esté en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir la carpeta landing/ como artefacto
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: landing
+
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
