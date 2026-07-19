@@ -1,13 +1,18 @@
 // Fase 7 — buscador de duplicados por CONTENIDO. Estrategia segura y rápida:
 //   1. Agrupar ficheros por tamaño (rapidísimo; distinto tamaño = distinto).
-//   2. Solo para los tamaños compartidos, calcular SHA-256 (vía `shasum`).
+//   2. Solo para los tamaños compartidos, calcular SHA-256 (crate `sha2`).
 //   3. Agrupar por hash → duplicados reales (mismo contenido exacto).
 // Nunca borra: solo encuentra. El usuario revisa y decide (deja al menos uno).
+//
+// El hash se calcula EN PROCESO con `sha2` (multiplataforma) leyendo por bloques,
+// en vez de invocar el binario `shasum`, que solo existe en macOS/Linux.
 
+use crate::platform;
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+use std::io::Read;
 use std::path::PathBuf;
-use std::process::Command;
 use walkdir::WalkDir;
 
 const MIN_SIZE: u64 = 1024 * 1024; // 1 MB: ignoramos lo pequeño (poco ahorro).
@@ -22,10 +27,25 @@ pub struct DupGroup {
 
 fn resolve(path: &str) -> PathBuf {
     if path.is_empty() || path == "~" {
-        PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| "/".into()))
+        platform::home_dir()
     } else {
         PathBuf::from(path)
     }
+}
+
+/// SHA-256 de un archivo, leyendo por bloques (no carga el fichero en memoria).
+fn sha256_file(path: &str) -> Option<String> {
+    let mut f = std::fs::File::open(path).ok()?;
+    let mut hasher = Sha256::new();
+    let mut buf = [0u8; 64 * 1024];
+    loop {
+        match f.read(&mut buf) {
+            Ok(0) => break,
+            Ok(n) => hasher.update(&buf[..n]),
+            Err(_) => return None,
+        }
+    }
+    Some(format!("{:x}", hasher.finalize()))
 }
 
 #[tauri::command]
@@ -66,21 +86,11 @@ pub async fn find_duplicates(path: String) -> Result<Vec<DupGroup>, String> {
             return Ok(vec![]);
         }
 
-        // 3. SHA-256 de los candidatos (en lotes, sin shell).
+        // 3. SHA-256 de los candidatos, en proceso y multiplataforma.
         let mut hash_of: HashMap<String, String> = HashMap::new();
-        for chunk in candidates.chunks(400) {
-            let mut cmd = Command::new("shasum");
-            cmd.arg("-a").arg("256");
-            for f in chunk {
-                cmd.arg(f);
-            }
-            if let Ok(out) = cmd.output() {
-                for line in String::from_utf8_lossy(&out.stdout).lines() {
-                    let mut it = line.splitn(2, ' ');
-                    if let (Some(h), Some(rest)) = (it.next(), it.next()) {
-                        hash_of.insert(rest.trim_start().to_string(), h.to_string());
-                    }
-                }
+        for f in &candidates {
+            if let Some(h) = sha256_file(f) {
+                hash_of.insert(f.clone(), h);
             }
         }
 

@@ -21,14 +21,44 @@ pub struct CleanResult {
 }
 
 fn home_dir() -> Option<PathBuf> {
-    std::env::var_os("HOME").map(PathBuf::from)
+    let h = crate::platform::home_dir();
+    if h.as_os_str().is_empty() {
+        None
+    } else {
+        Some(h)
+    }
 }
 
-/// Cache roots ZodHub CleanPC is allowed to touch. Anything outside these is rejected.
+/// Carpeta de cachés del usuario, según el sistema:
+///   macOS   → `~/Library/Caches`
+///   Windows → `%LOCALAPPDATA%\Temp` (los temporales del usuario)
+///   Linux   → `~/.cache` (estándar XDG)
+fn user_cache_root() -> Option<PathBuf> {
+    #[cfg(target_os = "macos")]
+    {
+        home_dir().map(|h| h.join("Library/Caches"))
+    }
+    #[cfg(target_os = "windows")]
+    {
+        std::env::var_os("LOCALAPPDATA")
+            .map(PathBuf::from)
+            .map(|p| p.join("Temp"))
+    }
+    #[cfg(target_os = "linux")]
+    {
+        home_dir().map(|h| h.join(".cache"))
+    }
+}
+
+/// Raíces de caché que ZodHub CleanPC puede tocar. Cualquier ruta fuera de
+/// estas se rechaza (guarda de seguridad).
 fn allowed_roots() -> Vec<PathBuf> {
-    let mut v = vec![PathBuf::from("/Library/Caches")];
-    if let Some(h) = home_dir() {
-        v.push(h.join("Library/Caches"));
+    let mut v: Vec<PathBuf> = Vec::new();
+    // Caché del sistema: solo existe como tal en macOS.
+    #[cfg(target_os = "macos")]
+    v.push(PathBuf::from("/Library/Caches"));
+    if let Some(r) = user_cache_root() {
+        v.push(r);
     }
     v
 }
@@ -74,8 +104,7 @@ fn remove_path(p: &Path) -> std::io::Result<()> {
 
 #[tauri::command]
 pub fn scan_caches() -> Result<Vec<CacheEntry>, String> {
-    let home = home_dir().ok_or("No se pudo localizar la carpeta de inicio")?;
-    let root = home.join("Library/Caches");
+    let root = user_cache_root().ok_or("No se pudo localizar la carpeta de cachés")?;
 
     // Top-level entries (one per app/bundle id).
     let mut paths: Vec<PathBuf> = Vec::new();
@@ -178,13 +207,22 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
     })
 }
 
+#[cfg(target_os = "macos")]
 fn shell_quote(p: &Path) -> String {
     let s = p.to_string_lossy();
     format!("'{}'", s.replace('\'', "'\\''"))
 }
 
+/// Fuera de macOS no elevamos privilegios: si un archivo no se puede borrar por
+/// permisos, se informa con claridad en vez de intentar un truco de elevación.
+#[cfg(not(target_os = "macos"))]
+fn remove_with_admin(_paths: &[PathBuf]) -> Result<(), String> {
+    Err("Estos archivos requieren permisos de administrador; ciérralos o ejecuta la app como administrador".into())
+}
+
 /// Deletes paths using one authenticated `rm -rf` via osascript. macOS shows
 /// the standard admin password dialog. Paths are already validated by caller.
+#[cfg(target_os = "macos")]
 fn remove_with_admin(paths: &[PathBuf]) -> Result<(), String> {
     let joined = paths
         .iter()

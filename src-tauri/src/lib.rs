@@ -5,6 +5,7 @@ mod dsstore;
 mod duplicates;
 mod memory;
 mod network;
+mod platform;
 mod scanner;
 mod scheduler;
 mod snapshots;

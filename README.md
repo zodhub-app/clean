@@ -76,8 +76,14 @@ en **Apple Silicon** (M1/M2/M3/M4).
 
 ## Actualizaciones automáticas
 
-ZodHub CleanPC lleva un actualizador integrado (Tauri): al arrancar comprueba si hay una versión
-nueva y, si la hay, la descarga, **verifica su firma** e instala con un clic. Nada de reinstalar a mano.
+ZodHub CleanPC lleva un actualizador integrado. En la barra superior hay una **campana**: cuando
+hay una versión nueva se enciende un **punto rojo con el número** de actualizaciones, y al pulsarla
+puedes instalarla con un clic (descarga, **verifica la firma**, instala y reinicia). Nada de
+reinstalar a mano.
+
+Comprueba al arrancar y cada 6 horas, y puedes forzar la comprobación desde la propia campana.
+Si no hay novedad dice «Estás al día»; si no puede comprobarlo (sin red), lo dice claramente en
+vez de fingir que todo está al día.
 
 ## Para desarrolladores
 
