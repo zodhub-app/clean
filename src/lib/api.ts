@@ -35,6 +35,8 @@ export type CleanResult = {
   freed: number; // bytes
   removed: number;
   errors: string[];
+  /** Elementos abiertos por otro programa que se dejaron intactos (no es error). */
+  skipped_in_use: number;
 };
 
 export function scanCaches(): Promise<CacheEntry[]> {
@@ -251,7 +253,15 @@ export type DevItem = {
   size: number;
   paths: string[];
 };
-export type DevCleanResult = { freed: number; errors: string[] };
+export type DevCleanResult = {
+  freed: number;
+  /** Fallos reales: algo que se pidió y no se pudo hacer. */
+  errors: string[];
+  /** Elementos abiertos por otro programa que se dejaron intactos (no es error). */
+  skipped_in_use: number;
+  /** Elementos que requerirían permisos de administrador. */
+  skipped_denied: number;
+};
 
 export function listDevJunk(): Promise<DevItem[]> {
   return invoke<DevItem[]>("list_dev_junk");

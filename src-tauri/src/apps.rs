@@ -359,13 +359,13 @@ fn uninstall_impl(
 /// de datos de aplicación, y nunca la raíz de ninguna de ellas.
 #[cfg(target_os = "windows")]
 fn is_leftover_ok(p: &Path) -> bool {
+    // `is_inside` normaliza antes de comparar. Importa especialmente aquí: el
+    // nombre del programa sale del registro de Windows, es texto arbitrario de
+    // terceros y podría contener `..` o separadores.
     ["LOCALAPPDATA", "APPDATA", "ProgramData"]
         .iter()
         .filter_map(|k| std::env::var(k).ok())
-        .any(|r| {
-            let rp = Path::new(&r);
-            p.starts_with(rp) && p != rp
-        })
+        .any(|r| crate::platform::is_inside(p, Path::new(&r)))
 }
 
 /// Linux: la desinstalación la debe hacer el gestor de paquetes del sistema.

@@ -38,10 +38,17 @@ pub struct DevItem {
     paths: Vec<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Default)]
 pub struct CleanResult {
     freed: u64,
+    /// Fallos de verdad: algo que el usuario pidió y no se pudo hacer.
     errors: Vec<String>,
+    /// Elementos que se dejaron intactos por estar abiertos por otro programa.
+    /// NO es un error: en carpetas temporales siempre hay alguno. Se devuelve
+    /// como número (no como frase) para que el frontend lo traduzca.
+    skipped_in_use: usize,
+    /// Elementos que harían falta permisos de administrador para borrar.
+    skipped_denied: usize,
 }
 
 fn home() -> String {
@@ -132,13 +139,17 @@ fn browser_cache_paths(h: &str) -> Vec<String> {
         format!("{h}/.config/chromium"),
         format!("{h}/.config/vivaldi"),
     ];
-    let subs = [
-        "Cache",
-        "Code Cache",
-        "GPUCache",
-        "DawnCache",
-        "GrShaderCache",
-        "Service Worker/CacheStorage",
+    // Subcarpetas de caché dentro de cada perfil. Van como tramos sueltos y se
+    // unen con `Path::join`: concatenar con "/" a mano generaba rutas mixtas
+    // tipo `C:\...\Default/Cache`, que funcionan por casualidad pero rompen
+    // cualquier comparación de cadenas y se ven fatal en la interfaz.
+    let subs: [&[&str]; 6] = [
+        &["Cache"],
+        &["Code Cache"],
+        &["GPUCache"],
+        &["DawnCache"],
+        &["GrShaderCache"],
+        &["Service Worker", "CacheStorage"],
     ];
     for base in &chromium {
         if let Ok(rd) = std::fs::read_dir(base) {
@@ -153,10 +164,13 @@ fn browser_cache_paths(h: &str) -> Vec<String> {
                     || name == "System Profile"
                     || name.starts_with("Profile ");
                 if is_profile {
-                    for s in &subs {
-                        let c = format!("{}/{}", p.to_string_lossy(), s);
-                        if Path::new(&c).exists() {
-                            out.push(c);
+                    for parts in &subs {
+                        let mut c = p.clone();
+                        for part in *parts {
+                            c.push(*part);
+                        }
+                        if c.exists() {
+                            out.push(c.to_string_lossy().to_string());
                         }
                     }
                 }
@@ -175,9 +189,9 @@ fn browser_cache_paths(h: &str) -> Vec<String> {
 
     if let Ok(rd) = std::fs::read_dir(&ff) {
         for e in rd.flatten() {
-            let c = format!("{}/cache2", e.path().to_string_lossy());
-            if Path::new(&c).exists() {
-                out.push(c);
+            let c = e.path().join("cache2");
+            if c.exists() {
+                out.push(c.to_string_lossy().to_string());
             }
         }
     }
@@ -447,31 +461,40 @@ fn empty_trash() -> Result<(), String> {
 
 /// Borra permanentemente las rutas de una categoría de ficheros. Devuelve el
 /// espacio liberado (tamaño medido antes) y los errores.
-/// ¿Es una carpeta que el sistema espera que siga existiendo?
-///
-/// `Temp`, `Caches` y compañía deben quedarse vacías, no desaparecer: Windows y
-/// macOS las dan por hechas y borrarlas causa problemas a otros programas.
-fn is_system_container(p: &Path) -> bool {
-    matches!(
-        p.file_name().and_then(|s| s.to_str()),
-        Some("Temp") | Some("temp") | Some("Caches") | Some("INetCache") | Some(".cache")
-    )
-}
-
-fn wipe_files(key: &str, h: &str) -> (u64, Vec<String>) {
-    let mut freed = 0u64;
-    let mut notes = Vec::new();
+fn wipe_files(key: &str, h: &str) -> crate::platform::Wipe {
+    let mut total = crate::platform::Wipe::default();
     for p in existing(key, h) {
         let path = Path::new(&p);
-        // Borrado tolerante: lo que esté en uso se salta y se sigue con el
-        // resto, en lugar de abortar y no limpiar nada (ver platform::wipe).
-        let w = crate::platform::wipe(path, is_system_container(path));
-        freed += w.freed;
-        if let Some(n) = crate::platform::wipe_note(&w) {
-            notes.push(format!("{p}: {n}"));
-        }
+        // Dos decisiones importantes aquí:
+        //
+        // 1. Borrado TOLERANTE: lo que esté en uso se salta y se sigue con el
+        //    resto, en lugar de abortar y no limpiar nada (ver platform::wipe).
+        //
+        // 2. `keep_root = true` SIEMPRE: se vacía el contenido pero la carpeta
+        //    contenedora se queda. Antes se intentaba adivinar cuáles eran «del
+        //    sistema» por su nombre, lo cual fallaba con `Cache`, `GPUCache`,
+        //    `.gradle\caches`… y borrar el directorio de caché de un navegador
+        //    abierto le rompe el perfil hasta que reinicia. Conservarlo no
+        //    cuesta nada (una carpeta vacía ocupa cero) y evita el problema.
+        total.add(crate::platform::wipe(path, true));
     }
-    (freed, notes)
+    total
+}
+
+/// Espacio liberado, conciliando las dos formas de medirlo.
+///
+/// - El **delta de espacio libre** (antes/después) es la medida más completa:
+///   incluye la Papelera y todo lo que el sistema devuelve al disco. Pero en un
+///   equipo vivo hay otros programas escribiendo, y puede salir 0 o negativo
+///   aunque hayamos borrado de verdad.
+/// - Los **bytes borrados** que cuenta `wipe` son exactos para lo que tocamos,
+///   pero no ven lo que libera el propio sistema.
+///
+/// Nos quedamos con el mayor de los dos: nunca infla la cifra por encima de lo
+/// que realmente se ha eliminado, y evita el «Liberados 0 B» tras una limpieza
+/// que sí ha borrado archivos.
+fn freed_bytes(free_before: u64, wiped: u64) -> u64 {
+    free_bytes().saturating_sub(free_before).max(wiped)
 }
 
 #[tauri::command]
@@ -482,15 +505,15 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
             return match crate::platform::cmd("docker").args(["system", "prune", "-af"]).output() {
                 Ok(o) if o.status.success() => CleanResult {
                     freed: parse_reclaimed(&String::from_utf8_lossy(&o.stdout)),
-                    errors: vec![],
+                    ..Default::default()
                 },
                 Ok(o) => CleanResult {
-                    freed: 0,
                     errors: vec![String::from_utf8_lossy(&o.stderr).trim().to_string()],
+                    ..Default::default()
                 },
                 Err(e) => CleanResult {
-                    freed: 0,
                     errors: vec![e.to_string()],
+                    ..Default::default()
                 },
             };
         }
@@ -506,26 +529,27 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
                     Err(e) => errors.push(format!("{p}: {e}")),
                 }
             }
-            return CleanResult { freed, errors };
+            return CleanResult { freed, errors, ..Default::default() };
         }
 
         // Ficheros o Papelera: medimos el espacio libre REAL antes/después
         // (du no puede con rutas protegidas como la Papelera y subestimaría).
         let before = free_bytes();
         let mut errors = Vec::new();
+        let mut w = crate::platform::Wipe::default();
         if key == "trash" {
             if let Err(e) = empty_trash() {
                 errors.push(e);
             }
         } else {
-            let (_f, mut e) = wipe_files(&key, &h);
-            errors.append(&mut e);
+            w = wipe_files(&key, &h);
         }
         std::thread::sleep(Duration::from_millis(700));
-        let after = free_bytes();
         CleanResult {
-            freed: after.saturating_sub(before),
+            freed: freed_bytes(before, w.freed),
             errors,
+            skipped_in_use: w.in_use,
+            skipped_denied: w.denied,
         }
     })
     .await
@@ -540,18 +564,19 @@ pub async fn clean_all_junk() -> Result<CleanResult, String> {
         let h = home();
         let before = free_bytes();
         let mut errors = Vec::new();
+        let mut w = crate::platform::Wipe::default();
         for key in FILE_KEYS {
-            let (_f, mut e) = wipe_files(key, &h);
-            errors.append(&mut e);
+            w.add(wipe_files(key, &h));
         }
         if let Err(e) = empty_trash() {
             errors.push(e);
         }
         std::thread::sleep(Duration::from_millis(900));
-        let after = free_bytes();
         CleanResult {
-            freed: after.saturating_sub(before),
+            freed: freed_bytes(before, w.freed),
             errors,
+            skipped_in_use: w.in_use,
+            skipped_denied: w.denied,
         }
     })
     .await

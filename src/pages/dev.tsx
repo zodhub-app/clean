@@ -11,7 +11,53 @@ import { formatBytes } from "@/lib/format";
 import { ScanOverlay } from "@/components/scan-overlay";
 import { CleanOverlay } from "@/components/clean-overlay";
 import { useLang } from "@/components/language-provider";
-import { listDevJunk, cleanDev, cleanAllJunk, type DevItem } from "@/lib/api";
+import {
+  listDevJunk,
+  cleanDev,
+  cleanAllJunk,
+  type DevItem,
+  type DevCleanResult,
+} from "@/lib/api";
+
+/**
+ * Traduce el resultado de una limpieza en el aviso que ve el usuario.
+ *
+ * Tres desenlaces, y es importante no confundirlos:
+ *   1. `errors`         → algo que se pidió NO se pudo hacer. Aviso naranja.
+ *   2. Elementos en uso → la limpieza fue bien, pero había archivos abiertos
+ *                         que se dejaron intactos. Es lo NORMAL en carpetas
+ *                         temporales: se cuenta como éxito, con una coletilla.
+ *   3. Ninguno          → éxito a secas.
+ *
+ * Antes cualquier incidencia salía como «No se pudo limpiar del todo», lo que
+ * hacía parecer un fallo lo que era comportamiento esperado del sistema.
+ */
+type Translate = (es: string, vars?: Record<string, string | number>) => string;
+
+function reportClean(r: DevCleanResult, t: Translate) {
+  const freed = t("Liberados {n}", { n: formatBytes(r.freed) });
+
+  if (r.errors.length) {
+    toast.warning(t("No se pudo limpiar del todo"), {
+      description: r.freed > 0 ? `${freed} · ${r.errors[0]}` : r.errors[0],
+    });
+    return;
+  }
+
+  const skipped: string[] = [];
+  if (r.skipped_in_use > 0) {
+    skipped.push(
+      t("{n} en uso por otros programas, intactos", { n: r.skipped_in_use }),
+    );
+  }
+  if (r.skipped_denied > 0) {
+    skipped.push(
+      t("{n} necesitan permisos de administrador", { n: r.skipped_denied }),
+    );
+  }
+
+  toast.success(freed, skipped.length ? { description: skipped.join(" · ") } : undefined);
+}
 
 const DEV_LABEL: Record<string, string> = {
   "user-caches": "Cachés del sistema y apps",
@@ -65,13 +111,7 @@ export function DevPage() {
     setCleaning(true);
     try {
       const r = await cleanDev(item.key);
-      if (r.errors.length) {
-        toast.warning(t("No se pudo limpiar del todo"), {
-          description: r.errors[0],
-        });
-      } else {
-        toast.success(t("Liberados {n}", { n: formatBytes(r.freed) }));
-      }
+      reportClean(r, t);
       await refresh();
     } catch (e) {
       toast.error(t("Error al limpiar"), { description: String(e) });
@@ -85,13 +125,7 @@ export function DevPage() {
     setCleaning(true);
     try {
       const r = await cleanAllJunk();
-      if (r.errors.length) {
-        toast.warning(t("No se pudo limpiar del todo"), {
-          description: `${t("Liberados {n}", { n: formatBytes(r.freed) })} · ${r.errors[0]}`,
-        });
-      } else {
-        toast.success(t("Liberados {n}", { n: formatBytes(r.freed) }));
-      }
+      reportClean(r, t);
       await refresh();
     } catch (e) {
       toast.error(t("Error al limpiar"), { description: String(e) });

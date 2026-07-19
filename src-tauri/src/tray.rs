@@ -56,8 +56,16 @@ pub fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     let quit = MenuItem::with_id(app, "quit", "Salir de ZodHub CleanPC", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&open, &sep, &quit])?;
 
+    // El icono viene del bundle. Si por lo que sea no estuviera, un `unwrap`
+    // aquí sería un PANIC durante el arranque: la app no abriría y el usuario
+    // no vería ni un mensaje. Prefiero quedarme sin icono en la bandeja.
+    let icon = match app.default_window_icon() {
+        Some(i) => i.clone(),
+        None => return Ok(()),
+    };
+
     TrayIconBuilder::with_id(TRAY_ID)
-        .icon(app.default_window_icon().unwrap().clone())
+        .icon(icon)
         .menu(&menu)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open" => show_main(app),

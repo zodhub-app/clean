@@ -120,8 +120,16 @@ export function CachePage() {
       // la operación tarda más, el overlay se mantiene hasta que termina.
       const dt = performance.now() - t0;
       if (dt < MIN_FX) await sleep(MIN_FX - dt);
+      // Los elementos abiertos por otros programas NO son un fallo: se
+      // mencionan dentro del aviso de éxito, no como advertencia aparte.
+      const detail = [t("{n} elementos eliminados", { n: r.removed })];
+      if (r.skipped_in_use > 0) {
+        detail.push(
+          t("{n} en uso por otros programas, intactos", { n: r.skipped_in_use }),
+        );
+      }
       toast.success(t("Liberados {n}", { n: formatBytes(r.freed) }), {
-        description: t("{n} elementos eliminados", { n: r.removed }),
+        description: detail.join(" · "),
       });
       if (r.errors.length) {
         toast.warning(

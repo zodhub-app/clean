@@ -53,7 +53,13 @@ pub fn clean_zip(paths: Vec<String>, dest: String) -> Result<CompressResult, Str
             entries += 1;
         } else if src.is_dir() {
             // Prefix entries with the folder's own name (like Finder does).
-            let prefix_base = src.parent().unwrap_or(Path::new("/"));
+            //
+            // Si `src` fuera una raíz (`/` o `C:\`) no tiene padre. Antes se
+            // recurría a `/` como comodín, que en Windows no es prefijo de
+            // nada: `strip_prefix` fallaba para TODAS las entradas y salía un
+            // zip vacío sin dar ningún error. Usando el propio `src` el zip
+            // sale con rutas relativas correctas.
+            let prefix_base = src.parent().unwrap_or(src.as_path());
             let walker = WalkDir::new(&src)
                 .into_iter()
                 .filter_entry(|e| {
@@ -117,6 +123,15 @@ pub fn sweep_ds_store(roots: Vec<String>) -> Result<SweepResult, String> {
     let mut errors: Vec<String> = Vec::new();
 
     for r in &roots {
+        // Misma guarda que el resto de la app: solo dentro de la carpeta de
+        // usuario. Aunque aquí solo se borren archivos llamados exactamente
+        // «.DS_Store», el comando es invocable desde el frontend y no debe ser
+        // la única puerta sin cerrojo. Barato de comprobar, imposible de
+        // olvidar el día que alguien amplíe el patrón de nombres.
+        if let Err(e) = crate::platform::is_deletable(std::path::Path::new(r)) {
+            errors.push(format!("{r}: {e}"));
+            continue;
+        }
         for entry in WalkDir::new(r).into_iter().filter_map(|e| e.ok()) {
             if entry.file_type().is_file() && entry.file_name() == ".DS_Store" {
                 let p = entry.path();

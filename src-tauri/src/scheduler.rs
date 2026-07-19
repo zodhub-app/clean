@@ -74,8 +74,16 @@ fn task_script(task: &str, _home: &str) -> Option<String> {
             .to_string(),
         _ => return None,
     };
-    // `$ErrorActionPreference` a Continue: los fallos parciales (archivos en uso)
-    // son normales al limpiar cachés y no deben marcar la tarea como fallida.
+    // `$ErrorActionPreference` a Continue y `exit 0`: los fallos parciales
+    // (archivos en uso) son normales al limpiar cachés y no deben marcar la
+    // tarea como fallida en el Programador.
+    //
+    // LIMITACIÓN CONOCIDA Y ASUMIDA: como el script siempre sale con 0, si algo
+    // fallara POR COMPLETO tampoco nos enteraríamos, ni en la tarea programada
+    // ni al pulsar «Ejecutar ahora». Se acepta porque estas tareas son de
+    // mejor esfuerzo por naturaleza y la alternativa —avisar cada vez que un
+    // archivo temporal está abierto— sería ruido constante. Quien quiera
+    // certeza tiene los paneles interactivos, que sí reportan el detalle.
     Some(format!("$ErrorActionPreference = 'Continue'\n{body}\nexit 0\n"))
 }
 
@@ -179,6 +187,21 @@ fn install_schedule(task: &str, cadence: &str, script_path: &str) -> Result<(), 
     let tr = format!(
         "powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"{script_path}\""
     );
+
+    // `schtasks` rechaza un /TR de más de 261 caracteres, y falla con un error
+    // que no dice nada. Puede pasar con un usuario de nombre largo o un perfil
+    // redirigido a OneDrive o a una unidad de red. Mejor detectarlo aquí y
+    // explicar el motivo que dejar que el usuario se pelee con el mensaje crudo.
+    const TR_MAX: usize = 261;
+    if tr.len() > TR_MAX {
+        return Err(format!(
+            "La ruta del script es demasiado larga para el Programador de tareas \
+             de Windows ({} caracteres; el máximo es {TR_MAX}). Suele ocurrir con \
+             perfiles de usuario en OneDrive o en una unidad de red.",
+            tr.len()
+        ));
+    }
+
     let out = crate::platform::cmd("schtasks")
         .args([
             "/Create", "/F", "/TN", &name, "/TR", &tr, "/SC", sc, "/ST", "03:00",

@@ -18,6 +18,9 @@ pub struct CleanResult {
     pub freed: u64,
     pub removed: usize,
     pub errors: Vec<String>,
+    /// Elementos abiertos por otro programa que se dejaron intactos. No es un
+    /// fallo; se devuelve como número para que el frontend lo traduzca.
+    pub skipped_in_use: usize,
 }
 
 fn home_dir() -> Option<PathBuf> {
@@ -63,10 +66,15 @@ fn allowed_roots() -> Vec<PathBuf> {
     v
 }
 
+/// Solo se tocan rutas ESTRICTAMENTE dentro de las raíces de caché permitidas.
+///
+/// Se usa `platform::is_inside`, que normaliza antes de comparar: resuelve los
+/// `..` (si no, `…/Caches/../../Documents` pasaría el filtro) y en Windows
+/// ignora mayúsculas (donde `C:\Users` y `c:\users` son lo mismo).
 fn is_allowed(path: &Path) -> bool {
     allowed_roots()
         .iter()
-        .any(|root| path.starts_with(root) && path != root)
+        .any(|root| crate::platform::is_inside(path, root))
 }
 
 /// Recursive on-disk size. Never follows symlinks.
@@ -154,6 +162,7 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
     let mut removed = 0usize;
     let mut errors: Vec<String> = Vec::new();
     let mut admin: Vec<(PathBuf, u64)> = Vec::new();
+    let mut in_use = 0usize;
 
     for ps in &paths {
         let p = PathBuf::from(ps);
@@ -169,12 +178,11 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
         let w = crate::platform::wipe(&p, false);
         freed += w.freed;
         removed += w.removed;
+        in_use += w.in_use;
 
         if w.denied > 0 {
             // Lo que falla por permisos se agrupa para pedir admin UNA sola vez.
             admin.push((p.clone(), size.saturating_sub(w.freed)));
-        } else if let Some(n) = crate::platform::wipe_note(&w) {
-            errors.push(format!("{ps}: {n}"));
         }
     }
 
@@ -196,6 +204,7 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
         freed,
         removed,
         errors,
+        skipped_in_use: in_use,
     })
 }
 

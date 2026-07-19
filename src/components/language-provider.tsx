@@ -206,6 +206,10 @@ const EN: Record<string, string> = {
   "No se pudo escanear la caché": "Couldn't scan the cache",
   "Liberados {n}": "Freed {n}",
   "{n} elementos eliminados": "{n} items removed",
+  "{n} en uso por otros programas, intactos":
+    "{n} in use by other programs, left untouched",
+  "{n} necesitan permisos de administrador":
+    "{n} need administrator permissions",
   "{n} no se pudieron borrar": "{n} couldn't be deleted",
   "Error al limpiar": "Cleanup error",
   Escanear: "Scan",

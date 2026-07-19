@@ -76,7 +76,8 @@ pub struct Wipe {
 }
 
 impl Wipe {
-    fn merge(&mut self, o: Wipe) {
+    /// Suma otro resultado a este (para acumular varias rutas).
+    pub fn add(&mut self, o: Wipe) {
         self.freed += o.freed;
         self.removed += o.removed;
         self.in_use += o.in_use;
@@ -113,17 +114,32 @@ pub fn wipe(path: &Path, keep_root: bool) -> Wipe {
         Err(_) => return w, // no existe: nada que hacer
     };
 
-    // Los enlaces simbólicos se borran como enlace; nunca se recorren.
-    if md.file_type().is_symlink() || !md.is_dir() {
+    // Enlaces simbólicos y junctions: se borra el ENLACE, nunca se recorre su
+    // destino (si no, un enlace a C:\ nos llevaría a barrer el disco entero).
+    // OJO Windows: una junction es un directorio y `is_symlink()` también es
+    // cierta para ella, pero hay que quitarla con `remove_dir`, no con
+    // `remove_file`. Sin esto quedaban contadas como «en uso» para siempre.
+    if md.file_type().is_symlink() {
+        let r = if is_link_to_dir(&md) {
+            std::fs::remove_dir(path)
+        } else {
+            std::fs::remove_file(path)
+        };
+        match r {
+            Ok(()) => w.removed += 1,
+            Err(e) => classify(&mut w, &e),
+        }
+        return w;
+    }
+
+    if !md.is_dir() {
         let size = md.len();
-        match std::fs::remove_file(path) {
+        match remove_file_forcing(path, &md) {
             Ok(()) => {
                 w.freed += size;
                 w.removed += 1;
             }
-            Err(e) if is_busy(&e) => w.in_use += 1,
-            Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => w.denied += 1,
-            Err(_) => w.in_use += 1,
+            Err(e) => classify(&mut w, &e),
         }
         return w;
     }
@@ -131,7 +147,7 @@ pub fn wipe(path: &Path, keep_root: bool) -> Wipe {
     // Directorio: primero el contenido, uno a uno.
     if let Ok(rd) = std::fs::read_dir(path) {
         for entry in rd.flatten() {
-            w.merge(wipe(&entry.path(), false));
+            w.add(wipe(&entry.path(), false));
         }
     }
 
@@ -147,18 +163,62 @@ pub fn wipe(path: &Path, keep_root: bool) -> Wipe {
     w
 }
 
-/// Frase para el usuario cuando parte de la limpieza no pudo completarse.
-/// Devuelve `None` si salió todo, para no dar avisos cuando no hace falta.
-pub fn wipe_note(w: &Wipe) -> Option<String> {
-    match (w.in_use, w.denied) {
-        (0, 0) => None,
-        (n, 0) => Some(format!(
-            "{n} elemento(s) en uso por otros programas; se han dejado intactos"
-        )),
-        (0, d) => Some(format!("{d} elemento(s) requieren permisos de administrador")),
-        (n, d) => Some(format!(
-            "{n} elemento(s) en uso y {d} sin permisos; el resto se ha limpiado"
-        )),
+/// Borra un archivo y, si falla por permisos, prueba a quitarle el atributo de
+/// SOLO LECTURA y reintenta una vez.
+///
+/// En Windows, borrar un archivo marcado como solo lectura devuelve «acceso
+/// denegado» aunque seas su dueño. Las cachés de npm y de Gradle escriben todo
+/// su contenido así, con lo que la limpieza fallaba en masa y, peor aún, la app
+/// culpaba a los permisos de administrador de algo que no los necesitaba.
+/// Solo se hace en Windows a propósito: en Unix el permiso que manda para
+/// borrar es el de la CARPETA, no el del archivo, así que tocar los bits del
+/// archivo no ayudaría y sería un efecto secundario innecesario.
+fn remove_file_forcing(path: &Path, _md: &std::fs::Metadata) -> std::io::Result<()> {
+    let first = std::fs::remove_file(path);
+
+    #[cfg(target_os = "windows")]
+    if let Err(e) = &first {
+        if e.kind() == std::io::ErrorKind::PermissionDenied && _md.permissions().readonly() {
+            let mut perms = _md.permissions();
+            #[allow(clippy::permissions_set_readonly_false)]
+            perms.set_readonly(false);
+            std::fs::set_permissions(path, perms)?;
+            return std::fs::remove_file(path);
+        }
+    }
+
+    first
+}
+
+/// ¿El enlace apunta a un directorio? (Hay que quitarlo con `remove_dir`.)
+///
+/// No sirve `md.is_dir()`: la librería estándar lo define como «es directorio Y
+/// NO es enlace», así que para un enlace siempre da `false`. En Windows eso
+/// significaba intentar `remove_file` sobre una junction —abundan dentro del
+/// perfil de usuario— y fallar siempre con acceso denegado, contándolas como
+/// «en uso» eternamente. Se mira el atributo real del sistema de archivos.
+#[cfg(target_os = "windows")]
+fn is_link_to_dir(md: &std::fs::Metadata) -> bool {
+    use std::os::windows::fs::MetadataExt;
+    const FILE_ATTRIBUTE_DIRECTORY: u32 = 0x10;
+    md.file_attributes() & FILE_ATTRIBUTE_DIRECTORY != 0
+}
+
+/// En Unix un enlace simbólico se borra SIEMPRE con `remove_file`, apunte a lo
+/// que apunte: se elimina el enlace, no su destino.
+#[cfg(not(target_os = "windows"))]
+fn is_link_to_dir(_md: &std::fs::Metadata) -> bool {
+    false
+}
+
+/// Contabiliza un fallo de borrado en la categoría que le corresponde.
+fn classify(w: &mut Wipe, e: &std::io::Error) {
+    if is_busy(e) {
+        w.in_use += 1;
+    } else if e.kind() == std::io::ErrorKind::PermissionDenied {
+        w.denied += 1;
+    } else {
+        w.in_use += 1;
     }
 }
 
@@ -270,6 +330,75 @@ pub fn protected_top_level() -> &'static [&'static str] {
     }
 }
 
+/// Normaliza una ruta para poder compararla con seguridad.
+///
+/// Dos motivos, y ambos son agujeros reales en una app que borra archivos:
+///
+/// 1. **`..` atraviesa las guardas.** `Path::starts_with` es léxico: no resuelve
+///    nada. `C:\Users\ana\..\..\Windows\System32` «empieza por» el home aunque
+///    apunte fuera. Al borrar, el sistema SÍ lo resuelve. Hay que resolverlo
+///    antes de decidir.
+/// 2. **Windows no distingue mayúsculas.** `C:\users\ana` y `C:\Users\Ana` son
+///    la misma carpeta, pero `starts_with` compara componente a componente byte
+///    a byte. Sin normalizar, la protección de «Documents» no salta si llega
+///    como «documents», y en sentido contrario se rechazan rutas legítimas.
+///
+/// Si la ruta no existe, `canonicalize` falla; entonces se limpia al menos de
+/// forma léxica para que un `..` no se cuele.
+fn norm(p: &Path) -> PathBuf {
+    let resolved = std::fs::canonicalize(p).unwrap_or_else(|_| lexical_clean(p));
+    #[cfg(target_os = "windows")]
+    {
+        // Dos ajustes imprescindibles en Windows:
+        //
+        // a) `canonicalize` devuelve rutas «verbatim» con el prefijo `\\?\`,
+        //    mientras que el camino de respaldo (`lexical_clean`, para rutas
+        //    que aún no existen) devuelve la forma normal. Comparar una con
+        //    otra daría siempre falso y la app rechazaría rutas legítimas con
+        //    un «Protegido» incomprensible. Se quita el prefijo para que ambas
+        //    salidas tengan la misma forma.
+        // b) El sistema no distingue mayúsculas: `C:\Users` y `c:\users` son la
+        //    misma carpeta, así que se compara todo en minúsculas.
+        let lower = resolved.to_string_lossy().to_lowercase();
+        // Ojo al orden: la forma de red (`\\?\UNC\servidor\...`) empieza por el
+        // prefijo corto, así que hay que probarla primero.
+        let plain = if let Some(rest) = lower.strip_prefix(r"\\?\unc\") {
+            format!(r"\\{rest}")
+        } else if let Some(rest) = lower.strip_prefix(r"\\?\") {
+            rest.to_string()
+        } else {
+            lower
+        };
+        PathBuf::from(plain)
+    }
+    #[cfg(not(target_os = "windows"))]
+    resolved
+}
+
+/// Resuelve `.` y `..` sin tocar el disco (para rutas que aún no existen).
+/// Un `..` que se pase de la raíz simplemente se descarta.
+fn lexical_clean(p: &Path) -> PathBuf {
+    use std::path::Component;
+    let mut out = PathBuf::new();
+    for c in p.components() {
+        match c {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                out.pop();
+            }
+            other => out.push(other.as_os_str()),
+        }
+    }
+    out
+}
+
+/// ¿`child` está dentro de `parent`? Comparación segura (ver `norm`).
+/// Estar «dentro» excluye ser el propio `parent`.
+pub fn is_inside(child: &Path, parent: &Path) -> bool {
+    let (c, p) = (norm(child), norm(parent));
+    c != p && c.starts_with(&p)
+}
+
 /// Guarda de seguridad común: solo se puede enviar a la Papelera algo DENTRO de
 /// la carpeta de usuario, nunca el propio home ni sus carpetas críticas.
 pub fn is_deletable(p: &Path) -> Result<(), String> {
@@ -277,16 +406,22 @@ pub fn is_deletable(p: &Path) -> Result<(), String> {
     if home.as_os_str().is_empty() {
         return Err("No se encontró la carpeta de usuario".into());
     }
-    if !p.starts_with(&home) {
-        return Err("Protegido: solo dentro de tu carpeta de usuario".into());
-    }
-    if p == home {
+    let (np, nh) = (norm(p), norm(&home));
+    if np == nh {
         return Err("Protegido: carpeta de inicio".into());
     }
-    if let Ok(rel) = p.strip_prefix(&home) {
+    if !np.starts_with(&nh) {
+        return Err("Protegido: solo dentro de tu carpeta de usuario".into());
+    }
+    // Carpetas críticas de primer nivel: Documentos, Escritorio, AppData…
+    if let Ok(rel) = np.strip_prefix(&nh) {
         if rel.components().count() == 1 {
-            if let Some(name) = p.file_name().and_then(|n| n.to_str()) {
-                if protected_top_level().contains(&name) {
+            if let Some(name) = np.file_name().and_then(|n| n.to_str()) {
+                // `np` ya viene en minúsculas en Windows: comparamos igual.
+                let hit = protected_top_level()
+                    .iter()
+                    .any(|s| s.eq_ignore_ascii_case(name));
+                if hit {
                     return Err(format!("Protegido: {name}"));
                 }
             }

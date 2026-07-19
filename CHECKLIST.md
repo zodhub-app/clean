@@ -145,6 +145,29 @@ Marcar lo verificado en cada repaso.
 - **Efectos calibrados solo para oscuro.** Las hendiduras y velos con
   `bg-black/25` se ven como manchas grises en tema claro. Dar siempre la
   variante clara y usar `dark:` para la oscura.
+- **`sed` masivo que borra líneas de `use`.** Un import puede venir precedido de
+  su propio `#[cfg(...)]`; al borrar el `use`, el atributo queda huérfano y pasa
+  a gatear la línea siguiente (¡un struct entero!). Compilaba en macOS y
+  reventaba en Windows. Tras cualquier borrado en bloque, revisar los `#[cfg]`
+  de las cabeceras.
+- **Guardas de ruta sin normalizar.** `Path::starts_with` es léxico: no resuelve
+  `..` ni ignora mayúsculas. Toda comprobación de «esta ruta está dentro de X»
+  pasa por `platform::is_inside` / `platform::is_deletable`, que canonicalizan.
+- **Windows: atributo de solo lectura.** Borrar un archivo con
+  `FILE_ATTRIBUTE_READONLY` da «acceso denegado» aunque seas el dueño (npm y
+  Gradle escriben así sus cachés). `platform::wipe` quita el atributo y
+  reintenta antes de contarlo como falta de permisos.
+- **Windows: junctions.** `Metadata::is_dir()` es falso para cualquier enlace,
+  así que no sirve para elegir entre `remove_file` y `remove_dir`. Se mira
+  `file_attributes() & FILE_ATTRIBUTE_DIRECTORY`.
+- **Windows: `canonicalize` devuelve rutas `\\?\`**, incompatibles con las
+  normales al comparar. `platform::norm` retira el prefijo.
+- **No borrar carpetas contenedoras de caché, solo vaciarlas** (`keep_root`):
+  borrar `…\Default\Cache` con el navegador abierto le rompe el perfil.
+- **Avisos: separar `errors` de lo informativo.** Que queden archivos en uso al
+  limpiar temporales es NORMAL; se devuelven como contadores
+  (`skipped_in_use` / `skipped_denied`) para que el frontend los traduzca y los
+  muestre como éxito con matiz, no como fallo.
 
 - `reqwest` 0.13 renombró la feature `rustls-tls` → **`rustls`**. Con el nombre
   viejo, `cargo` falla con «does not have that feature».
