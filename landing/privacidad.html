@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Política de privacidad — ZodHub CleanPC</title>
-<meta name="description" content="Qué datos trata ZodHub CleanPC y cuáles no. La app funciona en local, sin telemetría. Aquí está explicado sin letra pequeña.">
+<meta name="description" content="Qué datos trata ZodHub CleanPC y cuáles no. La app funciona en local, sin telemetría, y solo hace dos conexiones. Explicado sin letra pequeña.">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,15 +20,23 @@
   .z-dots  { animation: zDots 38s linear infinite; }
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
   .reveal.in { opacity: 1; transform: translateY(0); }
-  .d1 { transition-delay: 120ms; }
-  .prose-z h2 { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.02em; color: #020617; margin-top: 2rem; margin-bottom: .5rem; }
+  .d1 { transition-delay: 120ms; } .d2 { transition-delay: 220ms; }
+  .prose-z h2 { font-size: 1.0625rem; font-weight: 500; letter-spacing: -0.02em; color: #020617; margin-top: 2.25rem; margin-bottom: .5rem; scroll-margin-top: 7.5rem; }
+  .prose-z h2:first-child { margin-top: 0; }
+  .prose-z h3 { font-size: .9375rem; font-weight: 500; color: #0f172a; margin-top: 1.25rem; margin-bottom: .25rem; }
   .prose-z p { color: #475569; font-weight: 300; line-height: 1.9; margin-bottom: .75rem; }
   .prose-z ul { margin: .25rem 0 1rem 0; }
-  .prose-z li { color: #475569; font-weight: 300; line-height: 1.85; padding-left: 1.4rem; position: relative; }
+  .prose-z li { color: #475569; font-weight: 300; line-height: 1.85; padding-left: 1.4rem; position: relative; margin-bottom: .2rem; }
   .prose-z li::before { content: ''; position: absolute; left: .35rem; top: .82em; width: 5px; height: 5px; border-radius: 99px; background: #93c5fd; }
   .prose-z strong { font-weight: 500; color: #0f172a; }
   .prose-z a { color: #2563eb; text-decoration: none; }
   .prose-z a:hover { text-decoration: underline; }
+  .note { border-left: 3px solid #10b981; background: #ecfdf5; border-radius: 0 1rem 1rem 0; padding: 1rem 1.25rem; margin: 1rem 0 1.25rem; }
+  .note p { color: #065f46; margin-bottom: 0; }
+  .note strong { color: #064e3b; }
+  .tbl { width: 100%; border-collapse: collapse; margin: .5rem 0 1.25rem; font-size: .8125rem; }
+  .tbl th { text-align: left; font-weight: 500; color: #0f172a; padding: .6rem .75rem; border-bottom: 1px solid #e2e8f0; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+  .tbl td { color: #475569; font-weight: 300; padding: .7rem .75rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.7; }
   @media (prefers-reduced-motion: reduce){ .z-blob-1,.z-blob-2,.z-dots{animation:none;} .reveal{opacity:1;transform:none;transition:none;} }
 </style>
 </head>
@@ -79,8 +87,8 @@
     <span class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-b from-emerald-400 to-emerald-500 text-white flex items-center justify-center shadow-[0_18px_40px_-18px_rgba(16,185,129,0.7)] mb-6"><iconify-icon icon="solar:shield-check-bold" class="text-3xl"></iconify-icon></span>
     <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="pv.badge">PRIVACIDAD</p>
     <h1 class="text-4xl md:text-5xl font-light tracking-[-0.06em] leading-[1] text-slate-950" data-i18n="pv.title">Política de privacidad</h1>
-    <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="pv.sub">Escrita para que se entienda. Si algo no queda claro, es un fallo nuestro: escríbenos y lo corregimos.</p>
-    <p class="mt-4 mono text-[11px] text-slate-400" data-i18n="pv.updated">Última actualización: 19 de julio de 2026</p>
+    <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="pv.sub">Escrita para que se entienda. Cuenta qué datos tocamos, cuáles no, y por qué puedes comprobarlo tú mismo en el código.</p>
+    <p class="mt-4 mono text-[11px] text-slate-400" data-i18n="pv.updated">Última actualización: 19 de julio de 2026 · Versión 1.0</p>
   </div>
 
   <!-- Resumen -->
@@ -99,45 +107,164 @@
     </div>
   </section>
 
+  <!-- Índice -->
+  <nav class="mt-8 reveal d1">
+    <div class="rounded-[2rem] bg-white/80 backdrop-blur-xl border border-white/90 p-6 md:p-7 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+      <p class="mono text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-4" data-i18n="pv.tocLabel">CONTENIDO</p>
+      <ol class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-500 font-light list-none">
+        <li><a href="#p1" class="hover:text-blue-600 transition-colors" data-i18n="pv.h1">1. Quién es el responsable</a></li>
+        <li><a href="#p2" class="hover:text-blue-600 transition-colors" data-i18n="pv.h2">2. Principio de fondo</a></li>
+        <li><a href="#p3" class="hover:text-blue-600 transition-colors" data-i18n="pv.h3">3. Lo que la app hace en tu equipo</a></li>
+        <li><a href="#p4" class="hover:text-blue-600 transition-colors" data-i18n="pv.h4">4. Lo que la app NO hace</a></li>
+        <li><a href="#p5" class="hover:text-blue-600 transition-colors" data-i18n="pv.h5">5. Conexiones a internet</a></li>
+        <li><a href="#p6" class="hover:text-blue-600 transition-colors" data-i18n="pv.h6">6. Datos que tratamos</a></li>
+        <li><a href="#p7" class="hover:text-blue-600 transition-colors" data-i18n="pv.h7">7. Suscripción a novedades</a></li>
+        <li><a href="#p8" class="hover:text-blue-600 transition-colors" data-i18n="pv.h8">8. Esta página web</a></li>
+        <li><a href="#p9" class="hover:text-blue-600 transition-colors" data-i18n="pv.h9">9. Donaciones</a></li>
+        <li><a href="#p10" class="hover:text-blue-600 transition-colors" data-i18n="pv.h10">10. Destinatarios y encargados</a></li>
+        <li><a href="#p11" class="hover:text-blue-600 transition-colors" data-i18n="pv.h11">11. Transferencias internacionales</a></li>
+        <li><a href="#p12" class="hover:text-blue-600 transition-colors" data-i18n="pv.h12">12. Plazos de conservación</a></li>
+        <li><a href="#p13" class="hover:text-blue-600 transition-colors" data-i18n="pv.h13">13. Seguridad</a></li>
+        <li><a href="#p14" class="hover:text-blue-600 transition-colors" data-i18n="pv.h14">14. Tus derechos</a></li>
+        <li><a href="#p15" class="hover:text-blue-600 transition-colors" data-i18n="pv.h15">15. Menores</a></li>
+        <li><a href="#p16" class="hover:text-blue-600 transition-colors" data-i18n="pv.h16">16. Decisiones automatizadas</a></li>
+        <li><a href="#p17" class="hover:text-blue-600 transition-colors" data-i18n="pv.h17">17. Cómo verificarlo tú mismo</a></li>
+        <li><a href="#p18" class="hover:text-blue-600 transition-colors" data-i18n="pv.h18">18. Cambios en esta política</a></li>
+      </ol>
+    </div>
+  </nav>
+
   <!-- Cuerpo -->
-  <section class="mt-8 reveal d1">
+  <section class="mt-8 reveal d2">
     <div class="rounded-[2rem] bg-white/80 backdrop-blur-xl border border-white/90 p-8 md:p-10 shadow-[0_2px_10px_rgba(15,23,42,0.04)] prose-z">
 
-      <h2 data-i18n="pv.h1">1. Quién es el responsable</h2>
-      <p data-i18n="pv.p1">ZodHub, responsable del tratamiento de los datos descritos en esta política. Puedes contactar en <a href="mailto:info@zodhub.com">info@zodhub.com</a> o abriendo un asunto en <a href="https://github.com/zodhub-app/clean/issues" target="_blank" rel="noopener">el repositorio del proyecto</a>.</p>
+      <h2 id="p1" data-i18n="pv.h1">1. Quién es el responsable</h2>
+      <p data-i18n="pv.p1">El responsable del tratamiento es <strong>ZodHub</strong>, desarrollador y distribuidor de la aplicación ZodHub CleanPC. Puedes contactar en <a href="mailto:info@zodhub.com">info@zodhub.com</a> o abriendo un asunto en <a href="https://github.com/zodhub-app/clean/issues" target="_blank" rel="noopener">el repositorio del proyecto</a>. Esta política se aplica tanto a la aplicación de escritorio como a esta web.</p>
 
-      <h2 data-i18n="pv.h2">2. Lo que hace la aplicación en tu equipo</h2>
-      <p data-i18n="pv.p2">ZodHub CleanPC lee rutas, tamaños de archivo, información del sistema (CPU, memoria, discos, procesos) y, cuando tú lo pides, borra o mueve archivos a la papelera. <strong>Todo eso ocurre íntegramente en tu dispositivo.</strong> Ese contenido no se transmite, no se copia a ningún servidor y no queda registrado fuera de tu equipo. Los ajustes de la app se guardan en local, en la carpeta de configuración de tu usuario.</p>
+      <h2 id="p2" data-i18n="pv.h2">2. Principio de fondo</h2>
+      <p data-i18n="pv.p2a">Muchos limpiadores comerciales necesitan saber cosas de ti para funcionar: qué tienes instalado, qué borras, con qué frecuencia abres la app. Nosotros partimos de la idea contraria: <strong>una herramienta que hurga en tus archivos es el último sitio donde debería haber telemetría.</strong></p>
+      <p data-i18n="pv.p2b">Por eso el diseño es «local primero». La app no tiene servidor propio, no tiene cuentas de usuario y no envía informes de uso. Todo lo que analiza se queda donde se genera: en tu ordenador.</p>
 
-      <h2 data-i18n="pv.h3">3. Comprobación de actualizaciones</h2>
-      <p data-i18n="pv.p3">Para avisarte de versiones nuevas, la app consulta periódicamente un archivo público alojado en GitHub. Como en cualquier petición de internet, GitHub recibe tu dirección IP, la versión de la app y datos técnicos básicos de la conexión. No enviamos ningún identificador propio ni podemos relacionar esa consulta contigo. Si prefieres no hacerla, puedes desactivar la comprobación automática en los ajustes de la app y actualizar manualmente desde la web.</p>
-
-      <h2 data-i18n="pv.h4">4. Suscripción voluntaria a novedades</h2>
-      <p data-i18n="pv.p4">En «Tu espacio» puedes darnos tu <strong>nombre (opcional)</strong> y tu <strong>correo electrónico</strong> para recibir avisos de funciones nuevas y mejoras importantes.</p>
+      <h2 id="p3" data-i18n="pv.h3">3. Lo que la app hace en tu equipo</h2>
+      <p data-i18n="pv.p3a">Para cumplir su función, la app accede en local a:</p>
       <ul>
-        <li data-i18n="pv.p4a"><strong>Base legal:</strong> tu consentimiento, que das marcando la casilla. No está premarcada.</li>
-        <li data-i18n="pv.p4b"><strong>Finalidad:</strong> enviarte novedades del proyecto. Nada más. No hay publicidad de terceros.</li>
-        <li data-i18n="pv.p4c"><strong>Conservación:</strong> hasta que te des de baja. Cada correo lleva un enlace de baja en un clic.</li>
-        <li data-i18n="pv.p4d"><strong>Es opcional:</strong> la app se actualiza sola sin necesidad de esto. No suscribirte no limita ninguna función.</li>
+        <li data-i18n="pv.p3b"><strong>Rutas, nombres y tamaños de archivos y carpetas</strong> de las áreas que analiza, para calcular qué ocupa espacio.</li>
+        <li data-i18n="pv.p3c"><strong>Contenido de archivos</strong>, únicamente en el buscador de duplicados y solo para calcular una huella criptográfica que permita compararlos. No se guarda el contenido ni la huella más allá de la sesión.</li>
+        <li data-i18n="pv.p3d"><strong>Información del sistema:</strong> uso de CPU, memoria y disco, sensores de temperatura, procesos en ejecución y contadores de red.</li>
+        <li data-i18n="pv.p3e"><strong>Lista de programas instalados</strong> y los archivos que dejan tras de sí, en el módulo de aplicaciones.</li>
+        <li data-i18n="pv.p3f"><strong>Tus preferencias</strong> (tema, idioma, tareas programadas), guardadas en la carpeta de configuración de tu usuario.</li>
+      </ul>
+      <div class="note">
+        <p data-i18n="pv.p3note"><strong>Nada de lo anterior se transmite.</strong> Se procesa en memoria mientras usas la app, se muestra en pantalla y desaparece al cerrarla. No hay copia remota, ni registro en la nube, ni historial que nosotros podamos consultar.</p>
+      </div>
+
+      <h2 id="p4" data-i18n="pv.h4">4. Lo que la app NO hace</h2>
+      <ul>
+        <li data-i18n="pv.p4a">No incorpora <strong>telemetría, analítica ni informes de uso</strong> de ningún tipo.</li>
+        <li data-i18n="pv.p4b">No lleva <strong>identificadores publicitarios</strong>, ni cookies, ni huella digital del dispositivo.</li>
+        <li data-i18n="pv.p4c">No incluye <strong>SDK de terceros</strong> que recojan datos por su cuenta.</li>
+        <li data-i18n="pv.p4d">No sube archivos, ni listados, ni resultados de los análisis <strong>a ningún servidor</strong>.</li>
+        <li data-i18n="pv.p4e">No crea un perfil tuyo, ni te asigna un identificador único, ni cruza información entre dispositivos.</li>
       </ul>
 
-      <h2 data-i18n="pv.h5">5. Encargados y terceros</h2>
-      <p data-i18n="pv.p5">Para funcionar nos apoyamos en proveedores que pueden tratar datos técnicos por cuenta nuestra: el alojamiento de la web y de las descargas (GitHub), el servicio que recibe el formulario de suscripción y el proveedor de pagos cuando haces una donación. Cada uno trata únicamente lo imprescindible para su función. <strong>No vendemos, alquilamos ni cedemos tus datos con fines comerciales.</strong></p>
+      <h2 id="p5" data-i18n="pv.h5">5. Conexiones a internet: las únicas dos</h2>
+      <p data-i18n="pv.p5a">Queremos ser exactos aquí, porque es donde otros son ambiguos. La app solo abre conexión en dos casos:</p>
+      <h3 data-i18n="pv.p5h1">a) Comprobación de actualizaciones</h3>
+      <p data-i18n="pv.p5b">Periódicamente, y al arrancar, la app descarga un archivo público alojado en GitHub para saber si existe una versión más reciente. Como en cualquier petición web, el servidor de GitHub recibe tu <strong>dirección IP</strong>, la versión de la app y datos técnicos básicos de la conexión (agente, fecha y hora). No enviamos ningún identificador propio, no sabemos quién hace cada petición y no recibimos ese registro. Si prefieres evitarla, puedes <strong>desactivar la comprobación automática en los ajustes</strong> y actualizar manualmente desde esta web.</p>
+      <h3 data-i18n="pv.p5h2">b) Suscripción voluntaria a novedades</h3>
+      <p data-i18n="pv.p5c">Solo si rellenas el formulario de «Tu espacio» y pulsas el botón. Se envía exclusivamente lo que hayas escrito: nombre y correo. Nada más viaja con ello.</p>
+      <p data-i18n="pv.p5d">Además, cuando pulsas un enlace dentro de la app (esta web, donaciones, repositorio), se abre en <strong>tu navegador</strong>, fuera de la aplicación. La app no incrusta contenido remoto ni carga recursos de terceros en su interfaz: las tipografías y los estilos van dentro del programa.</p>
 
-      <h2 data-i18n="pv.h6">6. Donaciones</h2>
-      <p data-i18n="pv.p6">Las donaciones se procesan íntegramente en la plataforma de pago, fuera de esta web y fuera de la app. <strong>Nosotros no vemos ni almacenamos los datos de tu tarjeta.</strong> Del proveedor solo recibimos la confirmación del pago y, si tú lo has facilitado ahí, tu nombre o alias. Donar no activa funciones ni cambia nada en la aplicación.</p>
+      <h2 id="p6" data-i18n="pv.h6">6. Datos que tratamos, para qué y con qué base legal</h2>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th data-i18n="pv.tblA">Dato</th>
+            <th data-i18n="pv.tblB">Finalidad</th>
+            <th data-i18n="pv.tblC">Base legal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-i18n="pv.tbl1a">Nombre (opcional) y correo electrónico</td>
+            <td data-i18n="pv.tbl1b">Enviarte novedades y mejoras del proyecto</td>
+            <td data-i18n="pv.tbl1c">Tu consentimiento (art. 6.1.a RGPD)</td>
+          </tr>
+          <tr>
+            <td data-i18n="pv.tbl2a">Dirección IP y datos técnicos de la petición de actualización</td>
+            <td data-i18n="pv.tbl2b">Entregarte el archivo de versiones; seguridad del alojamiento</td>
+            <td data-i18n="pv.tbl2c">Interés legítimo en distribuir actualizaciones (art. 6.1.f)</td>
+          </tr>
+          <tr>
+            <td data-i18n="pv.tbl3a">Datos de contacto de tus consultas</td>
+            <td data-i18n="pv.tbl3b">Atender lo que nos preguntes</td>
+            <td data-i18n="pv.tbl3c">Interés legítimo en responderte (art. 6.1.f)</td>
+          </tr>
+          <tr>
+            <td data-i18n="pv.tbl4a">Confirmación de una donación y, en su caso, alias público</td>
+            <td data-i18n="pv.tbl4b">Gestionar y agradecer el apoyo</td>
+            <td data-i18n="pv.tbl4c">Ejecución de la relación e interés legítimo (art. 6.1.b y f)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p data-i18n="pv.p6a">No tratamos categorías especiales de datos (salud, ideología, biometría…) ni te pedimos jamás documentos identificativos.</p>
 
-      <h2 data-i18n="pv.h7">7. Esta página web</h2>
-      <p data-i18n="pv.p7">La web no usa cookies de análisis ni de publicidad, y no te sigue entre sitios. Sí carga tipografías y algunos recursos de estilo desde redes de distribución externas, que por la naturaleza técnica de una petición web reciben tu dirección IP. El alojamiento es GitHub Pages, que puede conservar registros de acceso por seguridad y diagnóstico.</p>
+      <h2 id="p7" data-i18n="pv.h7">7. Suscripción a novedades</h2>
+      <p data-i18n="pv.p7a">En «Tu espacio» puedes darnos tu <strong>nombre (opcional)</strong> y tu <strong>correo electrónico</strong> para recibir avisos de funciones nuevas y mejoras importantes.</p>
+      <ul>
+        <li data-i18n="pv.p7b"><strong>El consentimiento es expreso:</strong> hay que marcar una casilla que <strong>no está premarcada</strong>. Sin ella, el botón no se activa.</li>
+        <li data-i18n="pv.p7c"><strong>Solo novedades del proyecto.</strong> No enviamos publicidad de terceros ni cedemos tu dirección a nadie.</li>
+        <li data-i18n="pv.p7d"><strong>Baja en un clic:</strong> cada correo lleva su enlace de baja, y también puedes pedirla escribiéndonos.</li>
+        <li data-i18n="pv.p7e"><strong>Es totalmente opcional.</strong> La app se actualiza sola sin esto, y no suscribirte no limita ninguna función. Lo decimos con claridad en la propia pantalla.</li>
+      </ul>
 
-      <h2 data-i18n="pv.h8">8. Tus derechos</h2>
-      <p data-i18n="pv.p8">Puedes solicitar el acceso, la rectificación, la supresión, la limitación, la oposición y la portabilidad de tus datos, así como retirar tu consentimiento en cualquier momento, escribiendo a <a href="mailto:info@zodhub.com">info@zodhub.com</a>. En la práctica, lo único que tenemos de ti es lo que nos hayas dado voluntariamente en el formulario. Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+      <h2 id="p8" data-i18n="pv.h8">8. Esta página web</h2>
+      <p data-i18n="pv.p8a">La web <strong>no usa cookies de análisis ni de publicidad</strong>, no te sigue entre sitios y no muestra ventanas de consentimiento porque no hay nada que consentir.</p>
+      <p data-i18n="pv.p8b">Sí carga, desde redes de distribución externas, la tipografía y algunas librerías de estilo e iconos. Por la naturaleza técnica de cualquier petición web, esos proveedores reciben tu <strong>dirección IP</strong> y datos básicos del navegador. Lo decimos aunque quede menos redondo: es la diferencia entre una política honesta y una de plantilla.</p>
+      <p data-i18n="pv.p8c">El alojamiento es <strong>GitHub Pages</strong>, que puede conservar registros de acceso por seguridad y diagnóstico, conforme a sus propias políticas.</p>
 
-      <h2 data-i18n="pv.h9">9. Menores</h2>
-      <p data-i18n="pv.p9">La suscripción a novedades está dirigida a mayores de 14 años. Si detectamos un alta de un menor de esa edad sin autorización, la eliminaremos.</p>
+      <h2 id="p9" data-i18n="pv.h9">9. Donaciones</h2>
+      <p data-i18n="pv.p9">Las donaciones se procesan íntegramente en la plataforma de pago, fuera de esta web y fuera de la app. <strong>Nosotros no vemos ni almacenamos los datos de tu tarjeta</strong> en ningún momento. Del proveedor recibimos únicamente la confirmación del pago y, si tú lo facilitaste allí, tu nombre o alias. Donar no activa funciones ni cambia nada en la aplicación.</p>
 
-      <h2 data-i18n="pv.h10">10. Cambios en esta política</h2>
-      <p data-i18n="pv.p10">Si cambiamos algo relevante, actualizaremos la fecha del encabezado y lo indicaremos en las notas de la versión. La app es de código consultable: cualquiera puede comprobar en el repositorio que lo que dice esta página es lo que hace el programa.</p>
+      <h2 id="p10" data-i18n="pv.h10">10. Destinatarios y encargados del tratamiento</h2>
+      <p data-i18n="pv.p10a">Para funcionar nos apoyamos en proveedores que pueden tratar datos por cuenta nuestra, cada uno limitado a su función:</p>
+      <ul>
+        <li data-i18n="pv.p10b"><strong>GitHub</strong> — alojamiento de la web, del código y de las descargas y actualizaciones.</li>
+        <li data-i18n="pv.p10c"><strong>El servicio que recibe el formulario</strong> de suscripción y la herramienta con la que enviamos el boletín.</li>
+        <li data-i18n="pv.p10d"><strong>La plataforma de pago</strong>, cuando decides donar.</li>
+      </ul>
+      <p data-i18n="pv.p10e"><strong>No vendemos, alquilamos ni cedemos tus datos con fines comerciales</strong>, ni ahora ni en el futuro. Solo los comunicaríamos a una autoridad si una norma o una resolución judicial nos obligara.</p>
+
+      <h2 id="p11" data-i18n="pv.h11">11. Transferencias internacionales</h2>
+      <p data-i18n="pv.p11">Algunos de esos proveedores están establecidos fuera del Espacio Económico Europeo. Cuando se produce una transferencia internacional, se ampara en los mecanismos previstos por el RGPD (decisión de adecuación o cláusulas contractuales tipo de la Comisión Europea). Puedes pedirnos información sobre las garantías aplicables escribiendo a nuestro correo de contacto.</p>
+
+      <h2 id="p12" data-i18n="pv.h12">12. Plazos de conservación</h2>
+      <ul>
+        <li data-i18n="pv.p12a"><strong>Datos de suscripción:</strong> hasta que te des de baja o solicites su supresión. Tras la baja, conservamos el mínimo imprescindible para acreditar que la petición se atendió.</li>
+        <li data-i18n="pv.p12b"><strong>Consultas:</strong> el tiempo necesario para resolverlas y, después, durante los plazos de prescripción que resulten aplicables.</li>
+        <li data-i18n="pv.p12c"><strong>Datos de donaciones:</strong> los que exija la normativa contable y fiscal al proveedor de pago.</li>
+        <li data-i18n="pv.p12d"><strong>Datos del análisis de tu equipo:</strong> no procede, porque nunca salen de tu dispositivo.</li>
+      </ul>
+
+      <h2 id="p13" data-i18n="pv.h13">13. Seguridad</h2>
+      <p data-i18n="pv.p13">Aplicamos medidas técnicas y organizativas razonables: comunicaciones cifradas (HTTPS), acceso restringido a la lista de suscriptores y el principio de minimización, que aquí es fácil de cumplir porque apenas recogemos nada. Además, las versiones de la app se distribuyen <strong>firmadas criptográficamente</strong>, de modo que el actualizador rechaza cualquier paquete que no proceda de nosotros. Ningún sistema es infalible, pero cuanto menos dato hay, menos hay que proteger.</p>
+
+      <h2 id="p14" data-i18n="pv.h14">14. Tus derechos</h2>
+      <p data-i18n="pv.p14a">Puedes ejercer en cualquier momento los derechos de <strong>acceso, rectificación, supresión, limitación, oposición y portabilidad</strong>, así como <strong>retirar tu consentimiento</strong> sin que ello afecte a la licitud del tratamiento anterior. Basta con escribir a <a href="mailto:info@zodhub.com">info@zodhub.com</a> indicando qué solicitas.</p>
+      <p data-i18n="pv.p14b">Responderemos en el plazo legal de un mes. En la práctica, lo único que podemos tener de ti es lo que hayas escrito voluntariamente en el formulario, así que la supresión es inmediata.</p>
+      <p data-i18n="pv.p14c">Si consideras que no hemos atendido correctamente tu solicitud, puedes presentar una reclamación ante la <strong>Agencia Española de Protección de Datos</strong> (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>) o ante la autoridad de control de tu país.</p>
+
+      <h2 id="p15" data-i18n="pv.h15">15. Menores</h2>
+      <p data-i18n="pv.p15">La suscripción a novedades está dirigida a mayores de 14 años, edad a partir de la cual la normativa española permite el consentimiento propio. Si detectamos un alta por debajo de esa edad sin autorización de quien ejerza la patria potestad o tutela, la eliminaremos. La aplicación en sí puede usarla cualquiera, ya que no recoge datos personales.</p>
+
+      <h2 id="p16" data-i18n="pv.h16">16. Decisiones automatizadas y elaboración de perfiles</h2>
+      <p data-i18n="pv.p16">No tomamos decisiones automatizadas con efectos jurídicos sobre ti ni elaboramos perfiles. La app clasifica archivos por criterios técnicos (tamaño, ubicación, tipo), lo cual no constituye un tratamiento de perfilado en el sentido del RGPD.</p>
+
+      <h2 id="p17" data-i18n="pv.h17">17. Cómo comprobar que esto es cierto</h2>
+      <p data-i18n="pv.p17">No hace falta que nos creas. El <a href="https://github.com/zodhub-app/clean" target="_blank" rel="noopener">código fuente es público</a>: cualquiera puede revisar qué peticiones de red hace el programa. También puedes observar el tráfico de la app con un cortafuegos o un monitor de red y verificar que, fuera de la comprobación de versiones, no habla con nadie. Es la única prueba que vale de verdad.</p>
+
+      <h2 id="p18" data-i18n="pv.h18">18. Cambios en esta política</h2>
+      <p data-i18n="pv.p18">Si añadimos cualquier función que implique una nueva salida de datos, actualizaremos esta página <strong>en el mismo momento</strong> y lo indicaremos en las notas de la versión. La fecha y la versión del encabezado identifican el texto vigente. Consulta también los <a href="terminos.html">términos de uso</a>, que completan este documento.</p>
 
     </div>
   </section>
@@ -170,42 +297,92 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
-  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.05});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
 
   var I18N = { en: {
-    "foot.privacy":"Privacy","foot.terms":"Terms","nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
+    "foot.privacy":"Privacy","foot.terms":"Terms",
+    "nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
     "pv.badge":"PRIVACY","pv.title":"Privacy policy",
-    "pv.sub":"Written to be understood. If something isn't clear, that's on us: write to us and we'll fix it.",
-    "pv.updated":"Last updated: 19 July 2026",
+    "pv.sub":"Written to be understood. It says which data we touch, which we don't, and why you can verify it yourself in the code.",
+    "pv.updated":"Last updated: 19 July 2026 · Version 1.0",
     "pv.tldrLabel":"THE WHOLE THING IN 4 LINES",
     "pv.tldr1":"The app scans and cleans <strong class=\"font-medium text-white\">on your device</strong>. Neither your files nor the results ever leave it.",
     "pv.tldr2":"<strong class=\"font-medium text-white\">Zero telemetry.</strong> We don't measure what you use, how much, or when.",
     "pv.tldr3":"There are only <strong class=\"font-medium text-white\">two connections</strong>: checking for a new version and, if you ask for it, signing up for news.",
     "pv.tldr4":"We never sell or hand over data <strong class=\"font-medium text-white\">to anyone</strong>.",
+    "pv.tocLabel":"CONTENTS",
     "pv.h1":"1. Who is responsible",
-    "pv.p1":"ZodHub, controller of the data described in this policy. You can get in touch at <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a> or by opening an issue in <a href=\"https://github.com/zodhub-app/clean/issues\" target=\"_blank\" rel=\"noopener\">the project repository</a>.",
-    "pv.h2":"2. What the app does on your device",
-    "pv.p2":"ZodHub CleanPC reads paths, file sizes, system information (CPU, memory, disks, processes) and, when you ask it to, deletes files or moves them to the bin. <strong>All of that happens entirely on your device.</strong> That content is not transmitted, not copied to any server and not logged anywhere outside your machine. App settings are stored locally, in your user's configuration folder.",
-    "pv.h3":"3. Update checks",
-    "pv.p3":"To tell you about new versions, the app periodically fetches a public file hosted on GitHub. As with any internet request, GitHub receives your IP address, the app version and basic technical connection data. We send no identifier of our own and cannot link that request to you. If you'd rather not make it, you can turn automatic checking off in the app's settings and update manually from the website.",
-    "pv.h4":"4. Voluntary news subscription",
-    "pv.p4":"In \"Your space\" you can give us your <strong>name (optional)</strong> and your <strong>email address</strong> to receive notice of new features and important improvements.",
-    "pv.p4a":"<strong>Legal basis:</strong> your consent, given by ticking the box. It is not pre-ticked.",
-    "pv.p4b":"<strong>Purpose:</strong> sending you project news. Nothing else. No third-party advertising.",
-    "pv.p4c":"<strong>Retention:</strong> until you unsubscribe. Every email carries a one-click unsubscribe link.",
-    "pv.p4d":"<strong>It's optional:</strong> the app updates itself without this. Not subscribing limits no feature.",
-    "pv.h5":"5. Processors and third parties",
-    "pv.p5":"To operate we rely on providers that may process technical data on our behalf: hosting for the website and the downloads (GitHub), the service that receives the subscription form, and the payment provider when you donate. Each one handles only what its function requires. <strong>We do not sell, rent or share your data for commercial purposes.</strong>",
-    "pv.h6":"6. Donations",
-    "pv.p6":"Donations are processed entirely on the payment platform, outside this website and outside the app. <strong>We never see or store your card details.</strong> From the provider we only receive payment confirmation and, if you supplied it there, your name or alias. Donating activates no features and changes nothing in the application.",
-    "pv.h7":"7. This website",
-    "pv.p7":"The site uses no analytics or advertising cookies and does not track you across sites. It does load fonts and some styling resources from external delivery networks which, by the technical nature of a web request, receive your IP address. Hosting is GitHub Pages, which may keep access logs for security and diagnostics.",
-    "pv.h8":"8. Your rights",
-    "pv.p8":"You can request access, rectification, erasure, restriction, objection and portability of your data, and withdraw your consent at any time, by writing to <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a>. In practice, the only thing we hold about you is whatever you voluntarily entered in the form. If you believe we haven't handled your request properly, you can complain to the Spanish Data Protection Agency (<a href=\"https://www.aepd.es\" target=\"_blank\" rel=\"noopener\">aepd.es</a>).",
-    "pv.h9":"9. Minors",
-    "pv.p9":"The news subscription is intended for people aged 14 and over. If we detect a sign-up below that age without authorisation, we will delete it.",
-    "pv.h10":"10. Changes to this policy",
-    "pv.p10":"If we change anything material, we'll update the date in the header and note it in the release notes. The app's source can be inspected: anyone can check in the repository that what this page says is what the program does.",
+    "pv.p1":"The data controller is <strong>ZodHub</strong>, developer and distributor of the ZodHub CleanPC application. You can get in touch at <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a> or by opening an issue in <a href=\"https://github.com/zodhub-app/clean/issues\" target=\"_blank\" rel=\"noopener\">the project repository</a>. This policy covers both the desktop application and this website.",
+    "pv.h2":"2. The underlying principle",
+    "pv.p2a":"Many commercial cleaners need to know things about you in order to work: what you have installed, what you delete, how often you open the app. We start from the opposite idea: <strong>a tool that rummages through your files is the last place telemetry belongs.</strong>",
+    "pv.p2b":"That's why the design is local-first. The app has no server of its own, no user accounts, and sends no usage reports. Everything it analyses stays where it is generated: on your computer.",
+    "pv.h3":"3. What the app does on your device",
+    "pv.p3a":"To do its job, the app accesses locally:",
+    "pv.p3b":"<strong>Paths, names and sizes of files and folders</strong> in the areas it scans, to work out what is taking up space.",
+    "pv.p3c":"<strong>File contents</strong>, only in the duplicate finder and only to compute a cryptographic fingerprint for comparison. Neither the content nor the fingerprint is kept beyond the session.",
+    "pv.p3d":"<strong>System information:</strong> CPU, memory and disk usage, temperature sensors, running processes and network counters.",
+    "pv.p3e":"<strong>The list of installed programs</strong> and the files they leave behind, in the applications module.",
+    "pv.p3f":"<strong>Your preferences</strong> (theme, language, scheduled tasks), stored in your user's configuration folder.",
+    "pv.p3note":"<strong>None of the above is transmitted.</strong> It is processed in memory while you use the app, displayed on screen, and gone when you close it. There is no remote copy, no cloud log, and no history we could consult.",
+    "pv.h4":"4. What the app does NOT do",
+    "pv.p4a":"It carries no <strong>telemetry, analytics or usage reporting</strong> of any kind.",
+    "pv.p4b":"It carries no <strong>advertising identifiers</strong>, cookies or device fingerprinting.",
+    "pv.p4c":"It bundles no <strong>third-party SDKs</strong> that collect data on their own account.",
+    "pv.p4d":"It uploads no files, listings or scan results <strong>to any server</strong>.",
+    "pv.p4e":"It builds no profile of you, assigns you no unique identifier and cross-references nothing between devices.",
+    "pv.h5":"5. Internet connections: the only two",
+    "pv.p5a":"We want to be precise here, because this is where others are vague. The app opens a connection in two cases only:",
+    "pv.p5h1":"a) Update checks",
+    "pv.p5b":"Periodically, and at startup, the app downloads a public file hosted on GitHub to find out whether a newer version exists. As with any web request, GitHub's server receives your <strong>IP address</strong>, the app version and basic technical connection data (agent, date and time). We send no identifier of our own, we don't know who makes each request, and we don't receive that log. If you'd rather avoid it, you can <strong>turn automatic checking off in the settings</strong> and update manually from this website.",
+    "pv.p5h2":"b) Voluntary news subscription",
+    "pv.p5c":"Only if you fill in the form in \"Your space\" and press the button. Exactly what you typed is sent: name and email. Nothing else travels with it.",
+    "pv.p5d":"In addition, when you click a link inside the app (this website, donations, repository), it opens in <strong>your browser</strong>, outside the application. The app embeds no remote content and loads no third-party resources into its interface: fonts and styles ship inside the program.",
+    "pv.h6":"6. Data we process, why, and on what legal basis",
+    "pv.tblA":"Data","pv.tblB":"Purpose","pv.tblC":"Legal basis",
+    "pv.tbl1a":"Name (optional) and email address","pv.tbl1b":"Sending you project news and improvements","pv.tbl1c":"Your consent (art. 6(1)(a) GDPR)",
+    "pv.tbl2a":"IP address and technical data of the update request","pv.tbl2b":"Delivering the version file; hosting security","pv.tbl2c":"Legitimate interest in distributing updates (art. 6(1)(f))",
+    "pv.tbl3a":"Contact details in your enquiries","pv.tbl3b":"Answering what you ask us","pv.tbl3c":"Legitimate interest in replying (art. 6(1)(f))",
+    "pv.tbl4a":"Donation confirmation and, where given, public alias","pv.tbl4b":"Managing and acknowledging support","pv.tbl4c":"Performance of the relationship and legitimate interest (art. 6(1)(b) and (f))",
+    "pv.p6a":"We process no special categories of data (health, beliefs, biometrics…) and never ask you for identity documents.",
+    "pv.h7":"7. News subscription",
+    "pv.p7a":"In \"Your space\" you can give us your <strong>name (optional)</strong> and your <strong>email address</strong> to receive notice of new features and important improvements.",
+    "pv.p7b":"<strong>Consent is express:</strong> you must tick a box that is <strong>not pre-ticked</strong>. Without it, the button stays disabled.",
+    "pv.p7c":"<strong>Project news only.</strong> We send no third-party advertising and pass your address to no one.",
+    "pv.p7d":"<strong>One-click unsubscribe:</strong> every email carries its opt-out link, and you can also request it by writing to us.",
+    "pv.p7e":"<strong>It is entirely optional.</strong> The app updates itself without this, and not subscribing limits no feature. We say so plainly on the screen itself.",
+    "pv.h8":"8. This website",
+    "pv.p8a":"The site <strong>uses no analytics or advertising cookies</strong>, does not track you across sites, and shows no consent banners because there is nothing to consent to.",
+    "pv.p8b":"It does load the typeface and some styling and icon libraries from external delivery networks. By the technical nature of any web request, those providers receive your <strong>IP address</strong> and basic browser data. We say so even though it makes the story less tidy: that's the difference between an honest policy and a boilerplate one.",
+    "pv.p8c":"Hosting is <strong>GitHub Pages</strong>, which may keep access logs for security and diagnostics under its own policies.",
+    "pv.h9":"9. Donations",
+    "pv.p9":"Donations are processed entirely on the payment platform, outside this website and outside the app. <strong>We never see or store your card details</strong> at any point. From the provider we receive only payment confirmation and, if you supplied it there, your name or alias. Donating activates no features and changes nothing in the application.",
+    "pv.h10":"10. Recipients and processors",
+    "pv.p10a":"To operate we rely on providers that may process data on our behalf, each limited to its function:",
+    "pv.p10b":"<strong>GitHub</strong> — hosting for the website, the code, and the downloads and updates.",
+    "pv.p10c":"<strong>The service receiving the subscription form</strong> and the tool we use to send the newsletter.",
+    "pv.p10d":"<strong>The payment platform</strong>, when you choose to donate.",
+    "pv.p10e":"<strong>We do not sell, rent or share your data for commercial purposes</strong>, now or in future. We would only disclose it to an authority where a legal rule or court order required us to.",
+    "pv.h11":"11. International transfers",
+    "pv.p11":"Some of those providers are established outside the European Economic Area. Where an international transfer occurs, it relies on the mechanisms provided by the GDPR (adequacy decision or the European Commission's standard contractual clauses). You can ask us for information about the applicable safeguards by writing to our contact address.",
+    "pv.h12":"12. Retention periods",
+    "pv.p12a":"<strong>Subscription data:</strong> until you unsubscribe or request erasure. After unsubscribing we keep the bare minimum needed to evidence that the request was honoured.",
+    "pv.p12b":"<strong>Enquiries:</strong> for as long as needed to resolve them and thereafter for any applicable limitation periods.",
+    "pv.p12c":"<strong>Donation data:</strong> whatever accounting and tax rules require of the payment provider.",
+    "pv.p12d":"<strong>Data from scanning your machine:</strong> not applicable, because it never leaves your device.",
+    "pv.h13":"13. Security",
+    "pv.p13":"We apply reasonable technical and organisational measures: encrypted communications (HTTPS), restricted access to the subscriber list, and the minimisation principle — easy to honour here, since we collect almost nothing. In addition, app releases are distributed <strong>cryptographically signed</strong>, so the updater rejects any package that does not come from us. No system is infallible, but the less data there is, the less there is to protect.",
+    "pv.h14":"14. Your rights",
+    "pv.p14a":"You may exercise at any time the rights of <strong>access, rectification, erasure, restriction, objection and portability</strong>, and <strong>withdraw your consent</strong> without affecting the lawfulness of prior processing. Just write to <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a> saying what you want.",
+    "pv.p14b":"We will reply within the legal period of one month. In practice, the only thing we can hold about you is what you voluntarily typed into the form, so erasure is immediate.",
+    "pv.p14c":"If you believe we have not handled your request properly, you may lodge a complaint with the <strong>Spanish Data Protection Agency</strong> (<a href=\"https://www.aepd.es\" target=\"_blank\" rel=\"noopener\">aepd.es</a>) or with your country's supervisory authority.",
+    "pv.h15":"15. Minors",
+    "pv.p15":"The news subscription is aimed at people aged 14 and over, the age from which Spanish law allows them to consent on their own behalf. If we detect a sign-up below that age without authorisation from a parent or guardian, we will delete it. The application itself can be used by anyone, since it collects no personal data.",
+    "pv.h16":"16. Automated decisions and profiling",
+    "pv.p16":"We take no automated decisions producing legal effects concerning you, and we build no profiles. The app classifies files by technical criteria (size, location, type), which does not amount to profiling within the meaning of the GDPR.",
+    "pv.h17":"17. How to check that this is true",
+    "pv.p17":"You don't have to take our word for it. The <a href=\"https://github.com/zodhub-app/clean\" target=\"_blank\" rel=\"noopener\">source code is public</a>: anyone can review what network requests the program makes. You can also watch the app's traffic with a firewall or network monitor and verify that, apart from the version check, it talks to nobody. That is the only proof that really counts.",
+    "pv.h18":"18. Changes to this policy",
+    "pv.p18":"If we add any feature that involves a new outbound data flow, we will update this page <strong>at the same time</strong> and note it in the release notes. The date and version in the header identify the text in force. See also the <a href=\"terminos.html\">terms of use</a>, which complete this document.",
     "pv.toTerms":"See the terms of use"
   }};
   var currentLang='es', esCache={};
