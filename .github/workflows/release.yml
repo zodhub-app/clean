@@ -25,12 +25,12 @@ jobs:
     runs-on: macos-latest # runner Apple Silicon (arm64) de GitHub
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: npm # cachea ~/.npm según package-lock.json
 
       - name: Configurar Rust (targets Intel + Apple Silicon)
