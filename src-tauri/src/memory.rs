@@ -1,6 +1,5 @@
 use crate::system::AppState;
 use serde::Serialize;
-#[cfg(target_os = "macos")]
 
 #[derive(Serialize)]
 pub struct MemoryStats {

@@ -10,7 +10,6 @@
 use crate::platform;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
-#[cfg(target_os = "macos")]
 use std::time::{SystemTime, UNIX_EPOCH};
 use sysinfo::Disks;
 

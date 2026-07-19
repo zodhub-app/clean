@@ -17,7 +17,6 @@ use serde::Serialize;
 #[cfg(target_os = "macos")]
 use std::path::Path;
 #[cfg(target_os = "macos")]
-#[cfg(target_os = "macos")]
 use sysinfo::Disks;
 
 #[derive(Serialize)]
