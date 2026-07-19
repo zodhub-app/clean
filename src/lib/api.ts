@@ -269,7 +269,7 @@ export function findDuplicates(path: string): Promise<DupGroup[]> {
   return invoke<DupGroup[]>("find_duplicates", { path });
 }
 
-/** Icono de ZodHub Clean en la barra de menús de macOS. */
+/** Icono de ZodHub CleanPC en la barra de menús de macOS. */
 export function getTrayVisible(): Promise<boolean> {
   return invoke<boolean>("get_tray_visible");
 }

@@ -1,4 +1,4 @@
-# MacUp — Checklist de verificación
+# ZodHub CleanPC — Checklist de verificación
 
 Lista viva de comprobaciones antes de dar por buena una tarea y, sobre todo,
 **antes de un build/empaquetado**. Si algo cambia en la app, se actualiza aquí.
@@ -39,10 +39,10 @@ Marcar lo verificado en cada repaso.
 
 ## 3. Integraciones macOS (requieren build/empaquetado)
 
-- [ ] **Icono en la barra de menús**: aparece arriba; el menú *Abrir MacUp /
+- [ ] **Icono en la barra de menús**: aparece arriba; el menú *Abrir ZodHub CleanPC /
       Salir* funciona; el interruptor de Ajustes lo activa/desactiva; con el icono
       activo, cerrar la ventana la **oculta** (la app sigue en la barra), no cierra.
-- [ ] **«Comprimir con MacUp» (clic derecho)**: la Acción Rápida aparece en
+- [ ] **«Comprimir con ZodHub CleanPC» (clic derecho)**: la Acción Rápida aparece en
       *Acciones rápidas* y produce un zip limpio. (Versión nativa integrada =
       pendiente de empaquetar el `.app` con el Servicio del sistema.)
 
@@ -86,16 +86,19 @@ Marcar lo verificado en cada repaso.
       pública está en `tauri.conf.json` (`plugins.updater.pubkey`); la privada,
       como secret `TAURI_SIGNING_PRIVATE_KEY` en GitHub (+ `_PASSWORD` si tiene).
 - [ ] **Endpoint correcto**: `plugins.updater.endpoints` apunta a
-      `https://github.com/<usuario>/zodhub-clean/releases/latest/download/latest.json`
-      (usuario/repo reales).
+      `https://github.com/zodhub-app/clean/releases/latest/download/latest.json`
+      (el repo NO se renombra aunque el producto sea «CleanPC»: esa URL va grabada
+      en las versiones ya publicadas).
 - [ ] **`createUpdaterArtifacts: true`**: OJO, `npm run tauri build` **exige** la
       clave privada en el entorno (`export TAURI_SIGNING_PRIVATE_KEY=…`). `tauri
       dev` no la necesita. En CI la aporta el secret.
 - [ ] **Release publicada**: el updater solo ve la última release **publicada**
       (no borrador ni prerelease). Publicar el borrador que crea el workflow.
-- [ ] **Aviso en la UI**: al arrancar con una versión nueva disponible aparece el
-      toast «Actualización disponible»; «Actualizar» descarga, instala y reinicia;
-      sin versión nueva / sin red / en `dev`, no molesta (honestidad).
+- [ ] **Campana de la barra**: entre el botón de tema y el de idioma. Con versión
+      nueva muestra **LED rojo con el número**; al pulsar, panel con «Actualizar
+      ahora» + barra de progreso, y reinicia al terminar. Sin novedad dice «Estás
+      al día»; sin red o en `dev`, «No se pudo comprobar» (nunca finge estar al día).
+      Re-comprueba cada 6 h y tiene botón de comprobación manual.
 - [ ] **Subir la versión** en `tauri.conf.json` y `Cargo.toml`/`package.json`
       antes de taggear; el tag `vX.Y.Z` debe coincidir.
 

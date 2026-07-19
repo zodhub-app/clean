@@ -1,6 +1,6 @@
-# MacUp — Módulo de Mantenimiento y Limpieza (roadmap)
+# ZodHub CleanPC — Módulo de Mantenimiento y Limpieza (roadmap)
 
-Objetivo: que MacUp **detecte, muestre y libere** de forma segura lo que llena el
+Objetivo: que ZodHub CleanPC **detecte, muestre y libere** de forma segura lo que llena el
 disco (instantáneas, cachés de dev, modelos de IA, basura del sistema) y pueda
 hacerlo **programado**, sin volver a llenarse sin darse cuenta.
 
@@ -21,7 +21,7 @@ el frontend solo UI. Y nada se borra sin previsualización + confirmación.
 
 ---
 
-## Lo que MacUp YA tiene (reutilizable)
+## Lo que ZodHub CleanPC YA tiene (reutilizable)
 
 - **Caché de usuario** (`cache.rs`): escaneo + borrado de `~/Library/Caches`.
 - **Memoria** (`memory.rs`): purga de RAM.

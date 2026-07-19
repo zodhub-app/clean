@@ -1,6 +1,6 @@
-# Instrucciones del proyecto MacUp
+# Instrucciones del proyecto ZodHub CleanPC
 
-MacUp es una utilidad de mantenimiento para Mac: sencilla, transparente y
+ZodHub CleanPC es una utilidad de mantenimiento para Mac: sencilla, transparente y
 local-first. Hace lo esencial (limpiar cachés, liberar espacio, ordenar
 `.DS_Store`, automatizar tareas) sin la monstruosidad ni el humo de los
 limpiadores comerciales. Lema: «Tu Mac, sencillamente seguro».
@@ -70,4 +70,4 @@ añadir dependencias nuevas (JS o crates), avisar de que hay que reinstalar.
 
 v1 completo: Resumen (telemetría en vivo + radar de red + monitor estilo Monitor
 de Actividad), Caché, Memoria, .DS_Store y Tareas (launchd). Pendiente: servicio
-de Finder «Comprimir con MacUp» (requiere empaquetar el `.app` con NSServices).
+de Finder «Comprimir con ZodHub CleanPC» (requiere empaquetar el `.app` con NSServices).

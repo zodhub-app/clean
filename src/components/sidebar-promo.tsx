@@ -24,7 +24,7 @@ export function SidebarPromo() {
 
           <div className="mt-1.5 flex flex-1 flex-col justify-center gap-1">
             <span className="text-[13px] font-semibold leading-tight">
-              {t("Bienvenido a ZodHub Clean")}
+              {t("Bienvenido a ZodHub CleanPC")}
             </span>
             <span className="text-[10px] leading-snug text-muted-foreground">
               {t(

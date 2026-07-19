@@ -1,4 +1,4 @@
-# Capturas de ZodHub Clean
+# Capturas de ZodHub CleanPC
 
 Imágenes usadas en el README y el perfil de la organización. Nombres esperados:
 

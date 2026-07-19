@@ -62,7 +62,7 @@ export function DashboardPage() {
   // identificar el de la CPU en este Mac.
   useEffect(() => {
     getSensors()
-      .then((s) => console.log("[ZodHub Clean] Sensores de temperatura:", s))
+      .then((s) => console.log("[ZodHub CleanPC] Sensores de temperatura:", s))
       .catch(() => {});
   }, []);
 

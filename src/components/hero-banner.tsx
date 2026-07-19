@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/language-provider";
 
-/** Lema + acceso a la ventana "Sobre ZodHub Clean". */
+/** Lema + acceso a la ventana "Sobre ZodHub CleanPC". */
 export function HeroBanner() {
   const [open, setOpen] = useState(false);
   const { t } = useLang();
@@ -36,8 +36,8 @@ export function HeroBanner() {
           variant="ghost"
           size="icon-sm"
           className="shrink-0 rounded-full bg-white/[0.05] hover:bg-white/10"
-          title={t("Sobre ZodHub Clean")}
-          aria-label={t("Sobre ZodHub Clean")}
+          title={t("Sobre ZodHub CleanPC")}
+          aria-label={t("Sobre ZodHub CleanPC")}
           onClick={() => setOpen(true)}
         >
           <Info />
@@ -98,7 +98,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
           </span>
           <div>
             <h3 className="gradient-text text-lg font-semibold leading-tight">
-              ZodHub Clean
+              ZodHub CleanPC
             </h3>
             <p className="text-xs text-muted-foreground">
               {t("Tu equipo, sencillamente limpio y seguro.")}
@@ -108,7 +108,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
 
         <p className="mt-4 text-sm text-muted-foreground">
           {t(
-            "ZodHub Clean es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.",
+            "ZodHub CleanPC es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.",
           )}
         </p>
 
@@ -136,7 +136,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
           </Feature>
           <Feature
             icon={<HeartHandshake className="size-4" />}
-            title={t("¿Por qué ZodHub Clean?")}
+            title={t("¿Por qué ZodHub CleanPC?")}
           >
             {t(
               "Ligera, clara y respetuosa con tus datos, frente a los limpiadores pesados llenos de avisos y suscripciones. Hace lo justo, y lo hace bien.",
@@ -146,7 +146,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
 
         <p className="mt-5 border-t pt-3 text-[11px] text-muted-foreground">
           {t(
-            "Nota honesta: ZodHub Clean no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0",
+            "Nota honesta: ZodHub CleanPC no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0",
           )}
         </p>
       </div>

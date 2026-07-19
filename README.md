@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="src-tauri/icons/128x128@2x.png" width="96" alt="ZodHub Clean" />
+<img src="src-tauri/icons/128x128@2x.png" width="96" alt="ZodHub CleanPC" />
 
-# ZodHub Clean
+# ZodHub CleanPC
 
 **Tu Mac, sencillamente limpio y seguro.**
 
@@ -22,7 +22,7 @@ mantenimiento— sin la monstruosidad ni el humo de los limpiadores comerciales.
 ---
 
 <div align="center">
-  <img src="docs/screenshot-resumen.png" alt="ZodHub Clean — pantalla de Resumen" width="860" />
+  <img src="docs/screenshot-resumen.png" alt="ZodHub CleanPC — pantalla de Resumen" width="860" />
   <br><em>Resumen: telemetría en vivo, radar de red y monitor de procesos.</em>
 </div>
 
@@ -76,7 +76,7 @@ en **Apple Silicon** (M1/M2/M3/M4).
 
 ## Actualizaciones automáticas
 
-ZodHub Clean lleva un actualizador integrado (Tauri): al arrancar comprueba si hay una versión
+ZodHub CleanPC lleva un actualizador integrado (Tauri): al arrancar comprueba si hay una versión
 nueva y, si la hay, la descarga, **verifica su firma** e instala con un clic. Nada de reinstalar a mano.
 
 ## Para desarrolladores

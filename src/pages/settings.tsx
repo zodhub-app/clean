@@ -147,7 +147,7 @@ function TrayToggle() {
     <span
       className="flex items-center gap-1.5"
       title={t(
-        "Barra de menús: muestra el icono de ZodHub Clean en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub Clean en la barra.",
+        "Barra de menús: muestra el icono de ZodHub CleanPC en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub CleanPC en la barra.",
       )}
     >
       <PanelTop className="size-3.5 text-muted-foreground" />
@@ -398,7 +398,7 @@ export function SettingsPage() {
       </div>
 
       <p className="px-1 text-[11px] text-muted-foreground">
-        {t("ZodHub Clean 0.1.0 · mantenimiento sencillo y honesto.")}
+        {t("ZodHub CleanPC 0.1.0 · mantenimiento sencillo y honesto.")}
       </p>
     </div>
   );

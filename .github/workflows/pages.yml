@@ -1,4 +1,4 @@
-# Publica la web de ZodHub Clean (carpeta landing/) en GitHub Pages.
+# Publica la web de ZodHub CleanPC (carpeta landing/) en GitHub Pages.
 # Resultado: https://zodhub-app.github.io/clean/
 #
 # Requiere activarlo una vez: repo → Settings → Pages → Source: "GitHub Actions".

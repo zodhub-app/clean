@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# MacUp bootstrap — run once on your Mac after pulling new frontend code.
-# Installs npm deps and pulls the shadcn/ui components MacUp uses.
+# ZodHub CleanPC bootstrap — run once on your Mac after pulling new frontend code.
+# Installs npm deps and pulls the shadcn/ui components ZodHub CleanPC uses.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

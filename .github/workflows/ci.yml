@@ -1,4 +1,4 @@
-# CI de verificación — ZodHub Clean
+# CI de verificación — ZodHub CleanPC
 #
 # En cada push/PR a main comprueba que TODO sigue compilando, sin generar
 # artefactos ni Release (rápido y barato). Así detectas roturas antes de taggear.

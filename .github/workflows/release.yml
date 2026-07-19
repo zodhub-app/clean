@@ -1,4 +1,4 @@
-# CI/CD — ZodHub Clean (build universal de macOS)
+# CI/CD — ZodHub CleanPC (build universal de macOS)
 #
 # Qué hace: en cada tag `v*` (y a mano vía "Run workflow") compila el .app/.dmg
 # UNIVERSAL (Intel x86_64 + Apple Silicon aarch64) y publica una Release de
@@ -68,7 +68,7 @@ jobs:
         with:
           # tagName/releaseName usan el tag que disparó el workflow.
           tagName: ${{ github.ref_name }}
-          releaseName: "ZodHub Clean ${{ github.ref_name }}"
+          releaseName: "ZodHub CleanPC ${{ github.ref_name }}"
           releaseBody: "Build universal de macOS (Intel + Apple Silicon). Sin firmar todavía: la primera vez, botón derecho sobre la app > Abrir."
           releaseDraft: true # se crea como borrador para que revises antes de publicar
           prerelease: false

@@ -28,7 +28,7 @@ const EN: Record<string, string> = {
   "Limpiar todo mi equipo": "Clean my whole device",
   "sin sensores en este equipo": "no sensors on this device",
   Novedades: "What's new",
-  "Bienvenido a ZodHub Clean": "Welcome to ZodHub Clean",
+  "Bienvenido a ZodHub CleanPC": "Welcome to ZodHub CleanPC",
   "Este espacio mostrará novedades y avisos nuestros, en tu idioma.":
     "This space will show our news and announcements, in your language.",
   "Saber más": "Learn more",
@@ -67,11 +67,11 @@ const EN: Record<string, string> = {
   "Limpiar todo mi Mac": "Clean my whole Mac",
   "Mantenimiento claro y en local — tus datos nunca salen de tu equipo.":
     "Clear, local maintenance — your data never leaves your computer.",
-  "Sobre ZodHub Clean": "About ZodHub Clean",
+  "Sobre ZodHub CleanPC": "About ZodHub CleanPC",
   Cerrar: "Close",
   "Tu Mac, sencillamente seguro.": "Your Mac, simply safe.",
-  "ZodHub Clean es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.":
-    "ZodHub Clean is a no-nonsense Mac maintenance utility: it clears caches, frees space, tidies .DS_Store files and automates maintenance. The essentials, done well.",
+  "ZodHub CleanPC es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.":
+    "ZodHub CleanPC is a no-nonsense Mac maintenance utility: it clears caches, frees space, tidies .DS_Store files and automates maintenance. The essentials, done well.",
   "Sencillo de verdad": "Truly simple",
   "Solo las operaciones que tu Mac necesita para ir fino. Sin menús interminables ni funciones de relleno.":
     "Only the operations your Mac needs to run smoothly. No endless menus or filler features.",
@@ -81,11 +81,11 @@ const EN: Record<string, string> = {
   Transparente: "Transparent",
   "Te enseña qué va a hacer y con qué datos antes de tocar nada. Sin cajas negras: lo que ves es lo que pasa.":
     "It shows what it will do and with what data before touching anything. No black boxes: what you see is what happens.",
-  "¿Por qué ZodHub Clean?": "Why ZodHub Clean?",
+  "¿Por qué ZodHub CleanPC?": "Why ZodHub CleanPC?",
   "Ligera, clara y respetuosa con tus datos, frente a los limpiadores pesados llenos de avisos y suscripciones. Hace lo justo, y lo hace bien.":
     "Lightweight, clear and respectful of your data, unlike the heavy cleaners full of warnings and subscriptions. It does just enough, and does it well.",
-  "Nota honesta: ZodHub Clean no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0":
-    "Honest note: ZodHub Clean is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door. · Version 0.1.0",
+  "Nota honesta: ZodHub CleanPC no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0":
+    "Honest note: ZodHub CleanPC is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door. · Version 0.1.0",
 
   // ── Dashboard ────────────────────────────────────────────────────────
   "Temperatura estable": "Stable temperature",
@@ -262,8 +262,8 @@ const EN: Record<string, string> = {
     "or click to choose a folder · zip without .DS_Store, __MACOSX or resource forks",
   "Elegir carpeta": "Choose folder",
   "Elegir archivos": "Choose files",
-  "Próximamente: «Comprimir con ZodHub Clean» en el clic derecho de Finder (al empaquetar la app).":
-    "Coming soon: “Compress with ZodHub Clean” in Finder's right-click menu (once the app is packaged).",
+  "Próximamente: «Comprimir con ZodHub CleanPC» en el clic derecho de Finder (al empaquetar la app).":
+    "Coming soon: “Compress with ZodHub CleanPC” in Finder's right-click menu (once the app is packaged).",
   "Barrido de .DS_Store": ".DS_Store sweep",
   "Elimina los archivos .DS_Store existentes en las carpetas que elijas (Finder los regenera al abrirlas).":
     "Removes existing .DS_Store files in the folders you choose (Finder recreates them when reopened).",
@@ -293,8 +293,8 @@ const EN: Record<string, string> = {
   "Papelera vaciada": "Trash emptied",
   "Cachés limpiadas": "Caches cleaned",
   ".DS_Store eliminados": ".DS_Store removed",
-  "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub Clean esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.":
-    "Scheduled tasks run on their own at 03:00 via launchd, even when ZodHub Clean is closed. Memory purge isn't schedulable because it requires admin permission.",
+  "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub CleanPC esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.":
+    "Scheduled tasks run on their own at 03:00 via launchd, even when ZodHub CleanPC is closed. Memory purge isn't schedulable because it requires admin permission.",
   "Ejecutar ahora": "Run now",
   "Programación desactivada": "Schedule disabled",
   "Programada: {cadence}": "Scheduled: {cadence}",
@@ -337,15 +337,15 @@ const EN: Record<string, string> = {
   Fuerte: "Strong",
   "Muy fuerte": "Very strong",
   "Tema de color": "Color theme",
-  "ZodHub Clean 0.1.0 · mantenimiento sencillo y honesto.":
-    "ZodHub Clean 0.1.0 · simple, honest maintenance.",
+  "ZodHub CleanPC 0.1.0 · mantenimiento sencillo y honesto.":
+    "ZodHub CleanPC 0.1.0 · simple, honest maintenance.",
   "Barra de menús": "Menu bar",
-  "Icono de acceso rápido de ZodHub Clean en la barra superior de macOS.":
-    "ZodHub Clean quick-access icon in the macOS menu bar.",
-  "Con el icono activo, cerrar la ventana deja ZodHub Clean en la barra de menús.":
-    "With the icon on, closing the window keeps ZodHub Clean in the menu bar.",
-  "Barra de menús: muestra el icono de ZodHub Clean en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub Clean en la barra.":
-    "Menu bar: shows the ZodHub Clean icon in the macOS menu bar for quick access. With it on, closing the window keeps ZodHub Clean in the menu bar.",
+  "Icono de acceso rápido de ZodHub CleanPC en la barra superior de macOS.":
+    "ZodHub CleanPC quick-access icon in the macOS menu bar.",
+  "Con el icono activo, cerrar la ventana deja ZodHub CleanPC en la barra de menús.":
+    "With the icon on, closing the window keeps ZodHub CleanPC in the menu bar.",
+  "Barra de menús: muestra el icono de ZodHub CleanPC en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub CleanPC en la barra.":
+    "Menu bar: shows the ZodHub CleanPC icon in the macOS menu bar for quick access. With it on, closing the window keeps ZodHub CleanPC in the menu bar.",
 
   // ── Almacenamiento (Fase 0) ──────────────────────────────────────────
   Almacenamiento: "Storage",

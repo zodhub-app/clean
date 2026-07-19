@@ -24,7 +24,7 @@ fn home_dir() -> Option<PathBuf> {
     std::env::var_os("HOME").map(PathBuf::from)
 }
 
-/// Cache roots MacUp is allowed to touch. Anything outside these is rejected.
+/// Cache roots ZodHub CleanPC is allowed to touch. Anything outside these is rejected.
 fn allowed_roots() -> Vec<PathBuf> {
     let mut v = vec![PathBuf::from("/Library/Caches")];
     if let Some(h) = home_dir() {

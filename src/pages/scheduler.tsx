@@ -136,7 +136,7 @@ export function SchedulerPage() {
         <CalendarClock className="mt-0.5 size-3.5 shrink-0 text-sky-500" />
         <p>
           {tr(
-            "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub Clean esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.",
+            "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub CleanPC esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.",
           )}
         </p>
       </div>
