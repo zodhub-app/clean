@@ -67,6 +67,10 @@ no porque el programa haga nada raro. Puedes leer el código entero en este repo
 antes de fiarte, que es la única garantía que vale de verdad. A partir de ahí, la app
 **se actualiza sola** en ambos sistemas.
 
+📖 **[Guía de instalación completa](docs/INSTALACION.md)** — paso a paso para Mac y Windows,
+instalación silenciosa para administradores, cómo verificar la descarga, cómo desinstalar y
+solución de problemas frecuentes.
+
 ## Qué hace
 
 - **Resumen** — telemetría en vivo (CPU, memoria, disco, temperatura), radar de red y un
