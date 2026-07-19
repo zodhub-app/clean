@@ -237,3 +237,28 @@ pantallas que redactan por su cuenta acaban contando cosas distintas.
 - [ ] **Local-first**: cero telemetría; los datos no salen del equipo.
 - [ ] **Borrado responsable**: permanente y confirmado; rutas validadas; nunca
       tocar rutas del sistema/SIP; admin solo cuando hace falta.
+
+## 8. PUBLICAR UNA RELEASE
+
+Reglas nacidas de la v0.2.2, cuya actualización automática era imposible pese a
+que todo «parecía» correcto: archivos presentes, tamaños normales, CI en verde.
+
+- **R1. Un tag = un build.** Nunca reutilizar ni mover un tag que ya haya
+  lanzado el workflow. Si hay que rehacerlo: borrar la release Y el tag, y
+  empezar de cero. Si no, los artefactos de la ejecución vieja se quedan
+  mezclados con los de la nueva.
+- **R2. La firma que importa es la de `latest.json`**, no el archivo `.sig`. Es
+  la que verifica el actualizador. El job `verificar-firmas` lo comprueba solo;
+  no publicar si falla.
+- **R3. «Los archivos están subidos» NO es verificar.** Una release solo está
+  bien cuando una app instalada de la versión anterior se ha actualizado sola,
+  ha reiniciado y muestra la versión nueva. Hasta entonces, no se anuncia como
+  funcionando.
+- **R4. Ningún mensaje de error genérico.** Si la app sabe qué ha fallado, lo
+  enseña. «No se pudo comprobar» cuando lo que falló fue instalar costó horas
+  de diagnóstico a ciegas.
+- **R5. Cuidado con las dependencias compartidas.** Cargo unifica las features
+  de una crate en todo el grafo: un `default-features = false` puede apagarle
+  algo a otro que dependa de ella (pasó con `reqwest` y el cliente HTTP del
+  actualizador). Al añadir una crate que ya usa un plugin, comprobar el
+  `Cargo.lock`.

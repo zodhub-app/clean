@@ -1,6 +1,6 @@
 [package]
 name = "macup"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -36,14 +36,22 @@ walkdir = "2"
 trash = "5"
 # SHA-256 en proceso, en vez de depender del binario `shasum` de macOS.
 sha2 = "0.10"
-# Cliente HTTP para la suscripción voluntaria a novedades (única salida de datos
-# de la app). Ya venía en el árbol vía el plugin del updater; rustls evita
-# depender de OpenSSL en los tres sistemas.
-# En reqwest 0.13 la feature se llama "rustls" (antes "rustls-tls").
-reqwest = { version = "0.13", default-features = false, features = [
-  "json",
-  "rustls",
-] }
+# NO añadir `reqwest` aquí sin leer esto.
+#
+# Estuvo declarado en la v0.2.0 y la v0.2.2 para la suscripción a novedades, con
+# `default-features = false`. Cargo UNIFICA las features de una misma crate en
+# todo el grafo: como ninguna otra dependencia pedía las de por defecto, se
+# apagaron para TODOS los que usan reqwest — incluido el cliente HTTP de
+# `tauri-plugin-updater`, que es quien descarga `latest.json`. Se quedó sin la
+# pila TLS de por defecto (`native-tls` y `hyper-tls` desaparecieron del
+# Cargo.lock), y las actualizaciones automáticas dejaron de funcionar.
+#
+# Encima no hacía falta: `subscribe.rs` tiene el ENDPOINT vacío, así que la
+# dependencia no daba ninguna función y sí rompía otra.
+#
+# Cuando haya endpoint de suscripción: usar `tauri-plugin-http` (comparte el
+# cliente de Tauri) o declarar reqwest con su TLS completo y explícito, y
+# DESPUÉS probar una actualización real de principio a fin antes de publicar.
 
 # Actualizaciones automáticas (escritorio: macOS/Windows/Linux, no móvil).
 # Se usa cfg(not(android/ios)) —que Cargo SÍ entiende al resolver dependencias—

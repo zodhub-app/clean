@@ -136,3 +136,71 @@ jobs:
           # alternativa para quien despliegue por directiva de grupo.
           updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PORTERO. No se publica nada sin pasar por aquí.
+  #
+  # Por qué existe: en la v0.2.2 se publicó una release cuyo `latest.json`
+  # llevaba la firma de un build ANTERIOR, mientras los binarios eran del build
+  # nuevo. Todo parecía correcto —archivos presentes, tamaños normales, CI en
+  # verde— y sin embargo la actualización automática era imposible: la app
+  # descargaba, comprobaba la firma, no cuadraba y abortaba. Se detectó desde
+  # fuera, a mano, después de publicar.
+  #
+  # Qué comprueba: que la firma incrustada en `latest.json` (la que el
+  # actualizador verifica de verdad) sea EXACTAMENTE la del `.sig` del archivo
+  # al que apunta. Si no coinciden, el job falla y la release se queda en
+  # borrador, sin publicar.
+  verificar-firmas:
+    name: Verificar firmas antes de publicar
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Descargar los artefactos de la release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download "${{ github.ref_name }}" -R "$GITHUB_REPOSITORY" -p '*' -D art
+
+      - name: La firma del latest.json debe ser la del archivo publicado
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+
+          data = json.load(open("art/latest.json"))
+          print(f"latest.json declara la version {data['version']}\n")
+
+          fallos = []
+          for plataforma, info in data["platforms"].items():
+              archivo = os.path.basename(info["url"])
+              sig = os.path.join("art", archivo + ".sig")
+
+              if not os.path.exists(os.path.join("art", archivo)):
+                  fallos.append(f"{plataforma}: apunta a {archivo}, que NO esta en la release")
+                  continue
+              if not os.path.exists(sig):
+                  fallos.append(f"{plataforma}: falta {archivo}.sig")
+                  continue
+
+              esperada = open(sig).read().strip()
+              declarada = info["signature"].strip()
+              if esperada == declarada:
+                  print(f"  OK    {plataforma:24} {archivo}")
+              else:
+                  print(f"  FALLA {plataforma:24} {archivo}")
+                  fallos.append(
+                      f"{plataforma}: la firma de latest.json no es la de {archivo}.sig "
+                      "(mezcla de dos compilaciones)"
+                  )
+
+          if fallos:
+              print("\nNO SE PUEDE PUBLICAR:")
+              for f in fallos:
+                  print("  - " + f)
+              print("\nBorra la release y el tag y vuelve a lanzarlo desde cero:")
+              print("  gh release delete <tag> --yes && git push --delete origin <tag>")
+              sys.exit(1)
+
+          print("\nTodas las firmas corresponden a sus archivos.")
+          PY

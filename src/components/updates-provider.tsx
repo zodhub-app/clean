@@ -43,6 +43,12 @@ type UpdatesCtx = {
   progress: number;
   lastChecked: Date | null;
   error: string | null;
+  /**
+   * QUÉ falló, no solo QUE falló. Sin esto la interfaz decía «No se pudo
+   * comprobar» aunque lo que hubiera fallado fuese la instalación, que es
+   * justo la información que hace falta para arreglarlo.
+   */
+  errorKind: "check" | "install" | null;
   /** Número para el LED de la campana (0 o 1 por ahora). */
   count: number;
   checkNow: () => Promise<void>;
@@ -50,6 +56,17 @@ type UpdatesCtx = {
 };
 
 const Context = createContext<UpdatesCtx | null>(null);
+
+/**
+ * Deja el error en algo que una persona pueda leer y repetirnos, sin perder el
+ * dato técnico. `String(e)` suele venir como "Error: ..." y a veces con la
+ * traza entera; nos quedamos con la primera línea sin el prefijo.
+ */
+function cleanError(e: unknown): string {
+  const raw = e instanceof Error ? e.message : String(e);
+  const first = raw.split("\n")[0].replace(/^Error:\s*/i, "").trim();
+  return first || raw.trim() || "desconocido";
+}
 
 /** Cada cuánto se vuelve a comprobar mientras la app está abierta. */
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 horas
@@ -61,6 +78,7 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorKind, setErrorKind] = useState<"check" | "install" | null>(null);
 
   // Evita comprobaciones solapadas.
   const busy = useRef(false);
@@ -82,9 +100,11 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
         setStatus("uptodate");
       }
       setError(null);
+      setErrorKind(null);
     } catch (e) {
       // Sin updater (dev/web), sin red o endpoint caído: no fingimos «al día».
-      setError(String(e));
+      setError(cleanError(e));
+      setErrorKind("check");
       setStatus((s) =>
         s === "downloading" || s === "installing" ? s : "error",
       );
@@ -118,7 +138,8 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
       // Reinicia con la versión nueva ya instalada.
       await relaunch();
     } catch (e) {
-      setError(String(e));
+      setError(cleanError(e));
+      setErrorKind("install");
       setStatus("error");
     }
   }, [update]);
@@ -146,6 +167,7 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
     progress,
     lastChecked,
     error,
+    errorKind,
     count: status === "available" ? 1 : 0,
     checkNow,
     install,

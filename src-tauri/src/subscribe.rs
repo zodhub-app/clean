@@ -49,23 +49,17 @@ pub async fn subscribe(name: String, email: String) -> Result<(), String> {
         return Err("Introduce un correo electrónico válido".into());
     }
 
-    let body = Payload {
+    let _body = Payload {
         name: &name,
         email: &email,
         source: "app",
         version: env!("CARGO_PKG_VERSION"),
     };
 
-    let res = reqwest::Client::new()
-        .post(ENDPOINT)
-        .json(&body)
-        .send()
-        .await
-        .map_err(|e| format!("No se pudo conectar: {e}"))?;
-
-    if res.status().is_success() {
-        Ok(())
-    } else {
-        Err(format!("El servidor respondió {}", res.status()))
-    }
+    // El envío está sin implementar A PROPÓSITO. Se hacía con `reqwest`, y esa
+    // dependencia apagaba el TLS del actualizador (ver Cargo.toml). Como no hay
+    // ENDPOINT configurado, esta rama es inalcanzable hoy: el guard de arriba
+    // corta antes. Al configurar el endpoint hay que reimplementar el POST con
+    // `tauri-plugin-http` y volver a probar la actualización automática.
+    Err("La suscripción todavía no está configurada".into())
 }

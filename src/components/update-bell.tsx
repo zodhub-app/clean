@@ -150,19 +150,29 @@ export function UpdateBell() {
       );
     }
 
-    // No se pudo comprobar.
+    // Falló algo. Se distingue QUÉ falló y se enseña el motivo real: decir solo
+    // «no se pudo comprobar» cuando lo que falló fue la instalación manda a
+    // quien lo lea a buscar el problema donde no está.
     if (u.status === "error") {
+      const instalando = u.errorKind === "install";
       return (
         <div className="space-y-2.5">
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <TriangleAlert className="size-4 text-amber-500" />
-            {t("No se pudo comprobar")}
+            <TriangleAlert className="size-4 shrink-0 text-amber-500" />
+            {instalando
+              ? t("No se pudo instalar la actualización")
+              : t("No se pudo comprobar")}
           </p>
+          {u.error && (
+            <p className="max-h-24 overflow-y-auto rounded-md bg-muted/60 px-2.5 py-1.5 font-mono text-[11px] leading-relaxed break-words text-muted-foreground">
+              {u.error}
+            </p>
+          )}
           <Button
             variant="secondary"
             size="sm"
             className="w-full"
-            onClick={() => void u.checkNow()}
+            onClick={() => void (instalando ? u.install() : u.checkNow())}
           >
             {t("Reintentar")}
           </Button>

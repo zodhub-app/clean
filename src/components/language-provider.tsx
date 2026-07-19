@@ -54,6 +54,7 @@ const EN: Record<string, string> = {
   "Buscar actualizaciones": "Check for updates",
   "Comprobando actualizaciones…": "Checking for updates…",
   "No se pudo comprobar": "Couldn't check for updates",
+  "No se pudo instalar la actualización": "Couldn't install the update",
   Reintentar: "Retry",
   "Estás al día": "You're up to date",
   "Versión {v}": "Version {v}",
