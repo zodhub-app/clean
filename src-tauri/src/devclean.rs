@@ -4,8 +4,9 @@
 // instante); Docker usa prune (sin volúmenes → datos a salvo); la Papelera se
 // vacía. Rutas fijas y conocidas bajo el usuario → seguro.
 
+use crate::platform;
 use serde::Serialize;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::Duration;
 use sysinfo::Disks;
@@ -13,10 +14,18 @@ use sysinfo::Disks;
 /// Espacio libre real del disco principal (para medir lo liberado de verdad).
 fn free_bytes() -> u64 {
     let disks = Disks::new_with_refreshed_list();
+    #[cfg(target_os = "windows")]
+    let root = {
+        let d = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
+        PathBuf::from(format!("{d}\\"))
+    };
+    #[cfg(not(target_os = "windows"))]
+    let root = PathBuf::from("/");
+
     disks
         .list()
         .iter()
-        .find(|d| d.mount_point() == Path::new("/"))
+        .find(|d| d.mount_point() == root.as_path())
         .or_else(|| disks.list().iter().max_by_key(|d| d.total_space()))
         .map(|d| d.available_space())
         .unwrap_or(0)
@@ -37,27 +46,19 @@ pub struct CleanResult {
 }
 
 fn home() -> String {
-    std::env::var("HOME").unwrap_or_default()
+    platform::home_dir().to_string_lossy().to_string()
 }
 
+/// Tamaño real de una ruta. Multiplataforma (antes `du -sk`, solo Unix).
 fn du_bytes(path: &str) -> u64 {
-    Command::new("du")
-        .arg("-sk")
-        .arg(path)
-        .output()
-        .ok()
-        .and_then(|o| {
-            String::from_utf8_lossy(&o.stdout)
-                .split_whitespace()
-                .next()
-                .and_then(|n| n.parse::<u64>().ok())
-        })
-        .map(|kb| kb * 1024)
-        .unwrap_or(0)
+    platform::dir_size(Path::new(path))
 }
 
-// Categorías de ficheros (borrado permanente; todas regenerables).
-const FILE_KEYS: [&str; 12] = [
+// Categorías de ficheros (borrado permanente; todas regenerables). Cambian
+// según el sistema: Xcode/simuladores solo existen en macOS; NuGet y Gradle son
+// lo típico en Windows. Las claves comunes se mantienen para no tocar el frontend.
+#[cfg(target_os = "macos")]
+const FILE_KEYS: &[&str] = &[
     "user-caches",
     "browser-caches",
     "logs",
@@ -72,16 +73,65 @@ const FILE_KEYS: [&str; 12] = [
     "lmstudio",
 ];
 
+#[cfg(target_os = "windows")]
+const FILE_KEYS: &[&str] = &[
+    "user-caches",
+    "browser-caches",
+    "npm",
+    "pnpm",
+    "nuget",
+    "gradle",
+    "huggingface",
+    "ollama",
+    "lmstudio",
+];
+
+#[cfg(target_os = "linux")]
+const FILE_KEYS: &[&str] = &[
+    "user-caches",
+    "browser-caches",
+    "npm",
+    "pnpm",
+    "gradle",
+    "huggingface",
+    "ollama",
+    "lmstudio",
+];
+
 /// Cachés de navegadores que NO viven en ~/Library/Caches (perfiles de Chromium
 /// y Firefox). Solo carpetas de caché puras (no cookies/sesiones).
 fn browser_cache_paths(h: &str) -> Vec<String> {
     let mut out = Vec::new();
+
+    #[cfg(target_os = "macos")]
     let chromium = [
         format!("{h}/Library/Application Support/Google/Chrome"),
         format!("{h}/Library/Application Support/BraveSoftware/Brave-Browser"),
         format!("{h}/Library/Application Support/Microsoft Edge"),
         format!("{h}/Library/Application Support/Chromium"),
         format!("{h}/Library/Application Support/Vivaldi"),
+    ];
+
+    // En Windows los perfiles de Chromium viven en %LOCALAPPDATA%.
+    #[cfg(target_os = "windows")]
+    let chromium = {
+        let l = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Local"));
+        [
+            format!("{l}\\Google\\Chrome\\User Data"),
+            format!("{l}\\BraveSoftware\\Brave-Browser\\User Data"),
+            format!("{l}\\Microsoft\\Edge\\User Data"),
+            format!("{l}\\Chromium\\User Data"),
+            format!("{l}\\Vivaldi\\User Data"),
+        ]
+    };
+
+    #[cfg(target_os = "linux")]
+    let chromium = [
+        format!("{h}/.config/google-chrome"),
+        format!("{h}/.config/BraveSoftware/Brave-Browser"),
+        format!("{h}/.config/microsoft-edge"),
+        format!("{h}/.config/chromium"),
+        format!("{h}/.config/vivaldi"),
     ];
     let subs = [
         "Cache",
@@ -114,7 +164,16 @@ fn browser_cache_paths(h: &str) -> Vec<String> {
             }
         }
     }
+    #[cfg(target_os = "macos")]
     let ff = format!("{h}/Library/Application Support/Firefox/Profiles");
+    #[cfg(target_os = "windows")]
+    let ff = {
+        let l = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Local"));
+        format!("{l}\\Mozilla\\Firefox\\Profiles")
+    };
+    #[cfg(target_os = "linux")]
+    let ff = format!("{h}/.cache/mozilla/firefox");
+
     if let Ok(rd) = std::fs::read_dir(&ff) {
         for e in rd.flatten() {
             let c = format!("{}/cache2", e.path().to_string_lossy());
@@ -126,24 +185,51 @@ fn browser_cache_paths(h: &str) -> Vec<String> {
     out
 }
 
-/// Mueve un elemento a la Papelera (recuperable). Para las copias de iOS.
+/// Mueve un elemento a la Papelera del sistema (recuperable). Multiplataforma.
 fn trash_path(path: &str) -> Result<(), String> {
-    let script = format!(
-        "tell application \"Finder\" to move POSIX file \"{}\" to trash",
-        path.replace('\\', "\\\\").replace('"', "\\\"")
-    );
-    let out = Command::new("osascript")
-        .arg("-e")
-        .arg(&script)
-        .output()
-        .map_err(|e| e.to_string())?;
-    if out.status.success() {
-        Ok(())
-    } else {
-        Err(String::from_utf8_lossy(&out.stderr).trim().to_string())
+    platform::move_to_trash(Path::new(path))
+}
+
+#[cfg(target_os = "windows")]
+fn candidates(key: &str, h: &str) -> Vec<String> {
+    let local = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Local"));
+    let appdata = std::env::var("APPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Roaming"));
+    match key {
+        "user-caches" => vec![format!("{local}\\Temp")],
+        "browser-caches" => browser_cache_paths(h),
+        "npm" => vec![
+            format!("{h}\\.npm\\_cacache"),
+            format!("{appdata}\\npm-cache\\_cacache"),
+        ],
+        "pnpm" => vec![format!("{local}\\pnpm\\store"), format!("{h}\\.pnpm-store")],
+        "nuget" => vec![format!("{h}\\.nuget\\packages")],
+        "gradle" => vec![format!("{h}\\.gradle\\caches")],
+        "huggingface" => vec![format!("{h}\\.cache\\huggingface")],
+        "ollama" => vec![format!("{h}\\.ollama\\models")],
+        "lmstudio" => vec![format!("{h}\\.cache\\lm-studio"), format!("{h}\\.lmstudio")],
+        // La Papelera de reciclaje de Windows no se vacía por ruta de forma
+        // segura: se omite en vez de hacer algo arriesgado.
+        _ => vec![],
     }
 }
 
+#[cfg(target_os = "linux")]
+fn candidates(key: &str, h: &str) -> Vec<String> {
+    match key {
+        "user-caches" => vec![format!("{h}/.cache")],
+        "browser-caches" => browser_cache_paths(h),
+        "npm" => vec![format!("{h}/.npm/_cacache")],
+        "pnpm" => vec![format!("{h}/.local/share/pnpm/store"), format!("{h}/.pnpm-store")],
+        "gradle" => vec![format!("{h}/.gradle/caches")],
+        "huggingface" => vec![format!("{h}/.cache/huggingface")],
+        "ollama" => vec![format!("{h}/.ollama/models")],
+        "lmstudio" => vec![format!("{h}/.cache/lm-studio"), format!("{h}/.lmstudio")],
+        "trash" => vec![format!("{h}/.local/share/Trash")],
+        _ => vec![],
+    }
+}
+
+#[cfg(target_os = "macos")]
 fn candidates(key: &str, h: &str) -> Vec<String> {
     match key {
         "user-caches" => vec![format!("{h}/Library/Caches")],
@@ -219,7 +305,7 @@ pub async fn list_dev_junk() -> Vec<DevItem> {
     tauri::async_runtime::spawn_blocking(|| {
         let h = home();
         let mut items = Vec::new();
-        for key in FILE_KEYS {
+        for &key in FILE_KEYS {
             let paths = existing(key, &h);
             if paths.is_empty() {
                 continue;
@@ -277,6 +363,15 @@ pub async fn list_dev_junk() -> Vec<DevItem> {
     .unwrap_or_default()
 }
 
+/// Vaciar la Papelera solo está implementado en macOS (vía Finder). En Windows
+/// no hay forma segura de vaciar la Papelera de reciclaje por ruta, y en Linux
+/// depende del escritorio: se informa en vez de arriesgar.
+#[cfg(not(target_os = "macos"))]
+fn empty_trash() -> Result<(), String> {
+    Err("Vaciar la Papelera todavía no está disponible en este sistema".into())
+}
+
+#[cfg(target_os = "macos")]
 fn empty_trash() -> Result<(), String> {
     // Vacía la Papelera vía Finder; ignora el -128 (papelera ya vacía).
     let script = "tell application \"Finder\"\n\
@@ -305,9 +400,18 @@ fn wipe_files(key: &str, h: &str) -> (u64, Vec<String>) {
     let mut errors = Vec::new();
     for p in existing(key, h) {
         let before = du_bytes(&p);
-        let out = Command::new("rm").arg("-rf").arg(&p).output();
-        match out {
-            Ok(_) => freed += before, // rm -rf es best-effort; espacio ~liberado
+        // Borrado con la API del sistema de archivos (sin `rm`, que no existe en
+        // Windows). Best-effort: si algo está bloqueado, se ignora y seguimos.
+        let path = Path::new(&p);
+        let res = if path.is_dir() {
+            std::fs::remove_dir_all(path)
+        } else {
+            std::fs::remove_file(path)
+        };
+        match res {
+            Ok(()) => freed += before,
+            // Que quede algún archivo en uso es normal en cachés: no es un fallo
+            // que deba alarmar, pero lo reportamos con claridad.
             Err(e) => errors.push(format!("{p}: {e}")),
         }
     }

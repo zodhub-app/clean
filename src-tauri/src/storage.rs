@@ -7,8 +7,10 @@
 //   - Nº de instantáneas APFS locales (adelanto de la Fase 2).
 //   - Histórico: guarda una muestra (throttled) para ver el crecimiento.
 
+use crate::platform;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
+#[cfg(target_os = "macos")]
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use sysinfo::Disks;
@@ -47,7 +49,7 @@ pub struct Sample {
 }
 
 fn home() -> String {
-    std::env::var("HOME").unwrap_or_default()
+    platform::home_dir().to_string_lossy().to_string()
 }
 fn now_secs() -> u64 {
     SystemTime::now()
@@ -56,14 +58,23 @@ fn now_secs() -> u64 {
         .unwrap_or(0)
 }
 
-/// Disco principal: escoge el volumen con más capacidad (el SSD interno).
+/// Disco principal: el volumen del sistema ("/" en macOS/Linux, la unidad del
+/// sistema en Windows). Si no se identifica, el de mayor capacidad.
 fn disk_usage() -> (u64, u64, u64) {
     let disks = Disks::new_with_refreshed_list();
-    let root = disks
+    #[cfg(target_os = "windows")]
+    let root = {
+        let d = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
+        PathBuf::from(format!("{d}\\"))
+    };
+    #[cfg(not(target_os = "windows"))]
+    let root = PathBuf::from("/");
+
+    let main = disks
         .list()
         .iter()
-        .find(|d| d.mount_point() == Path::new("/"));
-    let chosen = root.or_else(|| disks.list().iter().max_by_key(|d| d.total_space()));
+        .find(|d| d.mount_point() == root.as_path());
+    let chosen = main.or_else(|| disks.list().iter().max_by_key(|d| d.total_space()));
     match chosen {
         Some(d) => {
             let t = d.total_space();
@@ -74,28 +85,22 @@ fn disk_usage() -> (u64, u64, u64) {
     }
 }
 
-/// Tamaño real en disco con `du -sk` (rápido; ignora lo inaccesible).
-fn du_size(path: &str) -> (u64, bool) {
-    if !Path::new(path).exists() {
+/// Tamaño real de un área. Multiplataforma (antes `du -sk`, solo Unix).
+fn area_size(path: &str) -> (u64, bool) {
+    let p = Path::new(path);
+    if !p.exists() {
         return (0, false);
     }
-    match Command::new("du").arg("-sk").arg(path).output() {
-        Ok(o) => {
-            let s = String::from_utf8_lossy(&o.stdout);
-            let kb = s
-                .split_whitespace()
-                .next()
-                .and_then(|n| n.parse::<u64>().ok())
-                .unwrap_or(0);
-            (kb * 1024, true)
-        }
-        Err(_) => (0, true),
-    }
+    (platform::dir_size(p), true)
 }
 
+/// Áreas que más suelen ocupar, según el sistema. Las claves (`key`) se
+/// mantienen entre sistemas para que el frontend no tenga que cambiar.
 fn areas() -> Vec<AreaInfo> {
     let h = home();
-    let specs: [(&str, String); 8] = [
+
+    #[cfg(target_os = "macos")]
+    let specs: Vec<(&str, String)> = vec![
         ("caches", format!("{h}/Library/Caches")),
         ("xcode", format!("{h}/Library/Developer/Xcode/DerivedData")),
         ("docker", format!("{h}/Library/Containers/com.docker.docker")),
@@ -105,10 +110,43 @@ fn areas() -> Vec<AreaInfo> {
         ("trash", format!("{h}/.Trash")),
         ("applications", "/Applications".to_string()),
     ];
+
+    #[cfg(target_os = "windows")]
+    let specs: Vec<(&str, String)> = {
+        let local =
+            std::env::var("LOCALAPPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Local"));
+        let appdata =
+            std::env::var("APPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Roaming"));
+        vec![
+            ("caches", format!("{local}\\Temp")),
+            ("docker", format!("{local}\\Docker")),
+            ("huggingface", format!("{h}\\.cache\\huggingface")),
+            ("ollama", format!("{h}\\.ollama")),
+            ("downloads", format!("{h}\\Downloads")),
+            ("nuget", format!("{h}\\.nuget\\packages")),
+            ("npm", format!("{appdata}\\npm-cache")),
+            (
+                "applications",
+                std::env::var("ProgramFiles").unwrap_or_else(|_| "C:\\Program Files".into()),
+            ),
+        ]
+    };
+
+    #[cfg(target_os = "linux")]
+    let specs: Vec<(&str, String)> = vec![
+        ("caches", format!("{h}/.cache")),
+        ("docker", format!("{h}/.local/share/docker")),
+        ("huggingface", format!("{h}/.cache/huggingface")),
+        ("ollama", format!("{h}/.ollama")),
+        ("downloads", format!("{h}/Downloads")),
+        ("trash", format!("{h}/.local/share/Trash")),
+        ("applications", "/opt".to_string()),
+    ];
+
     specs
         .iter()
         .map(|(k, p)| {
-            let (size, exists) = du_size(p);
+            let (size, exists) = area_size(p);
             AreaInfo {
                 key: k.to_string(),
                 path: p.clone(),
@@ -119,7 +157,29 @@ fn areas() -> Vec<AreaInfo> {
         .collect()
 }
 
+/// Volúmenes del equipo. En macOS se leen los contenedores APFS (roles System,
+/// Data, VM, Preboot…). Fuera de macOS no existe ese concepto, así que se listan
+/// las unidades/puntos de montaje reales con su espacio consumido.
+#[cfg(target_os = "macos")]
+fn volumes() -> Vec<VolumeInfo> {
+    apfs_volumes()
+}
+
+#[cfg(not(target_os = "macos"))]
+fn volumes() -> Vec<VolumeInfo> {
+    Disks::new_with_refreshed_list()
+        .list()
+        .iter()
+        .map(|d| VolumeInfo {
+            name: d.mount_point().to_string_lossy().to_string(),
+            role: d.file_system().to_string_lossy().to_string(),
+            consumed: d.total_space().saturating_sub(d.available_space()),
+        })
+        .collect()
+}
+
 /// Parsea `diskutil apfs list`: por cada volumen, rol + nombre + consumo.
+#[cfg(target_os = "macos")]
 fn apfs_volumes() -> Vec<VolumeInfo> {
     let out = match Command::new("diskutil").arg("apfs").arg("list").output() {
         Ok(o) => o,
@@ -164,6 +224,15 @@ fn apfs_volumes() -> Vec<VolumeInfo> {
     vols
 }
 
+/// Instantáneas locales. Solo macOS por ahora: en Windows el equivalente son
+/// las Instantáneas de volumen (VSS) y requieren admin — se abordará aparte.
+/// Devolver 0 es honesto: significa «no hay dato», y la UI no inventa nada.
+#[cfg(not(target_os = "macos"))]
+fn snapshot_count() -> u32 {
+    0
+}
+
+#[cfg(target_os = "macos")]
 fn snapshot_count() -> u32 {
     match Command::new("tmutil")
         .arg("listlocalsnapshots")
@@ -178,11 +247,27 @@ fn snapshot_count() -> u32 {
     }
 }
 
+/// Dónde se guarda el histórico de almacenamiento, según el sistema:
+///   macOS   → ~/Library/Application Support/com.viper.macup/
+///   Windows → %APPDATA%\com.viper.macup\
+///   Linux   → ~/.local/share/com.viper.macup/
 fn history_path() -> Option<PathBuf> {
-    let h = std::env::var("HOME").ok()?;
-    Some(PathBuf::from(format!(
-        "{h}/Library/Application Support/com.viper.macup/storage-history.json"
-    )))
+    let h = platform::home_dir();
+    if h.as_os_str().is_empty() {
+        return None;
+    }
+
+    #[cfg(target_os = "macos")]
+    let dir = h.join("Library/Application Support/com.viper.macup");
+    #[cfg(target_os = "windows")]
+    let dir = std::env::var_os("APPDATA")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| h.join("AppData/Roaming"))
+        .join("com.viper.macup");
+    #[cfg(target_os = "linux")]
+    let dir = h.join(".local/share/com.viper.macup");
+
+    Some(dir.join("storage-history.json"))
 }
 fn read_history() -> Vec<Sample> {
     history_path()
@@ -224,7 +309,7 @@ pub async fn storage_stats() -> StorageStats {
             used,
             free,
             snapshots: snapshot_count(),
-            volumes: apfs_volumes(),
+            volumes: volumes(),
             areas: areas(),
         }
     })
