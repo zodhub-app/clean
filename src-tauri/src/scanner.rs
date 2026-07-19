@@ -25,6 +25,11 @@ pub struct ScanResult {
     parent: Option<String>,
     total: u64,
     entries: Vec<ScanEntry>,
+    /// Entradas que no se pudieron leer (permisos, protección de privacidad de
+    /// macOS…). Si no es cero, `total` es un MÍNIMO, no el tamaño real. Antes
+    /// se descartaban en silencio y el usuario veía un total más bajo que el
+    /// del Finder sin ninguna pista de por qué.
+    unreadable: usize,
 }
 
 fn resolve(path: &str) -> PathBuf {
@@ -51,16 +56,21 @@ pub async fn scan_dir(path: String) -> Result<ScanResult, String> {
         }
 
         // Tamaño real de cada hijo (recursivo, sin seguir enlaces).
+        let mut unreadable = 0usize;
         let mut entries: Vec<ScanEntry> = children
             .iter()
-            .map(|c| ScanEntry {
-                name: c
-                    .file_name()
-                    .map(|n| n.to_string_lossy().to_string())
-                    .unwrap_or_default(),
-                size: platform::dir_size(c),
-                is_dir: c.is_dir(),
-                path: c.to_string_lossy().to_string(),
+            .map(|c| {
+                let m = platform::measure(c);
+                unreadable += m.unreadable;
+                ScanEntry {
+                    name: c
+                        .file_name()
+                        .map(|n| n.to_string_lossy().to_string())
+                        .unwrap_or_default(),
+                    size: m.bytes,
+                    is_dir: c.is_dir(),
+                    path: c.to_string_lossy().to_string(),
+                }
             })
             .collect();
         entries.sort_by(|a, b| b.size.cmp(&a.size));
@@ -70,6 +80,7 @@ pub async fn scan_dir(path: String) -> Result<ScanResult, String> {
             parent: dir.parent().map(|p| p.to_string_lossy().to_string()),
             path: dir.to_string_lossy().to_string(),
             entries,
+            unreadable,
         })
     })
     .await
@@ -86,18 +97,24 @@ pub fn reveal_in_finder(path: String) -> Result<(), String> {
 #[derive(Serialize)]
 pub struct TrashResult {
     moved: u32,
-    freed: u64,
+    /// Tamaño de lo movido a la Papelera. **NO es espacio liberado.**
+    ///
+    /// Mover a la Papelera no libera ni un byte: el archivo sigue en el mismo
+    /// disco, en `~/.Trash`. El espacio se recupera al VACIARLA. El campo se
+    /// llamaba `freed` y la interfaz decía «liberado X», que era falso; ahora
+    /// se llama por lo que es y la interfaz dice «movido a la Papelera».
+    moved_bytes: u64,
     errors: Vec<String>,
 }
 
 /// Mueve elementos a la Papelera del sistema (recuperable). Valida cada ruta con
-/// la guarda de seguridad común. Devuelve cuántos se movieron, cuánto se liberó
+/// la guarda de seguridad común. Devuelve cuántos se movieron, cuánto ocupaban
 /// y los errores.
 #[tauri::command]
 pub async fn move_to_trash(paths: Vec<String>) -> Result<TrashResult, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let mut moved = 0u32;
-        let mut freed = 0u64;
+        let mut moved_bytes = 0u64;
         let mut errors = Vec::new();
         for ps in paths {
             let p = PathBuf::from(&ps);
@@ -113,14 +130,14 @@ pub async fn move_to_trash(paths: Vec<String>) -> Result<TrashResult, String> {
             match platform::move_to_trash(&p) {
                 Ok(()) => {
                     moved += 1;
-                    freed += before;
+                    moved_bytes += before;
                 }
                 Err(e) => errors.push(format!("{ps}: {e}")),
             }
         }
         TrashResult {
             moved,
-            freed,
+            moved_bytes,
             errors,
         }
     })

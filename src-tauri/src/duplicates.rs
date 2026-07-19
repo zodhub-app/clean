@@ -103,23 +103,82 @@ pub async fn find_duplicates(path: String) -> Result<Vec<DupGroup>, String> {
         }
 
         // 5. grupos con >=2 → duplicados reales.
+        //
+        // OJO con lo que significa «duplicado». Dos rutas con el mismo
+        // contenido NO siempre ocupan el doble:
+        //
+        //   - **Enlaces duros**: dos nombres para el MISMO archivo. Ocupa una
+        //     vez. Borrar uno libera cero.
+        //   - **Clones APFS** (duplicar en el Finder, `cp -c`): comparten los
+        //     bloques hasta que uno se modifica. Borrar uno libera cero.
+        //
+        // Antes se hacía `wasted = size × (count − 1)` sin comprobar nada, así
+        // que la app prometía recuperar espacio que no existía. Ahora se
+        // agrupan las rutas por identidad real de archivo (dispositivo +
+        // inodo): las que comparten inodo cuentan UNA sola vez.
         let mut out = Vec::new();
         for (_h, mut files) in groups {
-            if files.len() >= 2 {
-                files.sort();
-                let size = std::fs::metadata(&files[0]).map(|m| m.len()).unwrap_or(0);
-                let count = files.len() as u32;
-                out.push(DupGroup {
-                    size,
-                    count,
-                    wasted: size * (count as u64 - 1),
-                    files,
-                });
+            if files.len() < 2 {
+                continue;
             }
+            files.sort();
+
+            // Identidades distintas dentro del grupo. Si dos rutas comparten
+            // inodo, son el mismo archivo y solo se cuenta una.
+            let unique = distinct_files(&files);
+            if unique < 2 {
+                continue; // solo enlaces duros: no hay nada que recuperar
+            }
+
+            let size = file_size_on_disk(&files[0]);
+            out.push(DupGroup {
+                size,
+                count: files.len() as u32,
+                // Se recupera el espacio de todas las COPIAS REALES menos una.
+                wasted: size.saturating_mul(unique as u64 - 1),
+                files,
+            });
         }
         out.sort_by(|a, b| b.wasted.cmp(&a.wasted));
         Ok(out)
     })
     .await
     .map_err(|e| e.to_string())?
+}
+
+/// Cuántos archivos DISTINTOS hay realmente entre estas rutas.
+///
+/// Dos rutas que apuntan al mismo inodo son un único archivo con dos nombres
+/// (enlace duro): ocupan una sola vez y borrar uno no libera nada.
+#[cfg(unix)]
+fn distinct_files(paths: &[String]) -> usize {
+    use std::collections::HashSet;
+    use std::os::unix::fs::MetadataExt;
+    let mut seen: HashSet<(u64, u64)> = HashSet::new();
+    let mut unknown = 0usize; // rutas que no se pudieron consultar: se cuentan aparte
+    for p in paths {
+        match std::fs::metadata(p) {
+            Ok(md) => {
+                seen.insert((md.dev(), md.ino()));
+            }
+            Err(_) => unknown += 1,
+        }
+    }
+    seen.len() + unknown
+}
+
+/// En Windows la identidad de archivo requiere abrirlo (`GetFileInformationByHandle`),
+/// que sería carísimo aquí. Los enlaces duros son mucho menos habituales, así
+/// que se asume que cada ruta es un archivo distinto. Puede sobreestimar en ese
+/// caso concreto y está documentado como tal.
+#[cfg(not(unix))]
+fn distinct_files(paths: &[String]) -> usize {
+    paths.len()
+}
+
+/// Espacio real en disco del archivo (bloques asignados), no el que declara.
+fn file_size_on_disk(path: &str) -> u64 {
+    std::fs::metadata(path)
+        .map(|md| crate::platform::size_on_disk(&md))
+        .unwrap_or(0)
 }

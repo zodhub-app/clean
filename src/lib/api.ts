@@ -37,6 +37,8 @@ export type CleanResult = {
   errors: string[];
   /** Elementos abiertos por otro programa que se dejaron intactos (no es error). */
   skipped_in_use: number;
+  /** Elementos que fallaron por otro motivo (disco lleno, error de E/S…). */
+  skipped_failed: number;
 };
 
 export function scanCaches(): Promise<CacheEntry[]> {
@@ -185,9 +187,22 @@ export type ScanResult = {
   parent: string | null;
   total: number;
   entries: ScanEntry[];
+  /**
+   * Entradas que no se pudieron leer. Si no es 0, `total` es un MÍNIMO: hay
+   * carpetas protegidas por el sistema que no se han podido medir.
+   */
+  unreadable: number;
 };
 
-export type TrashResult = { moved: number; freed: number; errors: string[] };
+export type TrashResult = {
+  moved: number;
+  /**
+   * Tamaño de lo movido a la Papelera. NO es espacio liberado: el archivo
+   * sigue en el mismo disco hasta que se vacía la Papelera.
+   */
+  moved_bytes: number;
+  errors: string[];
+};
 
 export function scanDir(path: string): Promise<ScanResult> {
   return invoke<ScanResult>("scan_dir", { path });
@@ -261,6 +276,10 @@ export type DevCleanResult = {
   skipped_in_use: number;
   /** Elementos que requerirían permisos de administrador. */
   skipped_denied: number;
+  /** Elementos que fallaron por otro motivo (disco lleno, error de E/S…). */
+  skipped_failed: number;
+  /** Bytes movidos a la Papelera (no liberados: se liberan al vaciarla). */
+  moved_bytes: number;
 };
 
 export function listDevJunk(): Promise<DevItem[]> {
@@ -276,7 +295,12 @@ export function cleanAllJunk(): Promise<DevCleanResult> {
 /** Fase 2 — instantáneas APFS / Time Machine locales. */
 export type Snapshot = { name: string; date: string };
 export type ThinResult = {
-  freed: number;
+  /**
+   * No hay campo de bytes liberados a propósito: APFS suelta los bloques de
+   * forma asíncrona y no hay manera fiable de atribuirlos a esta operación.
+   * Se informa de lo que sí se sabe con certeza: cuántas instantáneas había
+   * y cuántas quedan.
+   */
   count_before: number;
   count_after: number;
 };

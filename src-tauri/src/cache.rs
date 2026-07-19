@@ -21,6 +21,8 @@ pub struct CleanResult {
     /// Elementos abiertos por otro programa que se dejaron intactos. No es un
     /// fallo; se devuelve como número para que el frontend lo traduzca.
     pub skipped_in_use: usize,
+    /// Elementos que fallaron por otro motivo. Aparte, para no disfrazarlos.
+    pub skipped_failed: usize,
 }
 
 fn home_dir() -> Option<PathBuf> {
@@ -87,7 +89,10 @@ fn path_size(path: &Path) -> u64 {
         return 0;
     }
     if meta.is_file() {
-        return meta.len();
+        // Espacio REAL en disco, igual que el resto de la app. Antes este panel
+        // usaba el tamaño lógico mientras Almacenamiento usaba bloques: dos
+        // pantallas daban números distintos para la MISMA carpeta.
+        return crate::platform::size_on_disk(&meta);
     }
     if meta.is_dir() {
         let mut total = 0;
@@ -163,6 +168,7 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
     let mut errors: Vec<String> = Vec::new();
     let mut admin: Vec<(PathBuf, u64)> = Vec::new();
     let mut in_use = 0usize;
+    let mut failed = 0usize;
 
     for ps in &paths {
         let p = PathBuf::from(ps);
@@ -179,6 +185,7 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
         freed += w.freed;
         removed += w.removed;
         in_use += w.in_use;
+        failed += w.failed;
 
         if w.denied > 0 {
             // Lo que falla por permisos se agrupa para pedir admin UNA sola vez.
@@ -186,14 +193,23 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
         }
     }
 
-    // Anything that needed elevated rights goes through one admin prompt.
+    // Lo que necesita permisos elevados va en UNA sola petición de admin.
     if !admin.is_empty() {
         let admin_paths: Vec<PathBuf> = admin.iter().map(|(p, _)| p.clone()).collect();
         match remove_with_admin(&admin_paths) {
             Ok(_) => {
-                for (_, size) in &admin {
-                    freed += size;
-                    removed += 1;
+                // Se COMPRUEBA qué desapareció de verdad, en vez de dar por
+                // liberado el tamaño estimado antes. `rm -rf` devuelve 0 en
+                // varios casos aunque no haya borrado todo, así que fiarse de
+                // su código de salida era inventarse la cifra.
+                for (p, size_pendiente) in &admin {
+                    if p.exists() {
+                        // Sigue ahí: no se ha liberado nada de esta ruta.
+                        errors.push(format!("{}: no se pudo eliminar", p.display()));
+                    } else {
+                        freed += size_pendiente;
+                        removed += 1;
+                    }
                 }
             }
             Err(e) => errors.push(format!("Admin: {e}")),
@@ -205,6 +221,7 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
         removed,
         errors,
         skipped_in_use: in_use,
+        skipped_failed: failed,
     })
 }
 

@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { osName } from "@/lib/api";
+import { setByteBase } from "@/lib/format";
 
 /**
  * Sistema operativo en el que corre la app. Sirve para dos cosas:
@@ -23,7 +24,13 @@ export function OsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     osName()
       .then((v) => {
-        if (v === "macos" || v === "windows" || v === "linux") setOs(v);
+        if (v === "macos" || v === "windows" || v === "linux") {
+          setOs(v);
+          // Cada sistema escribe «GB» con una base distinta. Se fija aquí,
+          // antes de pintar ninguna cifra, para que los tamaños coincidan con
+          // el Finder o el Explorador del usuario (ver lib/format.ts).
+          setByteBase(v);
+        }
       })
       .catch(() => setOs("unknown"));
   }, []);

@@ -81,9 +81,19 @@ export function MemoryPage() {
   }, [refresh]);
 
   const usedPct = mem && mem.total > 0 ? (mem.used / mem.total) * 100 : 0;
-  // Presión aproximada: fracción NO reclamable (no es la métrica exacta de Apple).
-  const reclaimable = mem ? mem.free + mem.inactive + mem.cached : 0;
+
+  // Presión aproximada: fracción NO recuperable. NO es la métrica exacta de
+  // Apple y así se etiqueta en la interfaz.
+  //
+  // `cached` NO entra en la suma: son páginas respaldadas por archivo que ya
+  // están contadas dentro de `inactive` (y de `active`). Sumarlas las contaba
+  // dos veces, lo que hacía que `reclaimable` pudiera superar el total y el
+  // resultado saliera NEGATIVO. Una aproximación que puede ser negativa no es
+  // una aproximación, es un error.
+  const reclaimable = mem ? mem.free + mem.inactive : 0;
   let score = mem && mem.total > 0 ? 1 - reclaimable / mem.total : 0;
+  // Cinturón: por muy raro que venga el dato, la presión vive entre 0 y 1.
+  score = Math.min(1, Math.max(0, score));
   if (mem && mem.swap_used > 0) score = Math.max(score, 0.6);
   const meta = levelMeta(score);
 
@@ -102,16 +112,29 @@ export function MemoryPage() {
       hist.current = [...hist.current, { t: Date.now(), used: usedPct }].slice(-40);
       setHistory(hist.current);
 
-      const freed = before - after.used;
-      if (freed > 64 * 1024 * 1024) {
-        toast.success(t("Liberados {n2}", { n2: formatBytes(freed) }), {
-          description: t("Cachés inactivas vaciadas. El resto está en uso real."),
-        });
-      } else {
-        toast.success(t("Memoria ya optimizada"), {
-          description: t("macOS apenas tenía cachés liberables en este momento."),
-        });
-      }
+      // NO se anuncia una cifra de memoria liberada.
+      //
+      // La diferencia entre el antes y el después NO se puede atribuir a la
+      // purga: entre las dos lecturas hay decenas de procesos reservando y
+      // soltando memoria por su cuenta. Si Safari suelta 500 MB en ese instante,
+      // la app se apuntaba el mérito. Es el mismo error que ya se corrigió en
+      // el espacio de disco, y aquí es aún menos defendible porque la memoria
+      // cambia mil veces por segundo.
+      //
+      // Se dice lo que sí es cierto: la purga se ha ejecutado. El efecto se ve
+      // en el propio panel, que se acaba de refrescar con datos reales.
+      const delta = before - after.used;
+      toast.success(t("Purga completada"), {
+        description:
+          delta > 0
+            ? t(
+                "La memoria en uso ha bajado {n2} entre las dos lecturas, aunque parte de ese cambio puede venir de otros programas.",
+                { n2: formatBytes(delta) },
+              )
+            : t(
+                "El sistema apenas tenía cachés que soltar en este momento; es lo habitual.",
+              ),
+      });
     } catch (err) {
       toast.error(t("No se pudo liberar la memoria"), {
         description: String(err),
@@ -151,15 +174,16 @@ export function MemoryPage() {
           tag: "Reclamable" as Tag,
           desc: "Datos recientes que ya no se usan pero siguen en RAM por si vuelven a hacer falta. macOS los reclama al instante si hay presión.",
         },
-        {
-          label: "Caché de archivos",
-          value: mem.cached,
-          color: "var(--chart-3)",
-          tag: "Reclamable" as Tag,
-          desc: "Archivos leídos del disco que macOS conserva para acelerar próximos accesos. Se descartan sin coste.",
-        },
       ]
     : [];
+
+  // «Caché de archivos» YA NO es una barra más. En `vm_stat`, las páginas
+  // respaldadas por archivo están repartidas dentro de activa e inactiva: es un
+  // corte transversal, no una categoría aparte. Pintarla como quinta barra
+  // hacía que la suma pasara del 100 % de la RAM instalada. Se muestra abajo
+  // como dato informativo, sin sumarse.
+  const fileCache = mem?.cached ?? 0;
+
   // Barras proporcionales al TOTAL de RAM (porcentaje real ocupado), no al
   // máximo del grupo: así reflejan honestamente cuánta memoria ocupa cada parte.
   const totalMem = mem?.total ?? 0;
@@ -328,6 +352,18 @@ export function MemoryPage() {
                   </div>
                 );
               })
+            )}
+
+            {/* Dato transversal, NO una categoría más: estas páginas ya están
+                contadas dentro de las barras de arriba. Se muestra aparte y sin
+                barra justo para que no parezca sumable. */}
+            {fileCache > 0 && (
+              <p className="mt-1 border-t pt-2.5 text-[11px] leading-5 text-muted-foreground">
+                {t(
+                  "De lo anterior, {n} son caché de archivos: contenido leído del disco que el sistema conserva para acelerar próximos accesos y descarta sin coste si hace falta. No es memoria adicional, ya está incluida en las barras.",
+                  { n: formatBytes(fileCache) },
+                )}
+              </p>
             )}
           </CardContent>
         </Card>

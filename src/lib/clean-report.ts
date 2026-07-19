@@ -38,6 +38,19 @@ export function reportClean(r: DevCleanResult, t: Translate) {
     return;
   }
 
+  // Mover a la Papelera no libera espacio: se dice aparte y con esas palabras.
+  if (r.freed === 0 && r.moved_bytes > 0) {
+    toast.success(
+      t("{n} movidos a la Papelera", { n: formatBytes(r.moved_bytes) }),
+      {
+        description: t(
+          "El espacio se libera cuando la vacíes. Así puedes recuperarlos si te arrepientes.",
+        ),
+      },
+    );
+    return;
+  }
+
   const skipped: string[] = [];
   if (r.skipped_in_use > 0) {
     skipped.push(
@@ -47,6 +60,13 @@ export function reportClean(r: DevCleanResult, t: Translate) {
   if (r.skipped_denied > 0) {
     skipped.push(
       t("{n} necesitan permisos de administrador", { n: r.skipped_denied }),
+    );
+  }
+
+  if (r.skipped_failed > 0) {
+    // No se sabe por qué falló: se dice así, en vez de inventar un motivo.
+    skipped.push(
+      t("{n} no se pudieron eliminar", { n: r.skipped_failed }),
     );
   }
 

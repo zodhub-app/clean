@@ -14,6 +14,28 @@ pub struct NetworkStats {
     listening: u32,
 }
 
+/// ¿Esta interfaz representa tráfico REAL hacia fuera del equipo?
+///
+/// Antes se sumaban todas, y eso contaba dos veces el mismo byte:
+///
+///   - `lo0` / `lo` es el bucle local: hablar con uno mismo (127.0.0.1). No
+///     sale nada del equipo, pero se sumaba como si fuera internet.
+///   - `utun*`, `ipsec*`, `ppp*`, `wg*`, `tun*`, `tap*` son túneles de VPN.
+///     Cada byte pasa por el túnel Y por la interfaz física, así que con una
+///     VPN activa las cifras salían **al doble**.
+///   - `awdl*`, `llw*`, `anpi*`, `bridge*`, `ap*` son interfaces internas de
+///     Apple (AirDrop, puentes, diagnóstico) que duplican o inventan tráfico.
+///
+/// Se cuenta la interfaz física, que es por donde el tráfico sale de verdad.
+fn is_real_traffic(name: &str) -> bool {
+    let n = name.to_ascii_lowercase();
+    const EXCLUIDAS: &[&str] = &[
+        "lo", "utun", "ipsec", "ppp", "wg", "tun", "tap", "awdl", "llw", "anpi", "bridge", "gif",
+        "stf", "vmnet", "veth", "docker", "vboxnet",
+    ];
+    !EXCLUIDAS.iter().any(|p| n.starts_with(p))
+}
+
 #[tauri::command]
 pub fn network_stats() -> NetworkStats {
     let nets = Networks::new_with_refreshed_list();
@@ -21,7 +43,10 @@ pub fn network_stats() -> NetworkStats {
     let mut tx = 0u64;
     let mut prx = 0u64;
     let mut ptx = 0u64;
-    for (_name, data) in &nets {
+    for (name, data) in &nets {
+        if !is_real_traffic(name) {
+            continue;
+        }
         rx += data.total_received();
         tx += data.total_transmitted();
         prx += data.total_packets_received();

@@ -18,7 +18,11 @@ pub struct DevItem {
 
 #[derive(Serialize, Default)]
 pub struct CleanResult {
+    /// Bytes que DEJAN DE OCUPAR disco. Solo lo eliminado de verdad.
     freed: u64,
+    /// Bytes movidos a la Papelera. Van aparte de `freed` a propósito: mover
+    /// algo a la Papelera no libera nada hasta que se vacía.
+    moved_bytes: u64,
     /// Fallos de verdad: algo que el usuario pidió y no se pudo hacer.
     errors: Vec<String>,
     /// Elementos que se dejaron intactos por estar abiertos por otro programa.
@@ -27,6 +31,10 @@ pub struct CleanResult {
     skipped_in_use: usize,
     /// Elementos que harían falta permisos de administrador para borrar.
     skipped_denied: usize,
+    /// Elementos que fallaron por otro motivo (disco lleno, error de E/S…).
+    /// Van aparte para no hacerlos pasar por «archivo en uso», que sería una
+    /// explicación falsa y mandaría al usuario a buscar donde no es.
+    skipped_failed: usize,
 }
 
 fn home() -> String {
@@ -181,6 +189,31 @@ fn trash_path(path: &str) -> Result<(), String> {
     platform::move_to_trash(Path::new(path))
 }
 
+/// Quita de la lista las rutas que ya están DENTRO de otra de la lista.
+///
+/// Sin esto, el titular «Recuperable» podía contar los mismos bytes dos veces:
+/// en Linux, por ejemplo, `user-caches` es `~/.cache`, que CONTIENE
+/// `~/.cache/huggingface` y `~/.cache/lm-studio`, que además son categorías
+/// propias. El usuario veía sumados dos veces los mismos gigas.
+///
+/// Se ordena de menos profunda a más profunda y se descarta toda ruta contenida
+/// en una anterior: se queda la más externa, que es la que se va a borrar.
+fn drop_nested(mut paths: Vec<String>) -> Vec<String> {
+    paths.sort_by_key(|p| p.matches(std::path::MAIN_SEPARATOR).count());
+    let mut kept: Vec<String> = Vec::new();
+    for p in paths {
+        let pp = Path::new(&p);
+        if kept
+            .iter()
+            .any(|k| platform::is_inside(pp, Path::new(k)))
+        {
+            continue; // ya cuenta dentro de otra ruta de la lista
+        }
+        kept.push(p);
+    }
+    kept
+}
+
 /// Tamaño de la Papelera.
 ///
 /// En Windows, `C:\$Recycle.Bin` está protegida y recorrerla a mano devuelve
@@ -279,10 +312,14 @@ fn candidates(key: &str, h: &str) -> Vec<String> {
 }
 
 fn existing(key: &str, h: &str) -> Vec<String> {
-    candidates(key, h)
-        .into_iter()
-        .filter(|p| Path::new(p).exists())
-        .collect()
+    // `drop_nested` evita contar dos veces una carpeta que ya está dentro de
+    // otra de la misma categoría (ver su documentación).
+    drop_nested(
+        candidates(key, h)
+            .into_iter()
+            .filter(|p| Path::new(p).exists())
+            .collect(),
+    )
 }
 
 fn parse_size(s: &str) -> u64 {
@@ -290,12 +327,22 @@ fn parse_size(s: &str) -> u64 {
     let num: String = s.chars().take_while(|c| c.is_ascii_digit() || *c == '.').collect();
     let unit = s[num.len()..].trim().to_uppercase();
     let n: f64 = num.parse().unwrap_or(0.0);
+    // Docker escribe en decimal (KB/MB/GB), pero acepta también las binarias.
+    // El caso `_ => 1.0` de antes era una trampa: una unidad no reconocida se
+    // trataba como BYTES, así que «1.5MiB» se convertía en 1 byte y la cifra
+    // salía un millón de veces más pequeña sin que nadie se enterara. Ahora una
+    // unidad desconocida devuelve 0, que al menos es visiblemente raro.
     let mult = match unit.as_str() {
+        "B" | "" => 1.0,
         "KB" => 1e3,
         "MB" => 1e6,
         "GB" => 1e9,
         "TB" => 1e12,
-        _ => 1.0,
+        "KIB" => 1024.0,
+        "MIB" => 1024.0 * 1024.0,
+        "GIB" => 1024.0 * 1024.0 * 1024.0,
+        "TIB" => 1024.0 * 1024.0 * 1024.0 * 1024.0,
+        _ => return 0,
     };
     (n * mult) as u64
 }
@@ -308,6 +355,13 @@ fn docker_reclaimable() -> Option<u64> {
     let text = String::from_utf8_lossy(&out.stdout);
     let mut total = 0u64;
     for line in text.lines().skip(1) {
+        // Los VOLÚMENES no se cuentan: el botón ejecuta `docker system prune -af`
+        // SIN `--volumes`, a propósito, porque ahí viven los datos de las bases
+        // de datos y borrarlos sin avisar sería catastrófico. Incluirlos en el
+        // «recuperable» era prometer un espacio que la app no iba a liberar.
+        if line.to_ascii_lowercase().contains("volumes") {
+            continue;
+        }
         if let Some(paren) = line.rfind('(') {
             if let Some(tok) = line[..paren].split_whitespace().last() {
                 total += parse_size(tok);
@@ -488,19 +542,28 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
                 },
             };
         }
-        // Copias de iOS: a la Papelera (recuperable, son valiosas). Como no
-        // liberan hasta vaciar la Papelera, reportamos el tamaño movido (du).
+        // Copias de iOS: van a la Papelera, no se borran (son valiosas y el
+        // usuario debe poder recuperarlas). Mover a la Papelera NO libera
+        // espacio, así que `freed` se queda a cero y se informa aparte de
+        // cuánto se ha movido. Antes se devolvía el tamaño movido en `freed` y
+        // la interfaz cantaba «Liberados X»: era falso y el propio comentario
+        // de este bloque lo reconocía.
         if key == "ios-backups" {
-            let mut freed = 0u64;
+            let mut moved_bytes = 0u64;
             let mut errors = Vec::new();
             for p in existing("ios-backups", &h) {
                 let before = du_bytes(&p);
                 match trash_path(&p) {
-                    Ok(()) => freed += before,
+                    Ok(()) => moved_bytes += before,
                     Err(e) => errors.push(format!("{p}: {e}")),
                 }
             }
-            return CleanResult { freed, errors, ..Default::default() };
+            return CleanResult {
+                freed: 0,
+                moved_bytes,
+                errors,
+                ..Default::default()
+            };
         }
 
         // Ficheros o Papelera.
@@ -529,9 +592,11 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
         }
         CleanResult {
             freed,
+            moved_bytes: 0, // este camino borra de verdad, no mueve nada
             errors,
             skipped_in_use: w.in_use,
             skipped_denied: w.denied,
+            skipped_failed: w.failed,
         }
     })
     .await
@@ -563,9 +628,11 @@ pub async fn clean_all_junk() -> Result<CleanResult, String> {
 
         CleanResult {
             freed,
+            moved_bytes: 0, // este camino borra de verdad, no mueve nada
             errors,
             skipped_in_use: w.in_use,
             skipped_denied: w.denied,
+            skipped_failed: w.failed,
         }
     })
     .await

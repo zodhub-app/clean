@@ -86,13 +86,27 @@ fn parse_vm_stat() -> (u64, u64, u64, u64, u64) {
         0
     };
 
+    // CATEGORÍAS DISJUNTAS. Esto es lo delicado de `vm_stat`: no todas sus
+    // líneas son categorías separadas, y sumarlas a lo loco infla el total.
+    //
+    //   - «Pages purgeable» NO es una categoría propia: esas páginas ya están
+    //     contadas dentro de active o inactive. Sumarlas las cuenta dos veces.
+    //   - «File-backed pages» es un corte ORTOGONAL (páginas respaldadas por
+    //     archivo), repartidas entre active, inactive y speculative. Sumarlo
+    //     como quinta categoría las cuenta dos veces otra vez.
+    //
+    // Antes se sumaban las dos. Resultado: las barras del panel de Memoria
+    // sumaban muy por encima del 100 % del total, y la «presión de memoria»
+    // podía salir negativa. Ahora solo se usan categorías que NO se solapan:
+    // wired + active + inactive + speculative + compressed ≤ total.
     let wired = pages("Pages wired down:") * page_size;
     let active = pages("Pages active:") * page_size;
-    let inactive = (pages("Pages inactive:")
-        + pages("Pages speculative:")
-        + pages("Pages purgeable:"))
-        * page_size;
+    let inactive = (pages("Pages inactive:") + pages("Pages speculative:")) * page_size;
     let compressed = pages("Pages occupied by compressor:") * page_size;
+
+    // Se conserva como INFORMACIÓN, no como categoría sumable: dice cuánta de
+    // la memoria anterior corresponde a caché de archivos (la primera que el
+    // sistema suelta si hace falta). El frontend no debe sumarla al resto.
     let cached = pages("File-backed pages:") * page_size;
 
     (wired, active, inactive, compressed, cached)

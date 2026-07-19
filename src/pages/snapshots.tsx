@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { formatBytes } from "@/lib/format";
 import { CleanOverlay } from "@/components/clean-overlay";
 import { useLang } from "@/components/language-provider";
 import { listSnapshots, thinSnapshots, type Snapshot } from "@/lib/api";
@@ -58,13 +57,15 @@ export function SnapshotsPage() {
     setThinning(true);
     try {
       const r = await thinSnapshots();
-      if (r.freed > 0) {
-        toast.success(t("Liberado {n} en instantáneas", { n: formatBytes(r.freed) }));
-      } else {
-        toast.success(t("Instantáneas liberadas"), {
-          description: t("El espacio puede tardar unos segundos en reflejarse."),
-        });
-      }
+      // Se informa del número de instantáneas, que es exacto, y NO de bytes:
+      // el sistema los libera de forma asíncrona y cualquier cifra que diéramos
+      // aquí sería inventada (ver el comentario en snapshots.rs).
+      const gone = Math.max(0, r.count_before - r.count_after);
+      toast.success(t("{n} instantáneas eliminadas", { n: gone }), {
+        description: t(
+          "El sistema libera el espacio poco a poco; lo verás reflejado en Almacenamiento.",
+        ),
+      });
       await refresh();
     } catch (e) {
       toast.error(t("No se pudieron liberar"), { description: String(e) });

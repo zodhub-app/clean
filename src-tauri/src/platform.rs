@@ -46,20 +46,128 @@ pub fn app_data_dir() -> Option<PathBuf> {
 /// Sustituye a `du -sk` (que solo existe en Unix). NUNCA sigue enlaces
 /// simbólicos, para no contar dos veces ni salirse del árbol.
 pub fn dir_size(path: &Path) -> u64 {
-    match std::fs::symlink_metadata(path) {
-        Ok(md) if md.is_file() => return md.len(),
-        Ok(md) if md.file_type().is_symlink() => return 0,
-        Err(_) => return 0,
-        _ => {}
+    measure(path).bytes
+}
+
+/// Resultado de medir una ruta.
+#[derive(Default, Debug, Clone, Copy)]
+pub struct Measure {
+    /// Espacio real en disco, sin contar dos veces lo compartido.
+    pub bytes: u64,
+    /// Entradas que no se pudieron leer (permisos, TCC…). Si esto no es cero,
+    /// `bytes` es un MÍNIMO, no el total: hay que decírselo al usuario.
+    pub unreadable: usize,
+}
+
+/// Mide una ruta como lo hace `du`, para que las dos cifras coincidan.
+///
+/// Tres decisiones que marcan la diferencia frente a sumar tamaños a lo bruto:
+///
+/// 1. **Espacio en disco, no tamaño declarado** (ver `size_on_disk`).
+/// 2. **Se cuentan los bloques de los directorios**, que también ocupan. `du`
+///    los cuenta; no hacerlo subestimaba en árboles con muchas carpetas, como
+///    `node_modules`.
+/// 3. **No se cuenta dos veces lo compartido.** Si varias rutas apuntan al
+///    mismo inodo (enlaces duros), ocupan UNA vez. `du` deduplica así; sin
+///    esto, la store de pnpm o `/Applications` salían muy infladas y el
+///    usuario borraba esperando recuperar un espacio que no existía.
+pub fn measure(path: &Path) -> Measure {
+    let mut out = Measure::default();
+
+    #[cfg(unix)]
+    let mut seen: std::collections::HashSet<(u64, u64)> = std::collections::HashSet::new();
+
+    let md = match std::fs::symlink_metadata(path) {
+        Ok(m) => m,
+        Err(_) => {
+            out.unreadable = 1;
+            return out;
+        }
+    };
+    // Un enlace simbólico no ocupa lo que apunta: no se sigue ni se suma.
+    if md.file_type().is_symlink() {
+        return out;
     }
-    WalkDir::new(path)
-        .follow_links(false)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.file_type().is_file())
-        .filter_map(|e| e.metadata().ok())
-        .map(|m| m.len())
-        .sum()
+    if !md.is_dir() {
+        out.bytes = size_on_disk(&md);
+        return out;
+    }
+
+    for entry in WalkDir::new(path).follow_links(false) {
+        let entry = match entry {
+            Ok(e) => e,
+            Err(_) => {
+                out.unreadable += 1;
+                continue;
+            }
+        };
+        // Los enlaces simbólicos no ocupan el destino.
+        if entry.file_type().is_symlink() {
+            continue;
+        }
+        let m = match entry.metadata() {
+            Ok(m) => m,
+            Err(_) => {
+                out.unreadable += 1;
+                continue;
+            }
+        };
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt;
+            // Mismo inodo ya contado = enlace duro. Ocupa una sola vez.
+            if !seen.insert((m.dev(), m.ino())) {
+                continue;
+            }
+        }
+        out.bytes += size_on_disk(&m);
+    }
+    out
+}
+
+/// Espacio que un archivo ocupa DE VERDAD en el disco.
+///
+/// Esto no es lo mismo que su tamaño «lógico» (`metadata.len()`), que es lo que
+/// el archivo dice pesar. La diferencia puede ser enorme y llevaba a que el
+/// Explorador sumara más de lo que cabe en el disco:
+///
+/// - **Archivos de la nube.** iCloud Drive (`~/Library/Mobile Documents`,
+///   `~/Library/CloudStorage`) y OneDrive dejan marcadores: el archivo aparece
+///   con su tamaño completo pero NO está descargado. Ocupa cero.
+/// - **Archivos dispersos** (máquinas virtuales, imágenes de disco): declaran
+///   un tamaño grande y solo reservan los bloques que han usado.
+///
+/// Se mide el espacio real porque es la única cifra útil aquí: lo que el
+/// usuario quiere saber es cuánto sitio recupera si borra algo.
+pub fn size_on_disk(md: &std::fs::Metadata) -> u64 {
+    #[cfg(unix)]
+    {
+        // `blocks()` cuenta bloques de 512 bytes REALMENTE asignados. Es la
+        // misma cifra que da `du`, y por eso coincide con el Finder.
+        use std::os::unix::fs::MetadataExt;
+        md.blocks().saturating_mul(512)
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::MetadataExt;
+        // Marcadores de archivos en la nube (OneDrive «Archivos a petición»):
+        // el contenido no está en el disco, así que no ocupa.
+        const FILE_ATTRIBUTE_OFFLINE: u32 = 0x0000_1000;
+        const FILE_ATTRIBUTE_RECALL_ON_OPEN: u32 = 0x0004_0000;
+        const FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS: u32 = 0x0040_0000;
+        const CLOUD: u32 =
+            FILE_ATTRIBUTE_OFFLINE | FILE_ATTRIBUTE_RECALL_ON_OPEN | FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS;
+        if md.file_attributes() & CLOUD != 0 {
+            return 0;
+        }
+        // LIMITACIÓN CONOCIDA: la biblioteca estándar no expone el tamaño
+        // asignado en disco en Windows (haría falta `GetCompressedFileSize` de
+        // la API nativa). Para archivos normales el tamaño lógico coincide; se
+        // desvía en los dispersos y comprimidos por NTFS, que son minoría.
+        md.file_size()
+    }
+    #[cfg(not(any(unix, windows)))]
+    md.len()
 }
 
 /// Resultado de un borrado tolerante.
@@ -73,6 +181,9 @@ pub struct Wipe {
     pub in_use: usize,
     /// Elementos omitidos por falta de permisos.
     pub denied: usize,
+    /// Elementos que fallaron por otro motivo (disco lleno, error de E/S…).
+    /// Tienen su propio contador para no disfrazarlos de «en uso».
+    pub failed: usize,
 }
 
 impl Wipe {
@@ -82,6 +193,7 @@ impl Wipe {
         self.removed += o.removed;
         self.in_use += o.in_use;
         self.denied += o.denied;
+        self.failed += o.failed;
     }
 }
 
@@ -133,7 +245,9 @@ pub fn wipe(path: &Path, keep_root: bool) -> Wipe {
     }
 
     if !md.is_dir() {
-        let size = md.len();
+        // Espacio REAL en disco, no el tamaño declarado. Un marcador de iCloud
+        // dice pesar 2 GB y no ocupa nada: contarlo como liberado sería mentir.
+        let size = size_on_disk(&md);
         match remove_file_forcing(path, &md) {
             Ok(()) => {
                 w.freed += size;
@@ -157,7 +271,9 @@ pub fn wipe(path: &Path, keep_root: bool) -> Wipe {
             Ok(()) => w.removed += 1,
             Err(e) if is_busy(&e) => w.in_use += 1,
             Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => w.denied += 1,
-            Err(_) => {} // no estaba vacía: ya se ha contado lo de dentro
+            // Cualquier otro error aquí suele ser «no estaba vacía», y lo que
+            // hay dentro ya se ha contado. No se suma nada para no duplicar.
+            Err(_) => {}
         }
     }
     w
@@ -212,13 +328,19 @@ fn is_link_to_dir(_md: &std::fs::Metadata) -> bool {
 }
 
 /// Contabiliza un fallo de borrado en la categoría que le corresponde.
+///
+/// Lo que NO se sabe no se disfraza: antes, cualquier error que no fuera de
+/// permisos se contaba como «en uso por otro programa». Un disco lleno, un
+/// fallo de entrada/salida o un nombre inválido le salían al usuario como
+/// «archivo abierto», que es una explicación falsa y le hacía buscar donde no
+/// era. Ahora esos casos van a su propio contador.
 fn classify(w: &mut Wipe, e: &std::io::Error) {
     if is_busy(e) {
         w.in_use += 1;
     } else if e.kind() == std::io::ErrorKind::PermissionDenied {
         w.denied += 1;
     } else {
-        w.in_use += 1;
+        w.failed += 1;
     }
 }
 

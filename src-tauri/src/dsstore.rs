@@ -135,7 +135,7 @@ pub fn sweep_ds_store(roots: Vec<String>) -> Result<SweepResult, String> {
         for entry in WalkDir::new(r).into_iter().filter_map(|e| e.ok()) {
             if entry.file_type().is_file() && entry.file_name() == ".DS_Store" {
                 let p = entry.path();
-                let size = std::fs::metadata(p).map(|m| m.len()).unwrap_or(0);
+                let size = std::fs::metadata(p).map(|m| crate::platform::size_on_disk(&m)).unwrap_or(0);
                 match std::fs::remove_file(p) {
                     Ok(_) => {
                         removed += 1;

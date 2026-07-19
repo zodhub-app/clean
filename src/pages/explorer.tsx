@@ -61,7 +61,9 @@ export function ExplorerPage() {
       const r = await moveToTrash([entry.path]);
       if (r.moved > 0) {
         toast.success(
-          t("Movido a la Papelera · liberado {n}", { n: formatBytes(r.freed) }),
+          t("Movido a la Papelera ({n}). El espacio se libera al vaciarla.", {
+            n: formatBytes(r.moved_bytes),
+          }),
         );
       }
       if (r.errors.length) {
@@ -128,7 +130,15 @@ export function ExplorerPage() {
         <CardHeader className="shrink-0 border-b px-4 py-2.5">
           <span className="text-xs font-medium text-muted-foreground">
             {res
-              ? t("Total: {s}", { s: formatBytes(res.total) })
+              ? // Si hay entradas ilegibles, el total es un MÍNIMO y se dice.
+                // Antes se descartaban en silencio y el usuario veía una cifra
+                // menor que la del Finder sin ninguna explicación.
+                res.unreadable > 0
+                ? t("Total: al menos {s} · {n} elementos sin acceso", {
+                    s: formatBytes(res.total),
+                    n: res.unreadable,
+                  })
+                : t("Total: {s}", { s: formatBytes(res.total) })
               : t("Analizando…")}
           </span>
         </CardHeader>

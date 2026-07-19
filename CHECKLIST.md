@@ -185,6 +185,51 @@ Marcar lo verificado en cada repaso.
   Para dependencias de escritorio usar
   `[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]`.
 
+## 7 ter. LAS CIFRAS. Léelo antes de tocar cualquier número
+
+Una auditoría encontró **37 problemas, 9 de ellos cifras objetivamente falsas**
+en pantalla. En una app cuyo argumento es la honestidad, ese es el fallo más
+grave posible. Estas reglas salen de ahí y no se negocian.
+
+**R1. Ninguna cifra se publica sin contrastarla con la fuente que manda.**
+Tamaño de carpeta ↔ `du -sh`. Disco ↔ `df -h` y Utilidad de Discos. Memoria ↔
+`vm_stat` y Monitor de Actividad. Procesos ↔ Monitor de Actividad. Papelera ↔
+Finder. Si no coincide, o está mal el código o hay que explicar por qué difiere.
+
+**R2. Espacio en disco, nunca tamaño declarado.** Siempre
+`platform::size_on_disk` / `platform::measure`, jamás `metadata.len()`. Los
+marcadores de iCloud y OneDrive dicen pesar gigas y ocupan cero.
+
+**R3. Nunca medir con el espacio libre del disco.** Ese delta recoge lo que
+hagan otros procesos y lo que el sistema suelte por su cuenta. Se cuentan los
+bytes eliminados uno a uno. Lo mismo vale para la memoria.
+
+**R4. Mover a la Papelera NO libera espacio.** Va en `moved_bytes`, nunca en
+`freed`, y el texto dice «movido a la Papelera».
+
+**R5. No contar dos veces.** Enlaces duros y clones comparten bloques:
+`measure` deduplica por inodo y `drop_nested` descarta rutas anidadas. En
+duplicados, dos rutas con el mismo inodo son UN archivo.
+
+**R6. Categorías que se pintan juntas deben ser disjuntas.** `File-backed` y
+`purgeable` de `vm_stat` se solapan con active/inactive: sumarlas hacía que las
+barras pasaran del 100 %.
+
+**R7. Las unidades son las del sistema del usuario.** base 1000 en macOS y
+Linux, 1024 en Windows (`lib/format.ts`). Dividir entre 1024 y escribir «GB»
+desviaba todo un 7,4 % frente al Finder.
+
+**R8. Lo que no se sabe, se dice.** Nada de `0` como sinónimo de «sin dato»,
+nada de `saturating_sub` que esconda un error, nada de clasificar un fallo
+desconocido como «archivo en uso». Si no se puede medir, no se enseña cifra
+(ver `thin_snapshots`).
+
+**R9. Lo que no se pudo leer, se cuenta y se avisa.** `Measure.unreadable` →
+«Total: al menos X · N elementos sin acceso».
+
+**R10. Un solo redactor por tipo de aviso.** `lib/clean-report.ts`. Dos
+pantallas que redactan por su cuenta acaban contando cosas distintas.
+
 ## 8. Principios innegociables (recordatorio)
 
 - [ ] **Lógica real en Rust**; el frontend solo hace UI/estado/formato.

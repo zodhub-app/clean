@@ -14,10 +14,6 @@
 // interfaz oculta la sección en ese sistema. Queda como trabajo futuro.
 
 use serde::Serialize;
-#[cfg(target_os = "macos")]
-use std::path::Path;
-#[cfg(target_os = "macos")]
-use sysinfo::Disks;
 
 #[derive(Serialize)]
 pub struct Snapshot {
@@ -27,21 +23,8 @@ pub struct Snapshot {
 
 #[derive(Serialize)]
 pub struct ThinResult {
-    freed: u64,
     count_before: u32,
     count_after: u32,
-}
-
-#[cfg(target_os = "macos")]
-fn free_bytes() -> u64 {
-    let disks = Disks::new_with_refreshed_list();
-    disks
-        .list()
-        .iter()
-        .find(|d| d.mount_point() == Path::new("/"))
-        .or_else(|| disks.list().iter().max_by_key(|d| d.total_space()))
-        .map(|d| d.available_space())
-        .unwrap_or(0)
 }
 
 /// Fuera de macOS no hay instantáneas locales equivalentes que podamos leer sin
@@ -95,7 +78,6 @@ pub async fn thin_snapshots() -> Result<ThinResult, String> {
 pub async fn thin_snapshots() -> Result<ThinResult, String> {
     tauri::async_runtime::spawn_blocking(|| {
         let count_before = parse_snapshots().len() as u32;
-        let before = free_bytes();
 
         let script = "do shell script \"/usr/bin/tmutil thinlocalsnapshots / 999999999999999 4\" with administrator privileges";
         let out = crate::platform::cmd("osascript")
@@ -107,13 +89,23 @@ pub async fn thin_snapshots() -> Result<ThinResult, String> {
             return Err(String::from_utf8_lossy(&out.stderr).trim().to_string());
         }
 
-        // Pequeña espera para que el sistema refleje el espacio liberado.
-        std::thread::sleep(std::time::Duration::from_millis(900));
-        let after = free_bytes();
         let count_after = parse_snapshots().len() as u32;
 
+        // NO se informa de bytes liberados, a propósito.
+        //
+        // Antes se restaba el espacio libre del disco antes y después, con una
+        // espera de 900 ms. Estaba mal por tres motivos a la vez: (1) ese delta
+        // recoge lo que cualquier otro proceso libere u ocupe en esa ventana;
+        // (2) APFS libera los bloques de una instantánea de forma ASÍNCRONA, de
+        // modo que a los 900 ms lo normal es que aún no se note y se reportara
+        // casi cero tras haber liberado decenas de gigas; (3) `saturating_sub`
+        // devolvía 0 en silencio si el disco se había llenado mientras tanto.
+        //
+        // No hay forma fiable de atribuir bytes a esta operación, así que se
+        // informa de lo único que sí se sabe con certeza: cuántas instantáneas
+        // había y cuántas quedan. El espacio se ve en el panel de
+        // Almacenamiento cuando el sistema termina de soltarlo.
         Ok(ThinResult {
-            freed: after.saturating_sub(before),
             count_before,
             count_after,
         })

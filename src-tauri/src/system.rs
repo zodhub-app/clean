@@ -67,13 +67,18 @@ pub fn system_stats(state: tauri::State<AppState>) -> SystemStats {
             break;
         }
     }
-    // Fallback: aggregate every disk if "/" wasn't reported.
+    // Respaldo si el volumen raíz no aparece: se coge el disco MÁS GRANDE, no
+    // la suma de todos.
+    //
+    // Sumar era un error grave en macOS: un contenedor APFS expone varios
+    // volúmenes (`/`, `/System/Volumes/Data`, `VM`, `Preboot`…) y CADA UNO
+    // reporta la capacidad del contenedor entero. La suma daba una capacidad
+    // cuatro o cinco veces mayor que el disco real, más los discos externos y
+    // cualquier DMG montado.
     if disk_total == 0 {
-        for disk in disks.list() {
-            disk_total += disk.total_space();
-            disk_used += disk
-                .total_space()
-                .saturating_sub(disk.available_space());
+        if let Some(d) = disks.list().iter().max_by_key(|d| d.total_space()) {
+            disk_total = d.total_space();
+            disk_used = d.total_space().saturating_sub(d.available_space());
         }
     }
 
@@ -156,7 +161,9 @@ pub fn list_sensors() -> Vec<SensorInfo> {
 pub struct ProcInfo {
     pid: u32,
     name: String,
-    cpu: f32, // % of total machine (0..100)
+    /// % de CPU tal y como lo da el sistema: POR NÚCLEO, igual que el
+    /// Monitor de Actividad. Puede pasar de 100 en procesos multihilo.
+    cpu: f32,
     mem: u64, // bytes
 }
 
@@ -176,17 +183,21 @@ pub fn top_processes(state: tauri::State<AppState>) -> TopProcesses {
         ProcessRefreshKind::everything(),
     );
 
-    let ncpu = std::thread::available_parallelism()
-        .map(|x| x.get())
-        .unwrap_or(1) as f32;
-
     let mut all: Vec<ProcInfo> = sys
         .processes()
         .iter()
         .map(|(pid, p)| ProcInfo {
             pid: pid.as_u32(),
             name: p.name().to_string_lossy().to_string(),
-            cpu: p.cpu_usage() / ncpu, // normalize across cores → 0..100
+            // % TAL CUAL lo da el sistema, sin dividir entre núcleos.
+            //
+            // Antes se dividía para que la cifra quedara entre 0 y 100 y
+            // «sumara bonito». Pero el Monitor de Actividad de macOS y el
+            // Administrador de tareas de Windows muestran el porcentaje POR
+            // NÚCLEO: un proceso a tope en 8 núcleos marca 800 %. Al dividir,
+            // la app enseñaba 100 % donde el sistema enseñaba 800 %, un factor
+            // de 8 de diferencia para quien comparase. Se deja como el sistema.
+            cpu: p.cpu_usage(),
             mem: p.memory(),
         })
         .collect();

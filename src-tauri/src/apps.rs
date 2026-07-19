@@ -31,7 +31,9 @@ pub struct LeftoverResult {
 #[derive(Serialize)]
 pub struct TrashResult {
     moved: u32,
-    freed: u64,
+    /// Tamaño de lo movido a la Papelera. **NO es espacio liberado**: el
+    /// archivo sigue en el mismo disco hasta que se vacía la Papelera.
+    moved_bytes: u64,
     errors: Vec<String>,
 }
 
@@ -328,7 +330,7 @@ fn uninstall_impl(
 
     // 2) Restos → Papelera de reciclaje (solo dentro de AppData/ProgramData).
     let mut moved = 0u32;
-    let mut freed = 0u64;
+    let mut moved_bytes = 0u64;
     for l in leftovers {
         let p = Path::new(&l);
         if !is_leftover_ok(p) {
@@ -342,7 +344,7 @@ fn uninstall_impl(
         match trash_one(&l) {
             Ok(()) => {
                 moved += 1;
-                freed += before;
+                moved_bytes += before;
             }
             Err(e) => errors.push(format!("{l}: {e}")),
         }
@@ -350,7 +352,7 @@ fn uninstall_impl(
 
     TrashResult {
         moved,
-        freed,
+        moved_bytes,
         errors,
     }
 }
@@ -377,7 +379,7 @@ fn uninstall_impl(
 ) -> TrashResult {
     TrashResult {
         moved: 0,
-        freed: 0,
+        moved_bytes: 0,
         errors: vec![
             "En Linux, desinstala con el gestor de paquetes de tu distribución".to_string(),
         ],
@@ -403,7 +405,7 @@ fn uninstall_impl(
         if !ok_app {
             return TrashResult {
                 moved: 0,
-                freed: 0,
+                moved_bytes: 0,
                 errors: vec![format!("{app_path}: protegido / no es una app en Aplicaciones")],
             };
         }
@@ -418,7 +420,7 @@ fn uninstall_impl(
         }
 
         let mut moved = 0u32;
-        let mut freed = 0u64;
+        let mut moved_bytes = 0u64;
         let mut errors = Vec::new();
         for tpath in targets {
             if !Path::new(&tpath).exists() {
@@ -428,14 +430,14 @@ fn uninstall_impl(
             match trash_one(&tpath) {
                 Ok(()) => {
                     moved += 1;
-                    freed += before;
+                    moved_bytes += before;
                 }
                 Err(e) => errors.push(format!("{tpath}: {e}")),
             }
         }
         TrashResult {
             moved,
-            freed,
+            moved_bytes,
             errors,
         }
     }

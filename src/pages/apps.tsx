@@ -85,7 +85,11 @@ export function AppsPage() {
         app.bundle_id,
       );
       if (r.moved > 0) {
-        toast.success(t("Desinstalada · liberado {n}", { n: formatBytes(r.freed) }));
+        toast.success(
+          t("Desinstalada. {n} movidos a la Papelera; el espacio se libera al vaciarla.", {
+            n: formatBytes(r.moved_bytes),
+          }),
+        );
       }
       if (r.errors.length) {
         toast.warning(t("No se pudo desinstalar"), { description: r.errors[0] });

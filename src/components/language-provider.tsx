@@ -58,6 +58,21 @@ const EN: Record<string, string> = {
   "Estás al día": "You're up to date",
   "Versión {v}": "Version {v}",
   "comprobado {t}": "checked {t}",
+  "Movido a la Papelera ({n}). El espacio se libera al vaciarla.":
+    "Moved to the Bin ({n}). Space is freed when you empty it.",
+  "Desinstalada. {n} movidos a la Papelera; el espacio se libera al vaciarla.":
+    "Uninstalled. {n} moved to the Bin; space is freed when you empty it.",
+  "De lo anterior, {n} son caché de archivos: contenido leído del disco que el sistema conserva para acelerar próximos accesos y descarta sin coste si hace falta. No es memoria adicional, ya está incluida en las barras.":
+    "Of the above, {n} is file cache: content read from disk that the system keeps to speed up future access and discards at no cost if needed. It is not extra memory — it is already counted in the bars.",
+  "{n} instantáneas eliminadas": "{n} snapshots removed",
+  "{n} movidos a la Papelera": "{n} moved to the Bin",
+  "El espacio se libera cuando la vacíes. Así puedes recuperarlos si te arrepientes.":
+    "Space is freed when you empty it. That way you can get them back if you change your mind.",
+  "{n} no se pudieron eliminar": "{n} could not be removed",
+  "Total: al menos {s} · {n} elementos sin acceso":
+    "Total: at least {s} · {n} items not accessible",
+  "El sistema libera el espacio poco a poco; lo verás reflejado en Almacenamiento.":
+    "The system frees the space gradually; you will see it reflected in Storage.",
 
   // ── Tu espacio (cuenta, novedades, apoyo y legal) ─────────────────────
   "Tu espacio": "Your space",
