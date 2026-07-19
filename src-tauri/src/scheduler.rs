@@ -1,18 +1,92 @@
+// Mantenimiento programado. El CONTRATO es el mismo en todos los sistemas
+// (list_schedules / set_schedule / run_task_now, con cadencias manual, daily,
+// weekly y monthly a las 03:00), pero el motor por debajo cambia:
+//
+//   macOS   → LaunchAgents de launchd (plist) ejecutando un script /bin/sh
+//   Windows → Programador de tareas (`schtasks`) ejecutando un script PowerShell
+//   Linux   → aún sin implementar (systemd user timers); se informa con claridad
+//
+// Todo en espacio de usuario: ninguna tarea pide permisos de administrador.
+
+use crate::platform;
 use serde::Serialize;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
 use std::process::Command;
+
+#[cfg(target_os = "macos")]
+use std::path::{Path, PathBuf};
 
 const PREFIX: &str = "com.viper.macup";
 
 fn home() -> Result<String, String> {
-    std::env::var("HOME").map_err(|_| "No se encontró HOME".to_string())
+    let h = platform::home_dir();
+    if h.as_os_str().is_empty() {
+        return Err("No se encontró la carpeta de usuario".to_string());
+    }
+    Ok(h.to_string_lossy().to_string())
 }
+
+/// Carpeta de datos de la app, según el sistema.
 fn support_dir(home: &str) -> String {
-    format!("{home}/Library/Application Support/{PREFIX}")
+    #[cfg(target_os = "macos")]
+    {
+        format!("{home}/Library/Application Support/{PREFIX}")
+    }
+    #[cfg(target_os = "windows")]
+    {
+        let base =
+            std::env::var("APPDATA").unwrap_or_else(|_| format!("{home}\\AppData\\Roaming"));
+        format!("{base}\\{PREFIX}")
+    }
+    #[cfg(target_os = "linux")]
+    {
+        format!("{home}/.local/share/{PREFIX}")
+    }
+}
+
+/// Tareas que tienen sentido en cada sistema. `.DS_Store` es exclusivo de macOS.
+fn task_keys() -> &'static [&'static str] {
+    #[cfg(target_os = "macos")]
+    {
+        &["dsstore", "cache", "trash", "cleanup"]
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        &["cache", "trash", "cleanup"]
+    }
+}
+
+// ─────────────────────────── Cuerpo de cada tarea ───────────────────────────
+
+/// Windows: PowerShell. `Clear-RecycleBin` es la forma oficial de vaciar la
+/// Papelera de reciclaje. Igual que en macOS, la limpieza automática es
+/// CONSERVADORA: no toca modelos de IA ni paquetes caros de re-descargar.
+#[cfg(target_os = "windows")]
+fn task_script(task: &str, _home: &str) -> Option<String> {
+    let body = match task {
+        "cache" => {
+            "Remove-Item -Path \"$env:LOCALAPPDATA\\Temp\\*\" -Recurse -Force -ErrorAction SilentlyContinue"
+                .to_string()
+        }
+        "trash" => "Clear-RecycleBin -Force -ErrorAction SilentlyContinue".to_string(),
+        "cleanup" => "Remove-Item -Path \"$env:LOCALAPPDATA\\Temp\\*\" -Recurse -Force -ErrorAction SilentlyContinue\n\
+             Remove-Item -Path \"$env:APPDATA\\npm-cache\\_cacache\\*\" -Recurse -Force -ErrorAction SilentlyContinue\n\
+             Clear-RecycleBin -Force -ErrorAction SilentlyContinue"
+            .to_string(),
+        _ => return None,
+    };
+    // `$ErrorActionPreference` a Continue: los fallos parciales (archivos en uso)
+    // son normales al limpiar cachés y no deben marcar la tarea como fallida.
+    Some(format!("$ErrorActionPreference = 'Continue'\n{body}\nexit 0\n"))
+}
+
+#[cfg(target_os = "linux")]
+fn task_script(_task: &str, _home: &str) -> Option<String> {
+    None
 }
 
 /// The shell body for each schedulable task. All user-space, no admin needed.
+#[cfg(target_os = "macos")]
 fn task_script(task: &str, home: &str) -> Option<String> {
     let body = match task {
         // Best-effort: borra los .DS_Store accesibles. `find`/`rm` devuelven un
@@ -91,7 +165,52 @@ fn task_script(task: &str, home: &str) -> Option<String> {
     Some(format!("#!/bin/sh\n{body}\n"))
 }
 
+// ───────────────────────── Registro de la programación ─────────────────────────
+
+/// Windows: Programador de tareas. `/F` sobrescribe si ya existía.
+#[cfg(target_os = "windows")]
+fn install_schedule(task: &str, cadence: &str, script_path: &str) -> Result<(), String> {
+    let sc = match cadence {
+        "daily" => "DAILY",
+        "weekly" => "WEEKLY",
+        "monthly" => "MONTHLY",
+        _ => return Err("Cadencia inválida".into()),
+    };
+    let name = format!("{PREFIX}.{task}");
+    let tr = format!(
+        "powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"{script_path}\""
+    );
+    let out = Command::new("schtasks")
+        .args([
+            "/Create", "/F", "/TN", &name, "/TR", &tr, "/SC", sc, "/ST", "03:00",
+        ])
+        .output()
+        .map_err(|e| e.to_string())?;
+    if out.status.success() {
+        Ok(())
+    } else {
+        Err(String::from_utf8_lossy(&out.stderr).trim().to_string())
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn remove_schedule(task: &str) {
+    let name = format!("{PREFIX}.{task}");
+    let _ = Command::new("schtasks")
+        .args(["/Delete", "/F", "/TN", &name])
+        .output();
+}
+
+#[cfg(target_os = "linux")]
+fn install_schedule(_task: &str, _cadence: &str, _script_path: &str) -> Result<(), String> {
+    Err("La programación automática aún no está disponible en Linux".into())
+}
+
+#[cfg(target_os = "linux")]
+fn remove_schedule(_task: &str) {}
+
 /// launchd StartCalendarInterval (always at 03:00) for a cadence.
+#[cfg(target_os = "macos")]
 fn calendar_interval(cadence: &str) -> Option<String> {
     let base = "<key>Hour</key><integer>3</integer><key>Minute</key><integer>0</integer>";
     match cadence {
@@ -106,6 +225,7 @@ fn calendar_interval(cadence: &str) -> Option<String> {
     }
 }
 
+#[cfg(target_os = "macos")]
 fn build_plist(label: &str, script: &str, interval: &str) -> String {
     format!(
         r#"<?xml version="1.0" encoding="UTF-8"?>
@@ -130,6 +250,7 @@ fn build_plist(label: &str, script: &str, interval: &str) -> String {
 }
 
 /// GUI launchd domain target for the current user, e.g. "gui/501".
+#[cfg(target_os = "macos")]
 fn gui_domain() -> String {
     let uid = Command::new("id")
         .arg("-u")
@@ -141,6 +262,7 @@ fn gui_domain() -> String {
     format!("gui/{uid}")
 }
 
+#[cfg(target_os = "macos")]
 fn unload_agent(plist: &Path) {
     // bootout removes the job from the user's GUI domain (modern API).
     let _ = Command::new("launchctl")
@@ -150,6 +272,7 @@ fn unload_agent(plist: &Path) {
         .output();
 }
 
+#[cfg(target_os = "macos")]
 fn load_agent(plist: &Path) -> Result<(), String> {
     unload_agent(plist); // bootstrap fails if already loaded → bootout first
     let out = Command::new("launchctl")
@@ -165,8 +288,17 @@ fn load_agent(plist: &Path) -> Result<(), String> {
     }
 }
 
+// ─────────────────────────────── Estado guardado ───────────────────────────────
+
 fn state_file(support: &str) -> String {
-    format!("{support}/schedules.json")
+    #[cfg(target_os = "windows")]
+    {
+        format!("{support}\\schedules.json")
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        format!("{support}/schedules.json")
+    }
 }
 fn read_state(support: &str) -> HashMap<String, String> {
     std::fs::read_to_string(state_file(support))
@@ -199,7 +331,7 @@ pub fn list_schedules() -> Vec<ScheduleInfo> {
         Err(_) => return vec![],
     };
     let m = read_state(&support);
-    ["dsstore", "cache", "trash", "cleanup"]
+    task_keys()
         .iter()
         .map(|t| ScheduleInfo {
             task: t.to_string(),
@@ -212,6 +344,56 @@ pub fn list_schedules() -> Vec<ScheduleInfo> {
 pub fn set_schedule(task: String, cadence: String) -> Result<(), String> {
     let home = home()?;
     let support = support_dir(&home);
+    set_schedule_impl(&home, &support, &task, &cadence)
+}
+
+/// Windows: crea/borra la tarea en el Programador de tareas.
+#[cfg(target_os = "windows")]
+fn set_schedule_impl(
+    home: &str,
+    support: &str,
+    task: &str,
+    cadence: &str,
+) -> Result<(), String> {
+    let scripts = format!("{support}\\scripts");
+    std::fs::create_dir_all(&scripts).map_err(|e| e.to_string())?;
+
+    // Se quita siempre la tarea previa antes de (re)crearla.
+    remove_schedule(task);
+    if cadence == "manual" {
+        return save_state(support, task, cadence);
+    }
+
+    let body = task_script(task, home).ok_or("Tarea desconocida")?;
+    let script_path = format!("{scripts}\\{task}.ps1");
+    std::fs::write(&script_path, body).map_err(|e| e.to_string())?;
+    install_schedule(task, cadence, &script_path)?;
+    save_state(support, task, cadence)
+}
+
+/// Linux: pendiente (systemd user timers). Se permite volver a «manual» para
+/// que el usuario pueda desactivar, pero no programar en falso.
+#[cfg(target_os = "linux")]
+fn set_schedule_impl(
+    _home: &str,
+    support: &str,
+    task: &str,
+    cadence: &str,
+) -> Result<(), String> {
+    if cadence == "manual" {
+        return save_state(support, task, cadence);
+    }
+    Err("La programación automática aún no está disponible en Linux".into())
+}
+
+/// macOS: LaunchAgent de launchd con el script en Application Support.
+#[cfg(target_os = "macos")]
+fn set_schedule_impl(
+    home: &str,
+    support: &str,
+    task: &str,
+    cadence: &str,
+) -> Result<(), String> {
     let scripts = format!("{support}/scripts");
     std::fs::create_dir_all(&scripts).map_err(|e| e.to_string())?;
     let agents = format!("{home}/Library/LaunchAgents");
@@ -227,19 +409,19 @@ pub fn set_schedule(task: String, cadence: String) -> Result<(), String> {
     }
 
     if cadence == "manual" {
-        return save_state(&support, &task, &cadence);
+        return save_state(support, task, cadence);
     }
 
-    let body = task_script(&task, &home).ok_or("Tarea desconocida")?;
+    let body = task_script(task, home).ok_or("Tarea desconocida")?;
     let script_path = format!("{scripts}/{task}.sh");
     std::fs::write(&script_path, body).map_err(|e| e.to_string())?;
 
-    let interval = calendar_interval(&cadence).ok_or("Cadencia inválida")?;
+    let interval = calendar_interval(cadence).ok_or("Cadencia inválida")?;
     let plist = build_plist(&label, &script_path, &interval);
     std::fs::write(&plist_path, plist).map_err(|e| e.to_string())?;
     load_agent(&plist_path)?;
 
-    save_state(&support, &task, &cadence)
+    save_state(support, task, cadence)
 }
 
 /// Async + spawn_blocking: el barrido de .DS_Store puede tardar (recorre el
@@ -251,11 +433,27 @@ pub async fn run_task_now(task: String) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || {
         let home = home()?;
         let body = task_script(&task, &home).ok_or("Tarea desconocida")?;
+
+        #[cfg(target_os = "windows")]
+        let out = Command::new("powershell")
+            .args([
+                "-NoProfile",
+                "-NonInteractive",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                &body,
+            ])
+            .output()
+            .map_err(|e| e.to_string())?;
+
+        #[cfg(not(target_os = "windows"))]
         let out = Command::new("/bin/sh")
             .arg("-c")
             .arg(&body)
             .output()
             .map_err(|e| e.to_string())?;
+
         if out.status.success() {
             Ok(())
         } else {
