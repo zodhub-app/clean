@@ -4,146 +4,154 @@
 
 # ZodHub CleanPC
 
-**Tu equipo, sencillamente limpio y seguro.**
+**Your machine, simply clean and safe.**
 
-Utilidad de mantenimiento y limpieza para **macOS y Windows**: directa, transparente y
-100 % local. Hace lo esencial —limpiar cachés, liberar espacio, encontrar duplicados,
-desinstalar de verdad, automatizar el mantenimiento— sin la monstruosidad ni el humo de
-los limpiadores comerciales.
+A maintenance and cleaning utility for **macOS and Windows**: direct, transparent and
+100% local. It does the essentials — clear out caches, free up space, find duplicates,
+uninstall properly, automate the boring parts — without the bloat and smoke of commercial
+cleaners.
 
-[![Descargar para Mac](https://img.shields.io/badge/⬇%20Mac-Intel%20%2B%20Apple%20Silicon-0A84FF?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
-[![Descargar para Windows](https://img.shields.io/badge/⬇%20Windows-10%20y%2011%20(64%20bits)-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
+🇪🇸 [Leer en español](README.es.md)
+
+[![Download for Mac](https://img.shields.io/badge/⬇%20Mac-Intel%20%2B%20Apple%20Silicon-0A84FF?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
+[![Download for Windows](https://img.shields.io/badge/⬇%20Windows-10%20and%2011%20(64--bit)-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
 
 ![macOS](https://img.shields.io/badge/macOS-12%2B-black?logo=apple)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows)
 ![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri)
-![local-first](https://img.shields.io/badge/local--first-privado-2ea44f)
-[![Última versión](https://img.shields.io/github/v/release/zodhub-app/clean?label=versión)](https://github.com/zodhub-app/clean/releases/latest)
+![local-first](https://img.shields.io/badge/local--first-private-2ea44f)
+[![Latest release](https://img.shields.io/github/v/release/zodhub-app/clean?label=version)](https://github.com/zodhub-app/clean/releases/latest)
 
 </div>
 
 ---
 
 <div align="center">
-  <img src="docs/screenshot-resumen.png" alt="ZodHub CleanPC — pantalla de Resumen" width="860" />
-  <br><em>Resumen: telemetría en vivo, radar de red y monitor de procesos.</em>
+  <img src="docs/screenshot-resumen.png" alt="ZodHub CleanPC — Home screen" width="860" />
+  <br><em>Home: live telemetry, network radar and a process monitor.</em>
 </div>
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshot-memoria.png" alt="Memoria" /><br><sub><b>Memoria</b> — presión de RAM y desglose explicado.</sub></td>
-    <td width="50%"><img src="docs/screenshot-tareas.png" alt="Tareas" /><br><sub><b>Tareas</b> — mantenimiento programado con launchd.</sub></td>
+    <td width="50%"><img src="docs/screenshot-memoria.png" alt="Memory" /><br><sub><b>Memory</b> — RAM pressure and a breakdown that explains itself.</sub></td>
+    <td width="50%"><img src="docs/screenshot-tareas.png" alt="Tasks" /><br><sub><b>Tasks</b> — scheduled maintenance via launchd / Task Scheduler.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshot-ajustes.png" alt="Ajustes" /><br><sub><b>Ajustes</b> — temas, apariencia y escala de la interfaz.</sub></td>
-    <td width="50%"><img src="docs/screenshot-ds-store.png" alt=".DS_Store" /><br><sub><b>.DS_Store</b> — comprime en zip limpio y barre los .DS_Store.</sub></td>
+    <td width="50%"><img src="docs/screenshot-ajustes.png" alt="Settings" /><br><sub><b>Settings</b> — themes, appearance and interface scale.</sub></td>
+    <td width="50%"><img src="docs/screenshot-ds-store.png" alt=".DS_Store" /><br><sub><b>.DS_Store</b> — zip without junk files and sweep them away.</sub></td>
   </tr>
 </table>
 
-<div align="center"><sub>Y además: Almacenamiento, Explorador de archivos grandes, Instantáneas APFS, Cachés de desarrollo, Desinstalador y Duplicados.</sub></div>
+<div align="center"><sub>Plus: Storage, a large-file Explorer, APFS Snapshots, developer caches, an Uninstaller and a Duplicate finder.</sub></div>
 
 ---
 
-## Descargar
+## Download
 
-Todo está en **[la última versión](https://github.com/zodhub-app/clean/releases/latest)**.
+Everything is on **[the latest release](https://github.com/zodhub-app/clean/releases/latest)**.
 
-| Sistema | Archivo | Notas |
+| System | File | Notes |
 | --- | --- | --- |
-| **macOS** 12 o superior | `..._universal.dmg` | Un único archivo para Intel y Apple Silicon |
-| **Windows** 10 y 11 (64 bits) | `..._x64-setup.exe` | Recomendado |
-| **Windows** (empresa) | `..._x64_en-US.msi` | Para despliegue por directiva de grupo |
+| **macOS** 12 or later | `..._universal.dmg` | One file for both Intel and Apple Silicon |
+| **Windows** 10 and 11 (64-bit) | `..._x64-setup.exe` | Recommended |
+| **Windows** (enterprise) | `..._x64_en-US.msi` | For group-policy deployment |
 
-### Primera instalación
+### First install
 
-**macOS** — abre el `.dmg`, arrastra la app a *Aplicaciones* y la primera vez ábrela con
-**clic derecho › Abrir**. Solo esa vez.
+**macOS** — open the `.dmg`, drag the app into *Applications*, and the first time open it
+with **right-click › Open**. Just that once.
 
-**Windows** — ejecuta el instalador. Aparecerá *«Windows protegió tu PC»*: pulsa
-**Más información › Ejecutar de todas formas**. También solo la primera vez.
+**Windows** — run the installer. You'll see *"Windows protected your PC"*: click
+**More info › Run anyway**. Also just the first time.
 
-Ese aviso sale en los dos sistemas porque todavía no firmamos con un certificado de pago,
-no porque el programa haga nada raro. Puedes leer el código entero en este repositorio
-antes de fiarte, que es la única garantía que vale de verdad. A partir de ahí, la app
-**se actualiza sola** en ambos sistemas.
+That notice appears on both systems because we don't yet sign with a paid certificate, not
+because the program does anything odd. You can read the entire source in this repository
+before trusting it, which is the only guarantee that really counts. From then on, the app
+**updates itself** on both systems.
 
-📖 **[Guía de instalación completa](docs/INSTALACION.md)** — paso a paso para Mac y Windows,
-instalación silenciosa para administradores, cómo verificar la descarga, cómo desinstalar y
-solución de problemas frecuentes.
+📖 **[Full install guide](docs/INSTALL.md)** — step by step for Mac and Windows, silent
+install for administrators, how to verify your download, how to uninstall, and common
+problems.
 
-## Qué hace
+## What it does
 
-- **Resumen** — telemetría en vivo (CPU, memoria, disco, temperatura), radar de red y un
-  monitor de procesos estilo Monitor de Actividad.
-- **Almacenamiento** — desglose del disco por categorías, con histórico de crecimiento.
-- **Explorador** — encuentra los archivos y carpetas más grandes y los revela en el Finder
-  o en el Explorador, según el sistema.
-- **Liberar espacio** — cachés del sistema, temporales, Docker, npm/pnpm/NuGet/Gradle,
-  modelos de IA y Papelera, todo con su tamaño real medido.
-- **Memoria** — presión de RAM y purga opcional, con la etiqueta honesta de que es una
-  aproximación y de que el sistema ya gestiona bien la memoria.
-- **Desinstalador** — quita programas y los archivos que dejan atrás. En Windows llama al
-  desinstalador oficial del propio programa, no inventa uno.
-- **Duplicados** — buscador por contenido (huella SHA-256), no por nombre de archivo.
-- **Tareas** — mantenimiento programado (diario, semanal o mensual) con `launchd` en macOS
-  y el Programador de tareas en Windows.
-- **Instantáneas APFS** *(solo macOS)* — lista y adelgaza las copias locales de Time Machine.
-- **.DS_Store** *(solo macOS)* — comprime en zip limpio y barre los `.DS_Store`.
+- **Home** — live CPU, memory, disk and network usage, temperatures from available sensors
+  and a process monitor.
+- **Free up space** — junk that piles up: caches, temporary files, leftovers from
+  development tools, Docker images and containers, AI models and the bin, each with its
+  real measured size.
+- **Storage** — what fills your disk, by volume and area, with a usage history.
+- **Explorer** — finds the heaviest files and folders and reveals them in Finder or File
+  Explorer, depending on the system.
+- **Duplicates** — compares files by content (SHA-256 fingerprint), not by name.
+- **Applications** — uninstalls programs and the files they leave behind. On Windows it
+  calls each program's own official uninstaller rather than inventing one.
+- **Memory** — RAM and swap detail, with an optional purge, honestly labelled as an
+  approximation.
+- **Tasks** — scheduled maintenance (daily, weekly or monthly) using `launchd` on macOS and
+  Task Scheduler on Windows.
+- **Snapshots** *(macOS only)* — lists and thins local Time Machine copies.
+- **.DS_Store** *(macOS only)* — zips folders without those hidden files and sweeps them away.
 
-Las secciones que no tienen sentido en un sistema **no aparecen** en él, en vez de mostrarse
-vacías o fingir que hacen algo.
+Sections that make no sense on a given system **don't appear** there, rather than showing up
+empty or pretending to do something.
 
-## Principios
+## Principles
 
-- **Honestidad.** Nada de promesas absolutas ni «antivirus». Si un dato no existe (p. ej. un
-  sensor de temperatura), se muestra `—`, nunca un valor inventado.
-- **Privado y local.** Todo se ejecuta en tu equipo. Cero telemetría; tus datos nunca salen de él.
-  Solo hay dos conexiones: comprobar si hay versión nueva y, si tú lo pides, el alta en el boletín.
-- **Borrado responsable.** El borrado se previsualiza y se confirma; nunca se tocan rutas del sistema.
+- **Honesty.** No absolute promises, no "antivirus" claims. If a value doesn't exist — say,
+  a temperature sensor — it shows `—`, never a made-up number.
+- **Private and local.** Everything runs on your machine. Zero telemetry; your data never
+  leaves it. There are only two connections: checking for a new version and, if you ask for
+  it, signing up for the newsletter.
+- **Responsible deletion.** Deletions are previewed and confirmed; system paths are never
+  touched.
 
-## Actualizaciones automáticas
+## Automatic updates
 
-ZodHub CleanPC lleva un actualizador integrado. En la barra superior hay una **campana**: cuando
-hay una versión nueva se enciende un **punto rojo con el número** de actualizaciones, y al pulsarla
-puedes instalarla con un clic (descarga, **verifica la firma**, instala y reinicia). Nada de
-reinstalar a mano.
+ZodHub CleanPC has a built-in updater. There's a **bell** in the top bar: when a new version
+exists it lights up with a **red dot and a count**, and one click installs it (download,
+**signature check**, install, restart). No reinstalling by hand.
 
-Comprueba al arrancar y cada 6 horas, y puedes forzar la comprobación desde la propia campana.
-Si no hay novedad dice «Estás al día»; si no puede comprobarlo (sin red), lo dice claramente en
-vez de fingir que todo está al día.
+It checks at startup and every 6 hours, and you can force a check from the bell itself. If
+there's nothing new it says "You're up to date"; if it can't check — no connection — it says
+so plainly instead of pretending everything is current.
 
-Funciona igual en **macOS y en Windows**: cada versión publica un `latest.json` con las dos
-plataformas, y los paquetes van firmados criptográficamente, así que el actualizador rechaza
-cualquier cosa que no venga de nosotros.
+It works the same on **macOS and Windows**: every release publishes a `latest.json` covering
+both platforms, and the packages are cryptographically signed, so the updater rejects
+anything that doesn't come from us.
 
-## Para desarrolladores
+## For developers
 
-Requisitos: Node 22+, Rust (rustup) y, según el sistema, las Command Line Tools de Xcode
-(macOS) o las Build Tools de Visual Studio con el SDK de Windows.
+Requirements: Node 22+, Rust (rustup) and, depending on your system, the Xcode Command Line
+Tools (macOS) or the Visual Studio Build Tools with the Windows SDK.
 
 ```bash
-npm run bootstrap      # npm install + componentes de shadcn
-npm run tauri dev      # arrancar en desarrollo
+npm run bootstrap      # npm install + shadcn components
+npm run tauri dev      # run in development
 ```
 
-Toda la lógica real (disco, red, sistema) vive en **Rust** (`src-tauri/src/*.rs`) como comandos
-Tauri; el frontend (React 19 + Tailwind v4 + shadcn/ui) solo hace interfaz. Lo específico de
-cada sistema se aísla con `#[cfg(target_os = ...)]` detrás de un contrato común, de modo que la
-interfaz no sabe en qué sistema está salvo para ocultar lo que no aplica.
+All the real logic (disk, network, system) lives in **Rust** (`src-tauri/src/*.rs`) as Tauri
+commands; the frontend (React 19 + Tailwind v4 + shadcn/ui) only handles the interface.
+Anything system-specific is isolated behind `#[cfg(target_os = ...)]` with a shared contract,
+so the UI doesn't know which system it's on except to hide what doesn't apply.
 
-Para publicar una versión nueva, sube el número en `tauri.conf.json`, `Cargo.toml` y
-`package.json`, y empuja un tag `vX.Y.Z`: el CI compila el `.dmg` universal y los instaladores
-de Windows, los firma y crea una release en borrador con el `latest.json` de las dos plataformas.
+To ship a new version, bump the number in `tauri.conf.json`, `Cargo.toml` and `package.json`,
+then push a `vX.Y.Z` tag: CI builds the universal `.dmg` and the Windows installers, signs
+them and creates a draft release with a `latest.json` covering both platforms.
+
+The website in `landing/` is bilingual: the Spanish pages hold the translation dictionary and
+`landing/build-en.py` regenerates `landing/en/` from it, so there is never a second copy of a
+text to keep in sync.
 
 ## Stack
 
 Tauri 2 · React 19 · Vite · TypeScript · Tailwind v4 · shadcn/ui · Rust (sysinfo, walkdir, trash, sha2, zip)
 
-## Licencia
+## Licence
 
-Software propietario de ZodHub. Puedes usarlo gratis y leer su código; no puedes
-redistribuirlo ni crear obras derivadas. Ver [LICENSE](LICENSE),
-[términos de uso](https://zodhub-app.github.io/clean/terminos.html) y
-[política de privacidad](https://zodhub-app.github.io/clean/privacidad.html).
+Proprietary software by ZodHub. You may use it free of charge and read its source; you may
+not redistribute it or create derivative works. See [LICENSE](LICENSE),
+[terms of use](https://zodhub-app.github.io/clean/en/terminos.html) and
+[privacy policy](https://zodhub-app.github.io/clean/en/privacidad.html).
 
-<div align="center"><sub>Hecho con cuidado por <a href="https://github.com/zodhub-app">ZodHub</a> · Tu equipo, sencillamente limpio y seguro.</sub></div>
+<div align="center"><sub>Made with care by <a href="https://github.com/zodhub-app">ZodHub</a> · Your machine, simply clean and safe.</sub></div>

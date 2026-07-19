@@ -4,7 +4,7 @@ Todo lo que necesitas para instalar y usar ZodHub CleanPC en **macOS** y en **Wi
 incluido qué hacer con los avisos de seguridad del sistema y cómo comprobar por tu cuenta
 que el archivo que has descargado es el nuestro.
 
-> Idioma: esta guía está en español. La app y la web están en español e inglés.
+> 🇬🇧 [Read this guide in English](INSTALL.md)
 
 ---
 
