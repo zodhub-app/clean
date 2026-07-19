@@ -67,6 +67,17 @@ META = {
     ),
 }
 
+# Sustituciones en crudo sobre el HTML de salida, para lo que no vive en un
+# elemento con `data-i18n`: por ejemplo el texto que se precarga en el tuit de
+# los botones de compartir, que va dentro del propio enlace. Sin esto, un lector
+# inglés compartía la página con un texto en español.
+RAW = {
+    "ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%20y%20Windows%2C%20100%25%20gratis":
+        "ZodHub%20CleanPC%20%E2%80%94%20honest%20maintenance%20for%20Mac%20and%20Windows%2C%20100%25%20free",
+    "ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%2C%20100%25%20gratis":
+        "ZodHub%20CleanPC%20%E2%80%94%20honest%20maintenance%20for%20Mac%2C%20100%25%20free",
+}
+
 TOGGLE_CLASSES = (
     "mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] "
     "text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] "
@@ -172,6 +183,8 @@ def build_english(name: str) -> None:
     swap_toggle(soup, f"../{name}", "ES", "Ver en español")
 
     out = kill_listener(str(soup))
+    for es, en in RAW.items():
+        out = out.replace(es, en)
     (OUT / name).write_text(out, encoding="utf-8")
     print(f"  en/{name}")
 
