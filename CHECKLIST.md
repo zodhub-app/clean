@@ -126,6 +126,26 @@ Marcar lo verificado en cada repaso.
 
 ### Errores ya cometidos aquí (no repetir)
 
+- **Windows: consolas parpadeando.** Todo proceso hijo se crea con
+  `crate::platform::cmd(...)`, NUNCA con `std::process::Command::new`. Sin la
+  bandera `CREATE_NO_WINDOW`, cada `powershell`/`netstat`/`schtasks` abre una
+  ventana negra; como la telemetría los lanza en bucle, parece un virus.
+  Única excepción justificada: el desinstalador de `apps.rs`, que el usuario
+  debe ver.
+- **Windows: `remove_dir_all` aborta al primer archivo en uso.** En `Temp`
+  siempre hay alguno, así que no se limpiaba nada y salía «os error 32». Usar
+  `platform::wipe(path, keep_root)`, que salta lo bloqueado y sigue, y
+  `platform::wipe_note()` para redactar el aviso. `keep_root: true` en carpetas
+  del sistema (`Temp`, `Caches`) que deben seguir existiendo.
+- **`$Recycle.Bin` no se puede recorrer**: da unos pocos bytes y parece vacía.
+  El tamaño se pide al Shell (`Shell.Application`, `NameSpace(0xA)`).
+- **`ui/sonner.tsx` venía leyendo el tema de `next-themes`**, que esta app no
+  monta: los avisos seguían al tema del SISTEMA, no al selector. Debe usar
+  `useTheme()` de `@/components/theme-provider`.
+- **Efectos calibrados solo para oscuro.** Las hendiduras y velos con
+  `bg-black/25` se ven como manchas grises en tema claro. Dar siempre la
+  variante clara y usar `dark:` para la oscura.
+
 - `reqwest` 0.13 renombró la feature `rustls-tls` → **`rustls`**. Con el nombre
   viejo, `cargo` falla con «does not have that feature».
 - En `Cargo.toml` **no existe** `cfg(desktop)`: es un cfg de Tauri, no de Cargo.

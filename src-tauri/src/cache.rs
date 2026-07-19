@@ -93,15 +93,6 @@ fn path_size(path: &Path) -> u64 {
     0
 }
 
-fn remove_path(p: &Path) -> std::io::Result<()> {
-    let meta = fs::symlink_metadata(p)?;
-    if meta.is_dir() && !meta.file_type().is_symlink() {
-        fs::remove_dir_all(p)
-    } else {
-        fs::remove_file(p)
-    }
-}
-
 #[tauri::command]
 pub fn scan_caches() -> Result<Vec<CacheEntry>, String> {
     let root = user_cache_root().ok_or("No se pudo localizar la carpeta de cachés")?;
@@ -174,15 +165,16 @@ pub fn clean_caches(paths: Vec<String>) -> Result<CleanResult, String> {
             continue;
         }
         let size = path_size(&p);
-        match remove_path(&p) {
-            Ok(_) => {
-                freed += size;
-                removed += 1;
-            }
-            Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => {
-                admin.push((p, size));
-            }
-            Err(e) => errors.push(format!("{ps}: {e}")),
+        // Borrado tolerante: lo bloqueado se salta y se sigue con el resto.
+        let w = crate::platform::wipe(&p, false);
+        freed += w.freed;
+        removed += w.removed;
+
+        if w.denied > 0 {
+            // Lo que falla por permisos se agrupa para pedir admin UNA sola vez.
+            admin.push((p.clone(), size.saturating_sub(w.freed)));
+        } else if let Some(n) = crate::platform::wipe_note(&w) {
+            errors.push(format!("{ps}: {n}"));
         }
     }
 
@@ -233,7 +225,7 @@ fn remove_with_admin(paths: &[PathBuf]) -> Result<(), String> {
     let escaped = shell_cmd.replace('\\', "\\\\").replace('"', "\\\"");
     let script = format!("do shell script \"{escaped}\" with administrator privileges");
 
-    let out = std::process::Command::new("osascript")
+    let out = crate::platform::cmd("osascript")
         .arg("-e")
         .arg(script)
         .output()

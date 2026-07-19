@@ -7,7 +7,6 @@
 use crate::platform;
 use serde::Serialize;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use std::time::Duration;
 use sysinfo::Disks;
 
@@ -190,6 +189,36 @@ fn trash_path(path: &str) -> Result<(), String> {
     platform::move_to_trash(Path::new(path))
 }
 
+/// Tamaño de la Papelera.
+///
+/// En Windows, `C:\$Recycle.Bin` está protegida y recorrerla a mano devuelve
+/// una cifra ridícula (unos pocos bytes), que es peor que no dar ninguna:
+/// parece que la papelera está vacía cuando no lo está. Se pregunta al Shell,
+/// que es quien sabe de verdad lo que hay dentro.
+#[cfg(target_os = "windows")]
+fn trash_size(_paths: &[String]) -> u64 {
+    const PS: &str = "$s=(New-Object -ComObject Shell.Application).NameSpace(0xA); \
+                      if($null -eq $s){0} else { \
+                      ($s.Items() | ForEach-Object { $_.Size } | Measure-Object -Sum).Sum }";
+    let out = match crate::platform::cmd("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-Command", PS])
+        .output()
+    {
+        Ok(o) if o.status.success() => o,
+        _ => return 0,
+    };
+    String::from_utf8_lossy(&out.stdout)
+        .trim()
+        .parse::<f64>()
+        .map(|v| v.max(0.0) as u64)
+        .unwrap_or(0)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn trash_size(paths: &[String]) -> u64 {
+    paths.iter().map(|p| du_bytes(p)).sum()
+}
+
 #[cfg(target_os = "windows")]
 fn candidates(key: &str, h: &str) -> Vec<String> {
     let local = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| format!("{h}\\AppData\\Local"));
@@ -280,7 +309,7 @@ fn parse_size(s: &str) -> u64 {
 }
 
 fn docker_reclaimable() -> Option<u64> {
-    let out = Command::new("docker").args(["system", "df"]).output().ok()?;
+    let out = crate::platform::cmd("docker").args(["system", "df"]).output().ok()?;
     if !out.status.success() {
         return None;
     }
@@ -342,7 +371,7 @@ pub async fn list_dev_junk() -> Vec<DevItem> {
         // Papelera.
         let trash = existing("trash", &h);
         if !trash.is_empty() {
-            let size: u64 = trash.iter().map(|p| du_bytes(p)).sum();
+            let size: u64 = trash_size(&trash);
             if size > 0 {
                 items.push(DevItem {
                     key: "trash".to_string(),
@@ -372,7 +401,7 @@ pub async fn list_dev_junk() -> Vec<DevItem> {
 /// Papelera de reciclaje. Vacía la de todas las unidades.
 #[cfg(target_os = "windows")]
 fn empty_trash() -> Result<(), String> {
-    let out = Command::new("powershell")
+    let out = crate::platform::cmd("powershell")
         .args([
             "-NoProfile",
             "-NonInteractive",
@@ -404,7 +433,7 @@ fn empty_trash() -> Result<(), String> {
                   if en is not -128 then error em number en\n\
                   end try\n\
                   end tell";
-    let out = Command::new("osascript")
+    let out = crate::platform::cmd("osascript")
         .arg("-e")
         .arg(script)
         .output()
@@ -418,27 +447,31 @@ fn empty_trash() -> Result<(), String> {
 
 /// Borra permanentemente las rutas de una categoría de ficheros. Devuelve el
 /// espacio liberado (tamaño medido antes) y los errores.
+/// ¿Es una carpeta que el sistema espera que siga existiendo?
+///
+/// `Temp`, `Caches` y compañía deben quedarse vacías, no desaparecer: Windows y
+/// macOS las dan por hechas y borrarlas causa problemas a otros programas.
+fn is_system_container(p: &Path) -> bool {
+    matches!(
+        p.file_name().and_then(|s| s.to_str()),
+        Some("Temp") | Some("temp") | Some("Caches") | Some("INetCache") | Some(".cache")
+    )
+}
+
 fn wipe_files(key: &str, h: &str) -> (u64, Vec<String>) {
     let mut freed = 0u64;
-    let mut errors = Vec::new();
+    let mut notes = Vec::new();
     for p in existing(key, h) {
-        let before = du_bytes(&p);
-        // Borrado con la API del sistema de archivos (sin `rm`, que no existe en
-        // Windows). Best-effort: si algo está bloqueado, se ignora y seguimos.
         let path = Path::new(&p);
-        let res = if path.is_dir() {
-            std::fs::remove_dir_all(path)
-        } else {
-            std::fs::remove_file(path)
-        };
-        match res {
-            Ok(()) => freed += before,
-            // Que quede algún archivo en uso es normal en cachés: no es un fallo
-            // que deba alarmar, pero lo reportamos con claridad.
-            Err(e) => errors.push(format!("{p}: {e}")),
+        // Borrado tolerante: lo que esté en uso se salta y se sigue con el
+        // resto, en lugar de abortar y no limpiar nada (ver platform::wipe).
+        let w = crate::platform::wipe(path, is_system_container(path));
+        freed += w.freed;
+        if let Some(n) = crate::platform::wipe_note(&w) {
+            notes.push(format!("{p}: {n}"));
         }
     }
-    (freed, errors)
+    (freed, notes)
 }
 
 #[tauri::command]
@@ -446,7 +479,7 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let h = home();
         if key == "docker" {
-            return match Command::new("docker").args(["system", "prune", "-af"]).output() {
+            return match crate::platform::cmd("docker").args(["system", "prune", "-af"]).output() {
                 Ok(o) if o.status.success() => CleanResult {
                     freed: parse_reclaimed(&String::from_utf8_lossy(&o.stdout)),
                     errors: vec![],

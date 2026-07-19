@@ -1,7 +1,6 @@
 use crate::system::AppState;
 use serde::Serialize;
 #[cfg(target_os = "macos")]
-use std::process::Command;
 
 #[derive(Serialize)]
 pub struct MemoryStats {
@@ -59,7 +58,7 @@ fn mem_breakdown() -> (u64, u64, u64, u64, u64) {
 /// zeros if vm_stat isn't available.
 #[cfg(target_os = "macos")]
 fn parse_vm_stat() -> (u64, u64, u64, u64, u64) {
-    let output = match Command::new("vm_stat").output() {
+    let output = match crate::platform::cmd("vm_stat").output() {
         Ok(o) => o,
         Err(_) => return (0, 0, 0, 0, 0),
     };
@@ -105,7 +104,7 @@ fn parse_vm_stat() -> (u64, u64, u64, u64, u64) {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn purge_memory() -> Result<(), String> {
-    let out = Command::new("osascript")
+    let out = crate::platform::cmd("osascript")
         .arg("-e")
         .arg("do shell script \"/usr/sbin/purge\" with administrator privileges")
         .output()

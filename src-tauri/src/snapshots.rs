@@ -17,7 +17,6 @@ use serde::Serialize;
 #[cfg(target_os = "macos")]
 use std::path::Path;
 #[cfg(target_os = "macos")]
-use std::process::Command;
 #[cfg(target_os = "macos")]
 use sysinfo::Disks;
 
@@ -55,7 +54,7 @@ fn parse_snapshots() -> Vec<Snapshot> {
 
 #[cfg(target_os = "macos")]
 fn parse_snapshots() -> Vec<Snapshot> {
-    let text = Command::new("tmutil")
+    let text = crate::platform::cmd("tmutil")
         .arg("listlocalsnapshots")
         .arg("/")
         .output()
@@ -100,7 +99,7 @@ pub async fn thin_snapshots() -> Result<ThinResult, String> {
         let before = free_bytes();
 
         let script = "do shell script \"/usr/bin/tmutil thinlocalsnapshots / 999999999999999 4\" with administrator privileges";
-        let out = Command::new("osascript")
+        let out = crate::platform::cmd("osascript")
             .arg("-e")
             .arg(script)
             .output()

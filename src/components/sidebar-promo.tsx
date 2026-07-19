@@ -13,10 +13,15 @@ export function SidebarPromo() {
   const { t } = useLang();
   return (
     <div className="mt-auto px-2 pb-1 group-data-[collapsible=icon]:hidden">
-      {/* Marco hundido: sombras interiores = sensación de profundidad hacia dentro. */}
-      <div className="relative aspect-square w-full rounded-lg border border-black/40 bg-black/25 p-2 shadow-[inset_0_2px_10px_rgba(0,0,0,0.6),inset_0_-1px_0_rgba(255,255,255,0.05)]">
+      {/*
+        Marco hundido: sombras interiores = profundidad hacia dentro.
+        La hendidura se calibra por tema. En oscuro puede ser negra y marcada;
+        en claro, ese mismo negro se ve como una MANCHA gris sucia sobre el
+        fondo, así que se usa un velo mucho más tenue y una sombra suave.
+      */}
+      <div className="relative aspect-square w-full rounded-lg border border-black/[0.06] bg-black/[0.03] p-2 shadow-[inset_0_1px_4px_rgba(15,23,42,0.06)] dark:border-black/40 dark:bg-black/25 dark:shadow-[inset_0_2px_10px_rgba(0,0,0,0.6),inset_0_-1px_0_rgba(255,255,255,0.05)]">
         {/* Banner (aquí irá la imagen/contenido remoto). */}
-        <div className="flex h-full flex-col overflow-hidden rounded-md bg-gradient-to-br from-primary/25 via-primary/10 to-transparent p-2.5">
+        <div className="flex h-full flex-col overflow-hidden rounded-md bg-gradient-to-br from-primary/15 via-primary/[0.06] to-transparent p-2.5 dark:from-primary/25 dark:via-primary/10">
           <div className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-primary">
             <Megaphone className="size-3" />
             {t("Novedades")}

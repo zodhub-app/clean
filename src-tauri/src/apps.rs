@@ -7,7 +7,6 @@ use serde::Serialize;
 #[cfg(target_os = "macos")]
 use std::path::PathBuf;
 use std::path::Path;
-use std::process::Command;
 
 #[derive(Serialize)]
 pub struct AppInfo {
@@ -49,7 +48,7 @@ fn du_bytes(path: &str) -> u64 {
 #[cfg(target_os = "macos")]
 fn bundle_id(app: &Path) -> String {
     let info = format!("{}/Contents/Info", app.to_string_lossy());
-    Command::new("defaults")
+    crate::platform::cmd("defaults")
         .arg("read")
         .arg(&info)
         .arg("CFBundleIdentifier")
@@ -122,7 +121,7 @@ Get-ItemProperty $paths -ErrorAction SilentlyContinue |
                 @{N='kb';E={$_.EstimatedSize}} |
   ConvertTo-Json -Compress
 "#;
-    let out = match Command::new("powershell")
+    let out = match crate::platform::cmd("powershell")
         .args(["-NoProfile", "-NonInteractive", "-Command", PS])
         .output()
     {
@@ -310,7 +309,14 @@ fn uninstall_impl(
     //    cadena del registro (suele venir ya con comillas, o ser msiexec /X{...}).
     match uninstaller.map(|s| s.trim().to_string()).filter(|s| !s.is_empty()) {
         Some(cmd) => {
-            if let Err(e) = Command::new("cmd").arg("/C").raw_arg(&cmd).spawn() {
+            // ÚNICA excepción a `platform::cmd`: el desinstalador es un proceso
+            // interactivo que el usuario TIENE que ver para poder responderle.
+            // Aquí ocultar la ventana dejaría un proceso invisible esperando.
+            if let Err(e) = std::process::Command::new("cmd")
+                .arg("/C")
+                .raw_arg(&cmd)
+                .spawn()
+            {
                 errors.push(format!("No se pudo abrir el desinstalador: {e}"));
             }
         }

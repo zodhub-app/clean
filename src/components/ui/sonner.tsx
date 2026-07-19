@@ -7,15 +7,24 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
-import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { useTheme } from "@/components/theme-provider"
 
+/**
+ * Avisos emergentes.
+ *
+ * OJO: la plantilla de shadcn lee el tema de `next-themes`, que esta app NO
+ * monta. El resultado era que el toast seguía al tema del SISTEMA en vez de al
+ * selector de la app: con Windows en oscuro y la app en claro, salía una caja
+ * grisácea que parecía una mancha. Aquí se toma el tema ya resuelto por nuestro
+ * ThemeProvider, que es la única fuente de verdad.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const { resolvedMode } = useTheme()
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={resolvedMode}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,

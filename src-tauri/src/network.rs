@@ -1,5 +1,4 @@
 use serde::Serialize;
-use std::process::Command;
 use sysinfo::Networks;
 
 #[derive(Serialize)]
@@ -44,7 +43,33 @@ pub fn network_stats() -> NetworkStats {
 /// Counts ESTABLISHED and LISTEN sockets from `netstat -an`. macOS ships netstat.
 /// Any failure (missing binary, parse error) degrades gracefully to (0, 0).
 fn count_sockets() -> (u32, u32) {
-    let output = match Command::new("netstat").args(["-an"]).output() {
+    // El panel de Inicio se refresca cada pocos segundos, pero `netstat` es un
+    // proceso externo y en Windows tarda bastante. Lanzarlo en cada tick
+    // castigaba la CPU sin aportar nada: el número de sockets no cambia tanto.
+    // Guardamos el último recuento durante unos segundos.
+    use std::sync::{Mutex, OnceLock};
+    use std::time::{Duration, Instant};
+    const TTL: Duration = Duration::from_secs(5);
+    static CACHE: OnceLock<Mutex<Option<(Instant, u32, u32)>>> = OnceLock::new();
+    let cache = CACHE.get_or_init(|| Mutex::new(None));
+
+    if let Ok(guard) = cache.lock() {
+        if let Some((at, e, l)) = *guard {
+            if at.elapsed() < TTL {
+                return (e, l);
+            }
+        }
+    }
+
+    let (established, listening) = count_sockets_uncached();
+    if let Ok(mut guard) = cache.lock() {
+        *guard = Some((Instant::now(), established, listening));
+    }
+    (established, listening)
+}
+
+fn count_sockets_uncached() -> (u32, u32) {
+    let output = match crate::platform::cmd("netstat").args(["-an"]).output() {
         Ok(o) => o,
         Err(_) => return (0, 0),
     };

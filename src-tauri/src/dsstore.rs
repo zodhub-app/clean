@@ -1,7 +1,6 @@
 use serde::Serialize;
 use std::fs::File;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use walkdir::WalkDir;
 use zip::write::{SimpleFileOptions, ZipWriter};
 use zip::CompressionMethod;
@@ -160,7 +159,7 @@ pub fn set_network_stores_disabled(_disabled: bool) -> Result<(), String> {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn get_network_stores_disabled() -> bool {
-    let out = Command::new("defaults")
+    let out = crate::platform::cmd("defaults")
         .args([
             "read",
             "com.apple.desktopservices",
@@ -177,7 +176,7 @@ pub fn get_network_stores_disabled() -> bool {
 #[tauri::command]
 pub fn set_network_stores_disabled(disabled: bool) -> Result<(), String> {
     let val = if disabled { "true" } else { "false" };
-    let out = Command::new("defaults")
+    let out = crate::platform::cmd("defaults")
         .args([
             "write",
             "com.apple.desktopservices",

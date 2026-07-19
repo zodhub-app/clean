@@ -11,7 +11,6 @@
 use crate::platform;
 use serde::Serialize;
 use std::collections::HashMap;
-use std::process::Command;
 
 #[cfg(target_os = "macos")]
 use std::path::{Path, PathBuf};
@@ -180,7 +179,7 @@ fn install_schedule(task: &str, cadence: &str, script_path: &str) -> Result<(), 
     let tr = format!(
         "powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"{script_path}\""
     );
-    let out = Command::new("schtasks")
+    let out = crate::platform::cmd("schtasks")
         .args([
             "/Create", "/F", "/TN", &name, "/TR", &tr, "/SC", sc, "/ST", "03:00",
         ])
@@ -196,7 +195,7 @@ fn install_schedule(task: &str, cadence: &str, script_path: &str) -> Result<(), 
 #[cfg(target_os = "windows")]
 fn remove_schedule(task: &str) {
     let name = format!("{PREFIX}.{task}");
-    let _ = Command::new("schtasks")
+    let _ = crate::platform::cmd("schtasks")
         .args(["/Delete", "/F", "/TN", &name])
         .output();
 }
@@ -252,7 +251,7 @@ fn build_plist(label: &str, script: &str, interval: &str) -> String {
 /// GUI launchd domain target for the current user, e.g. "gui/501".
 #[cfg(target_os = "macos")]
 fn gui_domain() -> String {
-    let uid = Command::new("id")
+    let uid = crate::platform::cmd("id")
         .arg("-u")
         .output()
         .ok()
@@ -265,7 +264,7 @@ fn gui_domain() -> String {
 #[cfg(target_os = "macos")]
 fn unload_agent(plist: &Path) {
     // bootout removes the job from the user's GUI domain (modern API).
-    let _ = Command::new("launchctl")
+    let _ = crate::platform::cmd("launchctl")
         .arg("bootout")
         .arg(gui_domain())
         .arg(plist)
@@ -275,7 +274,7 @@ fn unload_agent(plist: &Path) {
 #[cfg(target_os = "macos")]
 fn load_agent(plist: &Path) -> Result<(), String> {
     unload_agent(plist); // bootstrap fails if already loaded → bootout first
-    let out = Command::new("launchctl")
+    let out = crate::platform::cmd("launchctl")
         .arg("bootstrap")
         .arg(gui_domain())
         .arg(plist)
@@ -435,7 +434,7 @@ pub async fn run_task_now(task: String) -> Result<(), String> {
         let body = task_script(&task, &home).ok_or("Tarea desconocida")?;
 
         #[cfg(target_os = "windows")]
-        let out = Command::new("powershell")
+        let out = crate::platform::cmd("powershell")
             .args([
                 "-NoProfile",
                 "-NonInteractive",
@@ -448,7 +447,7 @@ pub async fn run_task_now(task: String) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
 
         #[cfg(not(target_os = "windows"))]
-        let out = Command::new("/bin/sh")
+        let out = crate::platform::cmd("/bin/sh")
             .arg("-c")
             .arg(&body)
             .output()

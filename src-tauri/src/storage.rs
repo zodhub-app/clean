@@ -11,7 +11,6 @@ use crate::platform;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 #[cfg(target_os = "macos")]
-use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use sysinfo::Disks;
 
@@ -181,7 +180,7 @@ fn volumes() -> Vec<VolumeInfo> {
 /// Parsea `diskutil apfs list`: por cada volumen, rol + nombre + consumo.
 #[cfg(target_os = "macos")]
 fn apfs_volumes() -> Vec<VolumeInfo> {
-    let out = match Command::new("diskutil").arg("apfs").arg("list").output() {
+    let out = match crate::platform::cmd("diskutil").arg("apfs").arg("list").output() {
         Ok(o) => o,
         Err(_) => return vec![],
     };
@@ -234,7 +233,7 @@ fn snapshot_count() -> u32 {
 
 #[cfg(target_os = "macos")]
 fn snapshot_count() -> u32 {
-    match Command::new("tmutil")
+    match crate::platform::cmd("tmutil")
         .arg("listlocalsnapshots")
         .arg("/")
         .output()
