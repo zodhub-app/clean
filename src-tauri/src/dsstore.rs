@@ -140,7 +140,24 @@ pub fn sweep_ds_store(roots: Vec<String>) -> Result<SweepResult, String> {
     })
 }
 
+// Los `.DS_Store` son un invento de macOS: el ajuste de «no crearlos en unidades
+// de red» solo existe ahí. Fuera de macOS estos dos comandos no aplican y la
+// interfaz oculta la sección entera.
+
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+pub fn get_network_stores_disabled() -> bool {
+    false
+}
+
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+pub fn set_network_stores_disabled(_disabled: bool) -> Result<(), String> {
+    Err("Este ajuste solo existe en macOS".into())
+}
+
 /// Whether macOS is set to NOT write .DS_Store on network volumes.
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn get_network_stores_disabled() -> bool {
     let out = Command::new("defaults")
@@ -156,6 +173,7 @@ pub fn get_network_stores_disabled() -> bool {
     }
 }
 
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_network_stores_disabled(disabled: bool) -> Result<(), String> {
     let val = if disabled { "true" } else { "false" };

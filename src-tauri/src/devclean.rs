@@ -207,8 +207,13 @@ fn candidates(key: &str, h: &str) -> Vec<String> {
         "huggingface" => vec![format!("{h}\\.cache\\huggingface")],
         "ollama" => vec![format!("{h}\\.ollama\\models")],
         "lmstudio" => vec![format!("{h}\\.cache\\lm-studio"), format!("{h}\\.lmstudio")],
-        // La Papelera de reciclaje de Windows no se vacía por ruta de forma
-        // segura: se omite en vez de hacer algo arriesgado.
+        // Papelera de reciclaje: se lista para poder vaciarla. El tamaño puede
+        // quedarse corto si Windows no deja leer parte de la carpeta; lo que se
+        // reporta como liberado se mide con el espacio libre real antes/después.
+        "trash" => {
+            let drive = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
+            vec![format!("{drive}\\$Recycle.Bin")]
+        }
         _ => vec![],
     }
 }
@@ -363,12 +368,30 @@ pub async fn list_dev_junk() -> Vec<DevItem> {
     .unwrap_or_default()
 }
 
-/// Vaciar la Papelera solo está implementado en macOS (vía Finder). En Windows
-/// no hay forma segura de vaciar la Papelera de reciclaje por ruta, y en Linux
-/// depende del escritorio: se informa en vez de arriesgar.
-#[cfg(not(target_os = "macos"))]
+/// Windows: `Clear-RecycleBin` es la forma oficial (y segura) de vaciar la
+/// Papelera de reciclaje. Vacía la de todas las unidades.
+#[cfg(target_os = "windows")]
 fn empty_trash() -> Result<(), String> {
-    Err("Vaciar la Papelera todavía no está disponible en este sistema".into())
+    let out = Command::new("powershell")
+        .args([
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            "Clear-RecycleBin -Force -ErrorAction SilentlyContinue; exit 0",
+        ])
+        .output()
+        .map_err(|e| e.to_string())?;
+    if out.status.success() {
+        Ok(())
+    } else {
+        Err(String::from_utf8_lossy(&out.stderr).trim().to_string())
+    }
+}
+
+/// Linux: depende del escritorio; se informa en vez de arriesgar.
+#[cfg(target_os = "linux")]
+fn empty_trash() -> Result<(), String> {
+    Err("Vaciar la Papelera todavía no está disponible en Linux".into())
 }
 
 #[cfg(target_os = "macos")]

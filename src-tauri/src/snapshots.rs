@@ -6,9 +6,19 @@
 //   - Al liberar, medimos el espacio libre antes/después y reportamos lo real.
 // Liberar usa `tmutil thinlocalsnapshots` con permiso de administrador.
 
+//
+// Fuera de macOS: el concepto no existe igual. En Windows el análogo son las
+// Instantáneas de volumen (VSS), que requieren permisos de administrador para
+// listarse y borrarse, y borrarlas elimina puntos de restauración del sistema
+// (arriesgado). Por eso aquí NO se implementa a medias: se devuelve vacío y la
+// interfaz oculta la sección en ese sistema. Queda como trabajo futuro.
+
 use serde::Serialize;
+#[cfg(target_os = "macos")]
 use std::path::Path;
+#[cfg(target_os = "macos")]
 use std::process::Command;
+#[cfg(target_os = "macos")]
 use sysinfo::Disks;
 
 #[derive(Serialize)]
@@ -24,6 +34,7 @@ pub struct ThinResult {
     count_after: u32,
 }
 
+#[cfg(target_os = "macos")]
 fn free_bytes() -> u64 {
     let disks = Disks::new_with_refreshed_list();
     disks
@@ -35,6 +46,14 @@ fn free_bytes() -> u64 {
         .unwrap_or(0)
 }
 
+/// Fuera de macOS no hay instantáneas locales equivalentes que podamos leer sin
+/// privilegios: devolvemos vacío (la UI oculta la sección) en vez de fingir.
+#[cfg(not(target_os = "macos"))]
+fn parse_snapshots() -> Vec<Snapshot> {
+    vec![]
+}
+
+#[cfg(target_os = "macos")]
 fn parse_snapshots() -> Vec<Snapshot> {
     let text = Command::new("tmutil")
         .arg("listlocalsnapshots")
@@ -63,8 +82,17 @@ pub async fn list_snapshots() -> Vec<Snapshot> {
         .unwrap_or_default()
 }
 
+/// Fuera de macOS no se ofrece: en Windows equivaldría a borrar puntos de
+/// restauración del sistema (requiere admin y es arriesgado). Mejor decirlo.
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+pub async fn thin_snapshots() -> Result<ThinResult, String> {
+    Err("Las instantáneas locales solo están disponibles en macOS".into())
+}
+
 /// Libera TODAS las instantáneas locales (thin agresivo, urgencia 4). Pide
 /// contraseña de administrador. Reporta el espacio realmente recuperado.
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub async fn thin_snapshots() -> Result<ThinResult, String> {
     tauri::async_runtime::spawn_blocking(|| {

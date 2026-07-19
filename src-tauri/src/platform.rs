@@ -17,6 +17,30 @@ pub fn home_dir() -> PathBuf {
     v.map(PathBuf::from).unwrap_or_default()
 }
 
+/// Carpeta donde la app guarda sus datos (preferencias, histórico, scripts):
+///   macOS   → ~/Library/Application Support/com.viper.macup
+///   Windows → %APPDATA%\com.viper.macup
+///   Linux   → ~/.local/share/com.viper.macup
+///
+/// El identificador se mantiene aunque el producto se llame «ZodHub CleanPC»:
+/// cambiarlo haría que los usuarios existentes perdieran sus ajustes.
+pub fn app_data_dir() -> Option<PathBuf> {
+    let h = home_dir();
+    if h.as_os_str().is_empty() {
+        return None;
+    }
+    #[cfg(target_os = "macos")]
+    let dir = h.join("Library/Application Support/com.viper.macup");
+    #[cfg(target_os = "windows")]
+    let dir = std::env::var_os("APPDATA")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| h.join("AppData/Roaming"))
+        .join("com.viper.macup");
+    #[cfg(target_os = "linux")]
+    let dir = h.join(".local/share/com.viper.macup");
+    Some(dir)
+}
+
 /// Tamaño real de un archivo o carpeta (recursivo), en bytes.
 ///
 /// Sustituye a `du -sk` (que solo existe en Unix). NUNCA sigue enlaces

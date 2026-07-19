@@ -10,8 +10,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NAV_ITEMS, type ViewId } from "@/lib/nav";
+import { navFor, NAV_ITEMS, type ViewId } from "@/lib/nav";
 import { useLang } from "@/components/language-provider";
+import { useOs } from "@/components/os-provider";
 import { SidebarPromo } from "@/components/sidebar-promo";
 
 export function AppSidebar({
@@ -22,7 +23,10 @@ export function AppSidebar({
   onNavigate: (id: ViewId) => void;
 }) {
   const { t } = useLang();
-  const main = NAV_ITEMS.filter((i) => i.id !== "settings");
+  const os = useOs();
+  // Solo las secciones que existen en este sistema.
+  const items = navFor(os);
+  const main = items.filter((i) => i.id !== "settings");
   const settings = NAV_ITEMS.find((i) => i.id === "settings")!;
 
   return (

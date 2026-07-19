@@ -216,6 +216,11 @@ export function appLeftovers(
 ): Promise<LeftoverResult> {
   return invoke<LeftoverResult>("app_leftovers", { bundleId, name });
 }
+/** Sistema operativo actual: "macos" | "windows" | "linux". */
+export function osName(): Promise<string> {
+  return invoke<string>("os_name");
+}
+
 export function uninstallApp(
   appPath: string,
   leftovers: string[],

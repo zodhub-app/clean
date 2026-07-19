@@ -12,10 +12,7 @@ use tauri::{
 const TRAY_ID: &str = "macup-tray";
 
 fn pref_file() -> Option<PathBuf> {
-    let home = std::env::var("HOME").ok()?;
-    Some(PathBuf::from(format!(
-        "{home}/Library/Application Support/com.viper.macup/tray.json"
-    )))
+    crate::platform::app_data_dir().map(|d| d.join("tray.json"))
 }
 
 /// Por defecto visible (como CleanMyMac). Si el usuario lo desactiva, se guarda
