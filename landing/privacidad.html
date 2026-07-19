@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de privacidad — ZodHub CleanPC</title>
+<meta name="description" content="Qué datos trata ZodHub CleanPC y cuáles no. La app funciona en local, sin telemetría. Aquí está explicado sin letra pequeña.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; } :target { scroll-margin-top: 7.5rem; }
+  body { font-family: 'Inter', sans-serif; background: #f3f5f8; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  @keyframes zDriftOne { 0%,100%{transform:translate3d(0,0,0) scale(1);} 35%{transform:translate3d(4vw,3vh,0) scale(1.06);} 70%{transform:translate3d(-2vw,5vh,0) scale(.98);} }
+  @keyframes zDriftTwo { 0%,100%{transform:translate3d(0,0,0) scale(1);} 40%{transform:translate3d(-4vw,-3vh,0) scale(1.08);} 75%{transform:translate3d(3vw,-5vh,0) scale(.96);} }
+  @keyframes zDots { 0%{background-position:0 0;} 100%{background-position:4rem 4rem;} }
+  .z-blob-1 { animation: zDriftOne 26s ease-in-out infinite; }
+  .z-blob-2 { animation: zDriftTwo 32s ease-in-out infinite; }
+  .z-dots  { animation: zDots 38s linear infinite; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 120ms; }
+  .prose-z h2 { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.02em; color: #020617; margin-top: 2rem; margin-bottom: .5rem; }
+  .prose-z p { color: #475569; font-weight: 300; line-height: 1.9; margin-bottom: .75rem; }
+  .prose-z ul { margin: .25rem 0 1rem 0; }
+  .prose-z li { color: #475569; font-weight: 300; line-height: 1.85; padding-left: 1.4rem; position: relative; }
+  .prose-z li::before { content: ''; position: absolute; left: .35rem; top: .82em; width: 5px; height: 5px; border-radius: 99px; background: #93c5fd; }
+  .prose-z strong { font-weight: 500; color: #0f172a; }
+  .prose-z a { color: #2563eb; text-decoration: none; }
+  .prose-z a:hover { text-decoration: underline; }
+  @media (prefers-reduced-motion: reduce){ .z-blob-1,.z-blob-2,.z-dots{animation:none;} .reveal{opacity:1;transform:none;transition:none;} }
+</style>
+</head>
+<body class="text-slate-900 min-h-screen relative overflow-x-hidden antialiased selection:bg-blue-100 selection:text-blue-900">
+
+<!-- Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+  <div class="z-blob-1 absolute top-[-12%] left-[-12%] w-[52vw] h-[52vw] rounded-full bg-emerald-200/25 blur-[7.5rem]"></div>
+  <div class="z-blob-2 absolute bottom-[-18%] right-[-10%] w-[62vw] h-[62vw] rounded-full bg-blue-200/30 blur-[8.75rem]"></div>
+  <div class="z-dots absolute inset-0 opacity-[0.22]" style="background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.09) 1px, transparent 0); background-size: 2rem 2rem;"></div>
+</div>
+
+<!-- Nav -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 pt-5">
+    <div class="relative overflow-hidden rounded-full bg-white/84 backdrop-blur-2xl border border-white/90 shadow-[0_14px_38px_-22px_rgba(15,23,42,0.42),inset_0_1px_0_rgba(255,255,255,1)] px-4 py-3">
+      <div class="absolute inset-0 rounded-full bg-white/36 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_2px_8px_rgba(59,130,246,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] flex items-center justify-center"><span class="mono text-xs font-semibold tracking-[-0.08em] text-white">ZC</span></span>
+          <span class="flex flex-col justify-center leading-none">
+            <span class="mono text-sm font-semibold tracking-[-0.06em] text-slate-950 group-hover:text-blue-600 transition-colors">ZodHub CleanPC</span>
+            <span class="mt-0.5 text-[10px] font-light tracking-[-0.02em] text-slate-400" data-i18n="nav.tagline">Mantenimiento honesto</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-7 text-xs text-slate-600 font-normal">
+          <a href="index.html#funciones" class="hover:text-blue-600 transition-colors" data-i18n="nav.features">Funciones</a>
+          <a href="index.html#como" class="hover:text-blue-600 transition-colors" data-i18n="nav.how">Cómo funciona</a>
+          <a href="index.html#seguridad" class="hover:text-blue-600 transition-colors" data-i18n="nav.security">Seguridad</a>
+          <a href="descargas.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.download">Descargar</a>
+          <a href="donar.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.support">Apoyar</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="langToggle" class="mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">EN</button>
+          <a href="descargas.html" class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_5px_14px_rgba(59,130,246,0.28),inset_0_1px_0_rgba(255,255,255,0.35)] hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-sm"></iconify-icon><span data-i18n="nav.cta">Descargar</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="relative z-10 max-w-4xl mx-auto px-6 pt-32 md:pt-40 pb-16">
+
+  <!-- Hero -->
+  <div class="text-center max-w-2xl mx-auto reveal">
+    <span class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-b from-emerald-400 to-emerald-500 text-white flex items-center justify-center shadow-[0_18px_40px_-18px_rgba(16,185,129,0.7)] mb-6"><iconify-icon icon="solar:shield-check-bold" class="text-3xl"></iconify-icon></span>
+    <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="pv.badge">PRIVACIDAD</p>
+    <h1 class="text-4xl md:text-5xl font-light tracking-[-0.06em] leading-[1] text-slate-950" data-i18n="pv.title">Política de privacidad</h1>
+    <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="pv.sub">Escrita para que se entienda. Si algo no queda claro, es un fallo nuestro: escríbenos y lo corregimos.</p>
+    <p class="mt-4 mono text-[11px] text-slate-400" data-i18n="pv.updated">Última actualización: 19 de julio de 2026</p>
+  </div>
+
+  <!-- Resumen -->
+  <section class="mt-12 reveal">
+    <div class="rounded-[2rem] bg-gradient-to-b from-[#172033] to-[#101827] text-white border border-white/10 p-8 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="relative">
+        <p class="mono text-[11px] text-blue-300 mb-5" data-i18n="pv.tldrLabel">RESUMEN EN 4 LÍNEAS</p>
+        <ul class="space-y-3 text-sm font-light text-white/75 leading-7">
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-emerald-400 text-lg shrink-0 mt-0.5"></iconify-icon><span data-i18n="pv.tldr1">La app analiza y limpia <strong class="font-medium text-white">en tu equipo</strong>. Ni los archivos ni los resultados salen de él.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-emerald-400 text-lg shrink-0 mt-0.5"></iconify-icon><span data-i18n="pv.tldr2"><strong class="font-medium text-white">Cero telemetría.</strong> No medimos qué usas, ni cuánto, ni cuándo.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-emerald-400 text-lg shrink-0 mt-0.5"></iconify-icon><span data-i18n="pv.tldr3">Solo hay <strong class="font-medium text-white">dos conexiones</strong>: comprobar si hay una versión nueva y, si tú lo pides, apuntarte a las novedades.</span></li>
+          <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-emerald-400 text-lg shrink-0 mt-0.5"></iconify-icon><span data-i18n="pv.tldr4">No vendemos ni cedemos datos <strong class="font-medium text-white">a nadie</strong>, nunca.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cuerpo -->
+  <section class="mt-8 reveal d1">
+    <div class="rounded-[2rem] bg-white/80 backdrop-blur-xl border border-white/90 p-8 md:p-10 shadow-[0_2px_10px_rgba(15,23,42,0.04)] prose-z">
+
+      <h2 data-i18n="pv.h1">1. Quién es el responsable</h2>
+      <p data-i18n="pv.p1">ZodHub, responsable del tratamiento de los datos descritos en esta política. Puedes contactar en <a href="mailto:info@zodhub.com">info@zodhub.com</a> o abriendo un asunto en <a href="https://github.com/zodhub-app/clean/issues" target="_blank" rel="noopener">el repositorio del proyecto</a>.</p>
+
+      <h2 data-i18n="pv.h2">2. Lo que hace la aplicación en tu equipo</h2>
+      <p data-i18n="pv.p2">ZodHub CleanPC lee rutas, tamaños de archivo, información del sistema (CPU, memoria, discos, procesos) y, cuando tú lo pides, borra o mueve archivos a la papelera. <strong>Todo eso ocurre íntegramente en tu dispositivo.</strong> Ese contenido no se transmite, no se copia a ningún servidor y no queda registrado fuera de tu equipo. Los ajustes de la app se guardan en local, en la carpeta de configuración de tu usuario.</p>
+
+      <h2 data-i18n="pv.h3">3. Comprobación de actualizaciones</h2>
+      <p data-i18n="pv.p3">Para avisarte de versiones nuevas, la app consulta periódicamente un archivo público alojado en GitHub. Como en cualquier petición de internet, GitHub recibe tu dirección IP, la versión de la app y datos técnicos básicos de la conexión. No enviamos ningún identificador propio ni podemos relacionar esa consulta contigo. Si prefieres no hacerla, puedes desactivar la comprobación automática en los ajustes de la app y actualizar manualmente desde la web.</p>
+
+      <h2 data-i18n="pv.h4">4. Suscripción voluntaria a novedades</h2>
+      <p data-i18n="pv.p4">En «Tu espacio» puedes darnos tu <strong>nombre (opcional)</strong> y tu <strong>correo electrónico</strong> para recibir avisos de funciones nuevas y mejoras importantes.</p>
+      <ul>
+        <li data-i18n="pv.p4a"><strong>Base legal:</strong> tu consentimiento, que das marcando la casilla. No está premarcada.</li>
+        <li data-i18n="pv.p4b"><strong>Finalidad:</strong> enviarte novedades del proyecto. Nada más. No hay publicidad de terceros.</li>
+        <li data-i18n="pv.p4c"><strong>Conservación:</strong> hasta que te des de baja. Cada correo lleva un enlace de baja en un clic.</li>
+        <li data-i18n="pv.p4d"><strong>Es opcional:</strong> la app se actualiza sola sin necesidad de esto. No suscribirte no limita ninguna función.</li>
+      </ul>
+
+      <h2 data-i18n="pv.h5">5. Encargados y terceros</h2>
+      <p data-i18n="pv.p5">Para funcionar nos apoyamos en proveedores que pueden tratar datos técnicos por cuenta nuestra: el alojamiento de la web y de las descargas (GitHub), el servicio que recibe el formulario de suscripción y el proveedor de pagos cuando haces una donación. Cada uno trata únicamente lo imprescindible para su función. <strong>No vendemos, alquilamos ni cedemos tus datos con fines comerciales.</strong></p>
+
+      <h2 data-i18n="pv.h6">6. Donaciones</h2>
+      <p data-i18n="pv.p6">Las donaciones se procesan íntegramente en la plataforma de pago, fuera de esta web y fuera de la app. <strong>Nosotros no vemos ni almacenamos los datos de tu tarjeta.</strong> Del proveedor solo recibimos la confirmación del pago y, si tú lo has facilitado ahí, tu nombre o alias. Donar no activa funciones ni cambia nada en la aplicación.</p>
+
+      <h2 data-i18n="pv.h7">7. Esta página web</h2>
+      <p data-i18n="pv.p7">La web no usa cookies de análisis ni de publicidad, y no te sigue entre sitios. Sí carga tipografías y algunos recursos de estilo desde redes de distribución externas, que por la naturaleza técnica de una petición web reciben tu dirección IP. El alojamiento es GitHub Pages, que puede conservar registros de acceso por seguridad y diagnóstico.</p>
+
+      <h2 data-i18n="pv.h8">8. Tus derechos</h2>
+      <p data-i18n="pv.p8">Puedes solicitar el acceso, la rectificación, la supresión, la limitación, la oposición y la portabilidad de tus datos, así como retirar tu consentimiento en cualquier momento, escribiendo a <a href="mailto:info@zodhub.com">info@zodhub.com</a>. En la práctica, lo único que tenemos de ti es lo que nos hayas dado voluntariamente en el formulario. Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+
+      <h2 data-i18n="pv.h9">9. Menores</h2>
+      <p data-i18n="pv.p9">La suscripción a novedades está dirigida a mayores de 14 años. Si detectamos un alta de un menor de esa edad sin autorización, la eliminaremos.</p>
+
+      <h2 data-i18n="pv.h10">10. Cambios en esta política</h2>
+      <p data-i18n="pv.p10">Si cambiamos algo relevante, actualizaremos la fecha del encabezado y lo indicaremos en las notas de la versión. La app es de código consultable: cualquiera puede comprobar en el repositorio que lo que dice esta página es lo que hace el programa.</p>
+
+    </div>
+  </section>
+
+  <!-- Enlace cruzado -->
+  <div class="mt-8 text-center reveal">
+    <a href="terminos.html" class="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">
+      <iconify-icon icon="solar:document-text-linear" class="text-base"></iconify-icon><span data-i18n="pv.toTerms">Ver los términos de uso</span>
+    </a>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="relative z-10 max-w-7xl mx-auto px-6 pb-14">
+  <div class="rounded-[2rem] bg-white/70 border border-slate-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+    <a href="index.html" class="flex items-center gap-3">
+      <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
+      <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub CleanPC</span>
+    </a>
+    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+      <div class="flex items-center gap-4 text-xs text-slate-500 font-light">
+        <a href="privacidad.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.privacy">Privacidad</a>
+        <a href="terminos.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.terms">Términos</a>
+        <a href="https://github.com/zodhub-app/clean" target="_blank" rel="noopener" class="hover:text-blue-600 transition-colors">GitHub</a>
+      </div>
+      <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.app</span></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+
+  var I18N = { en: {
+    "foot.privacy":"Privacy","foot.terms":"Terms","nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
+    "pv.badge":"PRIVACY","pv.title":"Privacy policy",
+    "pv.sub":"Written to be understood. If something isn't clear, that's on us: write to us and we'll fix it.",
+    "pv.updated":"Last updated: 19 July 2026",
+    "pv.tldrLabel":"THE WHOLE THING IN 4 LINES",
+    "pv.tldr1":"The app scans and cleans <strong class=\"font-medium text-white\">on your device</strong>. Neither your files nor the results ever leave it.",
+    "pv.tldr2":"<strong class=\"font-medium text-white\">Zero telemetry.</strong> We don't measure what you use, how much, or when.",
+    "pv.tldr3":"There are only <strong class=\"font-medium text-white\">two connections</strong>: checking for a new version and, if you ask for it, signing up for news.",
+    "pv.tldr4":"We never sell or hand over data <strong class=\"font-medium text-white\">to anyone</strong>.",
+    "pv.h1":"1. Who is responsible",
+    "pv.p1":"ZodHub, controller of the data described in this policy. You can get in touch at <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a> or by opening an issue in <a href=\"https://github.com/zodhub-app/clean/issues\" target=\"_blank\" rel=\"noopener\">the project repository</a>.",
+    "pv.h2":"2. What the app does on your device",
+    "pv.p2":"ZodHub CleanPC reads paths, file sizes, system information (CPU, memory, disks, processes) and, when you ask it to, deletes files or moves them to the bin. <strong>All of that happens entirely on your device.</strong> That content is not transmitted, not copied to any server and not logged anywhere outside your machine. App settings are stored locally, in your user's configuration folder.",
+    "pv.h3":"3. Update checks",
+    "pv.p3":"To tell you about new versions, the app periodically fetches a public file hosted on GitHub. As with any internet request, GitHub receives your IP address, the app version and basic technical connection data. We send no identifier of our own and cannot link that request to you. If you'd rather not make it, you can turn automatic checking off in the app's settings and update manually from the website.",
+    "pv.h4":"4. Voluntary news subscription",
+    "pv.p4":"In \"Your space\" you can give us your <strong>name (optional)</strong> and your <strong>email address</strong> to receive notice of new features and important improvements.",
+    "pv.p4a":"<strong>Legal basis:</strong> your consent, given by ticking the box. It is not pre-ticked.",
+    "pv.p4b":"<strong>Purpose:</strong> sending you project news. Nothing else. No third-party advertising.",
+    "pv.p4c":"<strong>Retention:</strong> until you unsubscribe. Every email carries a one-click unsubscribe link.",
+    "pv.p4d":"<strong>It's optional:</strong> the app updates itself without this. Not subscribing limits no feature.",
+    "pv.h5":"5. Processors and third parties",
+    "pv.p5":"To operate we rely on providers that may process technical data on our behalf: hosting for the website and the downloads (GitHub), the service that receives the subscription form, and the payment provider when you donate. Each one handles only what its function requires. <strong>We do not sell, rent or share your data for commercial purposes.</strong>",
+    "pv.h6":"6. Donations",
+    "pv.p6":"Donations are processed entirely on the payment platform, outside this website and outside the app. <strong>We never see or store your card details.</strong> From the provider we only receive payment confirmation and, if you supplied it there, your name or alias. Donating activates no features and changes nothing in the application.",
+    "pv.h7":"7. This website",
+    "pv.p7":"The site uses no analytics or advertising cookies and does not track you across sites. It does load fonts and some styling resources from external delivery networks which, by the technical nature of a web request, receive your IP address. Hosting is GitHub Pages, which may keep access logs for security and diagnostics.",
+    "pv.h8":"8. Your rights",
+    "pv.p8":"You can request access, rectification, erasure, restriction, objection and portability of your data, and withdraw your consent at any time, by writing to <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a>. In practice, the only thing we hold about you is whatever you voluntarily entered in the form. If you believe we haven't handled your request properly, you can complain to the Spanish Data Protection Agency (<a href=\"https://www.aepd.es\" target=\"_blank\" rel=\"noopener\">aepd.es</a>).",
+    "pv.h9":"9. Minors",
+    "pv.p9":"The news subscription is intended for people aged 14 and over. If we detect a sign-up below that age without authorisation, we will delete it.",
+    "pv.h10":"10. Changes to this policy",
+    "pv.p10":"If we change anything material, we'll update the date in the header and note it in the release notes. The app's source can be inspected: anyone can check in the repository that what this page says is what the program does.",
+    "pv.toTerms":"See the terms of use"
+  }};
+  var currentLang='es', esCache={};
+  function cacheES(){document.querySelectorAll('[data-i18n]').forEach(function(el){esCache[el.getAttribute('data-i18n')]=el.innerHTML;});}
+  function applyLang(lang){var d=lang==='en'?I18N.en:null;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(lang==='es'){if(esCache[k]!==undefined)el.innerHTML=esCache[k];}else if(d&&d[k]!==undefined)el.innerHTML=d[k];});
+    document.documentElement.lang=lang;currentLang=lang;var b=document.getElementById('langToggle');if(b)b.textContent=lang==='es'?'EN':'ES';}
+  cacheES();
+  document.getElementById('langToggle').addEventListener('click',function(){applyLang(currentLang==='es'?'en':'es');});
+</script>
+</body>
+</html>

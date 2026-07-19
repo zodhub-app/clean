@@ -26,7 +26,7 @@ export function AppSidebar({
   const os = useOs();
   // Solo las secciones que existen en este sistema.
   const items = navFor(os);
-  const main = items.filter((i) => i.id !== "settings");
+  const main = items.filter((i) => i.id !== "settings" && !i.hideInSidebar);
   const settings = NAV_ITEMS.find((i) => i.id === "settings")!;
 
   return (

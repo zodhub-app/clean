@@ -36,6 +36,14 @@ walkdir = "2"
 trash = "5"
 # SHA-256 en proceso, en vez de depender del binario `shasum` de macOS.
 sha2 = "0.10"
+# Cliente HTTP para la suscripción voluntaria a novedades (única salida de datos
+# de la app). Ya venía en el árbol vía el plugin del updater; rustls evita
+# depender de OpenSSL en los tres sistemas.
+# En reqwest 0.13 la feature se llama "rustls" (antes "rustls-tls").
+reqwest = { version = "0.13", default-features = false, features = [
+  "json",
+  "rustls",
+] }
 
 # Actualizaciones automáticas (escritorio: macOS/Windows/Linux, no móvil).
 # Se usa cfg(not(android/ios)) —que Cargo SÍ entiende al resolver dependencias—

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, UserRound } from "lucide-react";
 import {
   SidebarInset,
   SidebarProvider,
@@ -25,6 +25,7 @@ import { MemoryPage } from "@/pages/memory";
 import { DSStorePage } from "@/pages/dsstore";
 import { SchedulerPage } from "@/pages/scheduler";
 import { SettingsPage } from "@/pages/settings";
+import { AccountPage } from "@/pages/account";
 
 export default function App() {
   const [view, setView] = useState<ViewId>("dashboard");
@@ -47,7 +48,7 @@ export default function App() {
             <active.icon className="size-3.5 text-muted-foreground" />
             <h1 className="text-xs font-medium">{t(active.title)}</h1>
           </div>
-          <HeaderActions />
+          <HeaderActions onOpenAccount={() => setView("account")} />
         </header>
         {/* Área de contenido. Las páginas con scroll usan <ScrollPage> (scrollbar
             temático); Caché y .DS_Store ocupan todo el alto (flex-1) y gestionan
@@ -85,6 +86,11 @@ export default function App() {
               <SettingsPage />
             </ScrollPage>
           )}
+          {view === "account" && (
+            <ScrollPage>
+              <AccountPage />
+            </ScrollPage>
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>
@@ -100,7 +106,7 @@ function ScrollPage({ children }: { children: ReactNode }) {
   );
 }
 
-function HeaderActions() {
+function HeaderActions({ onOpenAccount }: { onOpenAccount: () => void }) {
   const { resolvedMode, setMode } = useTheme();
   const { lang, toggle, t } = useLang();
   const isDark = resolvedMode === "dark";
@@ -117,6 +123,17 @@ function HeaderActions() {
         {isDark ? <Sun /> : <Moon />}
       </Button>
       <UpdateBell />
+      {/* Tu espacio: novedades, suscripción, apoyo y legal. */}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        className="rounded-full bg-white/[0.05] hover:bg-white/10"
+        aria-label={t("Tu espacio")}
+        title={t("Tu espacio")}
+        onClick={onOpenAccount}
+      >
+        <UserRound />
+      </Button>
       <Button
         variant="ghost"
         size="icon-sm"

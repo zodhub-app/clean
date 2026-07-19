@@ -10,6 +10,7 @@ mod scanner;
 mod scheduler;
 mod snapshots;
 mod storage;
+mod subscribe;
 mod system;
 mod tray;
 
@@ -26,6 +27,7 @@ use scanner::{move_to_trash, reveal_in_finder, scan_dir};
 use scheduler::{list_schedules, run_task_now, set_schedule};
 use snapshots::{list_snapshots, thin_snapshots};
 use storage::{storage_history, storage_stats};
+use subscribe::{subscribe, subscribe_available};
 use system::{list_sensors, os_name, system_stats, top_processes, AppState};
 use tauri::Manager;
 use tray::{get_tray_visible, set_tray_visible};
@@ -102,7 +104,9 @@ pub fn run() {
             clean_all_junk,
             list_snapshots,
             thin_snapshots,
-            find_duplicates
+            find_duplicates,
+            subscribe,
+            subscribe_available
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

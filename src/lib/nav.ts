@@ -10,6 +10,7 @@ import {
   FileArchive,
   CalendarClock,
   Settings,
+  UserRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,7 +26,8 @@ export type ViewId =
   | "memory"
   | "dsstore"
   | "scheduler"
-  | "settings";
+  | "settings"
+  | "account";
 
 export type NavItem = {
   id: ViewId;
@@ -37,6 +39,8 @@ export type NavItem = {
    * Las secciones que no aplican se ocultan en vez de enseñarse vacías.
    */
   os?: Array<"macos" | "windows" | "linux">;
+  /** No aparece en la barra lateral (se accede desde la barra superior). */
+  hideInSidebar?: boolean;
 };
 
 /** Navegación filtrada para el sistema actual. */
@@ -116,5 +120,12 @@ export const NAV_ITEMS: NavItem[] = [
     title: "Ajustes",
     description: "Tema y preferencias",
     icon: Settings,
+  },
+  {
+    id: "account",
+    title: "Tu espacio",
+    description: "Novedades, apoyo y legal",
+    icon: UserRound,
+    hideInSidebar: true, // se abre desde el botón de la barra superior
   },
 ];

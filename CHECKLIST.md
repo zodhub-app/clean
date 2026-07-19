@@ -102,6 +102,36 @@ Marcar lo verificado en cada repaso.
 - [ ] **Subir la versión** en `tauri.conf.json` y `Cargo.toml`/`package.json`
       antes de taggear; el tag `vX.Y.Z` debe coincidir.
 
+## 7 bis. Web pública, legal y donaciones
+
+- [ ] **Dominio**: el oficial es **zodhub.app** (antes se usó `zodhub.pro`; no
+      debe quedar ninguna ocurrencia). Contacto provisional: `info@zodhub.com`.
+- [ ] **Páginas legales existen y enlazan**: `landing/privacidad.html` y
+      `landing/terminos.html`. Los enlaces desde la app («Tu espacio → legal»)
+      apuntan a `https://zodhub-app.github.io/clean/…`: si se cambia el nombre de
+      un archivo, hay que tocar `LINKS` en `src/pages/account.tsx`.
+- [ ] **Coherencia legal ↔ código**: la política de privacidad afirma que las
+      únicas salidas de red son la comprobación de actualizaciones y la
+      suscripción voluntaria. Si se añade **cualquier** otra petición de red, la
+      política deja de ser cierta → actualizarla en el mismo commit.
+- [ ] **Donaciones**: el bloque `PAY` de `landing/donar.html` (Stripe / Ko-fi /
+      GitHub Sponsors). Con todo vacío el botón sale desactivado y dice
+      «Donaciones aún no abiertas» — es el estado honesto, no un bug.
+- [ ] **Cifras de ejemplo**: la meta del mes y los apoyos de `donar.html` son
+      ilustrativos y están etiquetados como tales. Al abrir donaciones, poner
+      datos reales o quitar los módulos.
+- [ ] **Suscripción**: `ENDPOINT` en `src-tauri/src/subscribe.rs`. Debe ser un
+      servicio con identificador **público** (Formspree, Web3Forms) o función
+      serverless propia. NUNCA una API con clave secreta: el binario se distribuye.
+
+### Errores ya cometidos aquí (no repetir)
+
+- `reqwest` 0.13 renombró la feature `rustls-tls` → **`rustls`**. Con el nombre
+  viejo, `cargo` falla con «does not have that feature».
+- En `Cargo.toml` **no existe** `cfg(desktop)`: es un cfg de Tauri, no de Cargo.
+  Para dependencias de escritorio usar
+  `[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]`.
+
 ## 8. Principios innegociables (recordatorio)
 
 - [ ] **Lógica real en Rust**; el frontend solo hace UI/estado/formato.

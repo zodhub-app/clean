@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos de uso — ZodHub CleanPC</title>
+<meta name="description" content="Condiciones de uso de ZodHub CleanPC: gratis, sin cuentas ni suscripciones, con el borrado siempre bajo tu control.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; } :target { scroll-margin-top: 7.5rem; }
+  body { font-family: 'Inter', sans-serif; background: #f3f5f8; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  @keyframes zDriftOne { 0%,100%{transform:translate3d(0,0,0) scale(1);} 35%{transform:translate3d(4vw,3vh,0) scale(1.06);} 70%{transform:translate3d(-2vw,5vh,0) scale(.98);} }
+  @keyframes zDriftTwo { 0%,100%{transform:translate3d(0,0,0) scale(1);} 40%{transform:translate3d(-4vw,-3vh,0) scale(1.08);} 75%{transform:translate3d(3vw,-5vh,0) scale(.96);} }
+  @keyframes zDots { 0%{background-position:0 0;} 100%{background-position:4rem 4rem;} }
+  .z-blob-1 { animation: zDriftOne 26s ease-in-out infinite; }
+  .z-blob-2 { animation: zDriftTwo 32s ease-in-out infinite; }
+  .z-dots  { animation: zDots 38s linear infinite; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 120ms; }
+  .prose-z h2 { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.02em; color: #020617; margin-top: 2rem; margin-bottom: .5rem; }
+  .prose-z p { color: #475569; font-weight: 300; line-height: 1.9; margin-bottom: .75rem; }
+  .prose-z ul { margin: .25rem 0 1rem 0; }
+  .prose-z li { color: #475569; font-weight: 300; line-height: 1.85; padding-left: 1.4rem; position: relative; }
+  .prose-z li::before { content: ''; position: absolute; left: .35rem; top: .82em; width: 5px; height: 5px; border-radius: 99px; background: #93c5fd; }
+  .prose-z strong { font-weight: 500; color: #0f172a; }
+  .prose-z a { color: #2563eb; text-decoration: none; }
+  .prose-z a:hover { text-decoration: underline; }
+  @media (prefers-reduced-motion: reduce){ .z-blob-1,.z-blob-2,.z-dots{animation:none;} .reveal{opacity:1;transform:none;transition:none;} }
+</style>
+</head>
+<body class="text-slate-900 min-h-screen relative overflow-x-hidden antialiased selection:bg-blue-100 selection:text-blue-900">
+
+<!-- Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+  <div class="z-blob-1 absolute top-[-12%] left-[-12%] w-[52vw] h-[52vw] rounded-full bg-indigo-200/25 blur-[7.5rem]"></div>
+  <div class="z-blob-2 absolute bottom-[-18%] right-[-10%] w-[62vw] h-[62vw] rounded-full bg-blue-200/30 blur-[8.75rem]"></div>
+  <div class="z-dots absolute inset-0 opacity-[0.22]" style="background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.09) 1px, transparent 0); background-size: 2rem 2rem;"></div>
+</div>
+
+<!-- Nav -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 pt-5">
+    <div class="relative overflow-hidden rounded-full bg-white/84 backdrop-blur-2xl border border-white/90 shadow-[0_14px_38px_-22px_rgba(15,23,42,0.42),inset_0_1px_0_rgba(255,255,255,1)] px-4 py-3">
+      <div class="absolute inset-0 rounded-full bg-white/36 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_2px_8px_rgba(59,130,246,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] flex items-center justify-center"><span class="mono text-xs font-semibold tracking-[-0.08em] text-white">ZC</span></span>
+          <span class="flex flex-col justify-center leading-none">
+            <span class="mono text-sm font-semibold tracking-[-0.06em] text-slate-950 group-hover:text-blue-600 transition-colors">ZodHub CleanPC</span>
+            <span class="mt-0.5 text-[10px] font-light tracking-[-0.02em] text-slate-400" data-i18n="nav.tagline">Mantenimiento honesto</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-7 text-xs text-slate-600 font-normal">
+          <a href="index.html#funciones" class="hover:text-blue-600 transition-colors" data-i18n="nav.features">Funciones</a>
+          <a href="index.html#como" class="hover:text-blue-600 transition-colors" data-i18n="nav.how">Cómo funciona</a>
+          <a href="index.html#seguridad" class="hover:text-blue-600 transition-colors" data-i18n="nav.security">Seguridad</a>
+          <a href="descargas.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.download">Descargar</a>
+          <a href="donar.html" class="hover:text-blue-600 transition-colors" data-i18n="nav.support">Apoyar</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="langToggle" class="mono inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">EN</button>
+          <a href="descargas.html" class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 shadow-[0_5px_14px_rgba(59,130,246,0.28),inset_0_1px_0_rgba(255,255,255,0.35)] hover:-translate-y-0.5 transition-all">
+            <iconify-icon icon="solar:download-minimalistic-linear" class="text-sm"></iconify-icon><span data-i18n="nav.cta">Descargar</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="relative z-10 max-w-4xl mx-auto px-6 pt-32 md:pt-40 pb-16">
+
+  <!-- Hero -->
+  <div class="text-center max-w-2xl mx-auto reveal">
+    <span class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-b from-indigo-400 to-indigo-500 text-white flex items-center justify-center shadow-[0_18px_40px_-18px_rgba(99,102,241,0.7)] mb-6"><iconify-icon icon="solar:document-text-bold" class="text-3xl"></iconify-icon></span>
+    <p class="mono text-xs font-medium tracking-[-0.02em] text-blue-500 mb-3" data-i18n="tc.badge">CONDICIONES</p>
+    <h1 class="text-4xl md:text-5xl font-light tracking-[-0.06em] leading-[1] text-slate-950" data-i18n="tc.title">Términos de uso</h1>
+    <p class="mt-5 text-slate-600 font-light leading-8" data-i18n="tc.sub">Sin letra pequeña ni cláusulas escondidas. Lo importante cabe en una pantalla.</p>
+    <p class="mt-4 mono text-[11px] text-slate-400" data-i18n="tc.updated">Última actualización: 19 de julio de 2026</p>
+  </div>
+
+  <!-- Resumen -->
+  <section class="mt-12 reveal">
+    <div class="grid sm:grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-white/80 border border-white/90 p-5 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+        <iconify-icon icon="solar:gift-linear" class="text-2xl text-blue-500"></iconify-icon>
+        <p class="text-sm font-medium text-slate-900 mt-2" data-i18n="tc.k1t">Gratis de verdad</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="tc.k1d">Sin cuentas, sin cuotas, sin funciones bloqueadas.</p>
+      </div>
+      <div class="rounded-2xl bg-white/80 border border-white/90 p-5 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+        <iconify-icon icon="solar:trash-bin-trash-linear" class="text-2xl text-rose-500"></iconify-icon>
+        <p class="text-sm font-medium text-slate-900 mt-2" data-i18n="tc.k2t">Tú decides qué se borra</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="tc.k2d">Nada se elimina sin que lo confirmes.</p>
+      </div>
+      <div class="rounded-2xl bg-white/80 border border-white/90 p-5 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+        <iconify-icon icon="solar:eye-linear" class="text-2xl text-emerald-500"></iconify-icon>
+        <p class="text-sm font-medium text-slate-900 mt-2" data-i18n="tc.k3t">Código consultable</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="tc.k3d">Puedes revisar qué hace antes de fiarte.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cuerpo -->
+  <section class="mt-8 reveal d1">
+    <div class="rounded-[2rem] bg-white/80 backdrop-blur-xl border border-white/90 p-8 md:p-10 shadow-[0_2px_10px_rgba(15,23,42,0.04)] prose-z">
+
+      <h2 data-i18n="tc.h1">1. Aceptación</h2>
+      <p data-i18n="tc.p1">Al descargar, instalar o usar ZodHub CleanPC (en adelante, «la app») aceptas estos términos. Si no estás de acuerdo con alguno, no la uses y desinstálala.</p>
+
+      <h2 data-i18n="tc.h2">2. Qué es la app</h2>
+      <p data-i18n="tc.p2">Una utilidad de mantenimiento para tu ordenador: localiza cachés, archivos temporales, duplicados y elementos que ocupan espacio, muestra información del sistema y te permite eliminar lo que tú selecciones. <strong>No es un antivirus</strong>, no protege frente a programas maliciosos y no repara averías de hardware. Cualquier afirmación distinta que veas por ahí no viene de nosotros.</p>
+
+      <h2 data-i18n="tc.h3">3. Licencia de uso</h2>
+      <p data-i18n="tc.p3">Te concedemos una licencia personal, gratuita, no exclusiva y revocable para instalar y usar la app en los dispositivos que quieras, con fines personales o profesionales. El software es propiedad de ZodHub. <strong>No puedes</strong> redistribuirlo, venderlo, publicarlo bajo otro nombre ni crear obras derivadas sin autorización escrita. El código fuente puede consultarse en el repositorio público, y eso no implica cesión de derechos. Los términos completos están en el <a href="https://github.com/zodhub-app/clean/blob/main/LICENSE" target="_blank" rel="noopener">archivo de licencia</a>.</p>
+
+      <h2 data-i18n="tc.h4">4. Tu responsabilidad al borrar</h2>
+      <p data-i18n="tc.p4">Esto es lo más importante de toda la página. La app te enseña qué ha encontrado y <strong>solo elimina lo que tú marcas y confirmas</strong>. Aun así, el borrado es una operación irreversible: una vez vaciada la papelera, un archivo no vuelve.</p>
+      <ul>
+        <li data-i18n="tc.p4a">Revisa lo seleccionado antes de confirmar. Si no reconoces algo, déjalo.</li>
+        <li data-i18n="tc.p4b">Ten copias de seguridad al día. Ninguna herramienta de limpieza sustituye a una copia.</li>
+        <li data-i18n="tc.p4c">Algunas acciones piden permisos de administrador. Se solicitan solo cuando la operación los necesita de verdad, y puedes negarlos.</li>
+      </ul>
+
+      <h2 data-i18n="tc.h5">5. Sin garantías</h2>
+      <p data-i18n="tc.p5">La app se ofrece «tal cual», sin garantía de ningún tipo, expresa o implícita, incluidas las de comerciabilidad, idoneidad para un fin concreto y ausencia de errores. No garantizamos que funcione sin interrupciones ni que libere una cantidad determinada de espacio.</p>
+
+      <h2 data-i18n="tc.h6">6. Limitación de responsabilidad</h2>
+      <p data-i18n="tc.p6">En la medida que permita la ley aplicable, ZodHub no responde de daños indirectos, incidentales o consecuentes, ni de la pérdida de datos, derivados del uso o la imposibilidad de uso de la app. Nada en estos términos excluye la responsabilidad que legalmente no pueda excluirse, como el dolo o los daños a las personas. Tampoco se limitan los derechos que la normativa de consumo te reconozca como consumidor.</p>
+
+      <h2 data-i18n="tc.h7">7. Actualizaciones</h2>
+      <p data-i18n="tc.p7">La app comprueba periódicamente si hay una versión nueva y te avisa; la instalación la decides tú. Las actualizaciones pueden añadir, cambiar o retirar funciones. Puedes desactivar la comprobación automática en los ajustes.</p>
+
+      <h2 data-i18n="tc.h8">8. Donaciones</h2>
+      <p data-i18n="tc.p8">Las donaciones son voluntarias, no dan derecho a funciones adicionales, soporte prioritario ni a ninguna contraprestación, y <strong>no son reembolsables</strong> salvo error manifiesto en el cobro. Se procesan a través de la plataforma de pago correspondiente, sujetas también a las condiciones de esa plataforma.</p>
+
+      <h2 data-i18n="tc.h9">9. Software de terceros</h2>
+      <p data-i18n="tc.p9">La app incorpora componentes de código abierto, cada uno con su propia licencia (mayoritariamente MIT y Apache-2.0). Los avisos correspondientes se recogen en el repositorio del proyecto.</p>
+
+      <h2 data-i18n="tc.h10">10. Cambios y ley aplicable</h2>
+      <p data-i18n="tc.p10">Podemos actualizar estos términos; la fecha del encabezado indica la última versión y seguir usando la app supone aceptar la vigente. Se rigen por la legislación española. Si eres consumidor, conservas el derecho a acudir a los tribunales de tu domicilio.</p>
+
+      <h2 data-i18n="tc.h11">11. Contacto</h2>
+      <p data-i18n="tc.p11">Para cualquier duda sobre estos términos: <a href="mailto:info@zodhub.com">info@zodhub.com</a> o a través de <a href="https://github.com/zodhub-app/clean/issues" target="_blank" rel="noopener">los asuntos del repositorio</a>.</p>
+
+    </div>
+  </section>
+
+  <!-- Enlace cruzado -->
+  <div class="mt-8 text-center reveal">
+    <a href="privacidad.html" class="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-slate-600 bg-white/78 border border-slate-200 shadow-[inset_0_1px_0_white] hover:text-blue-600 hover:-translate-y-0.5 transition-all">
+      <iconify-icon icon="solar:shield-check-linear" class="text-base"></iconify-icon><span data-i18n="tc.toPrivacy">Ver la política de privacidad</span>
+    </a>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="relative z-10 max-w-7xl mx-auto px-6 pb-14">
+  <div class="rounded-[2rem] bg-white/70 border border-slate-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+    <a href="index.html" class="flex items-center gap-3">
+      <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
+      <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub CleanPC</span>
+    </a>
+    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+      <div class="flex items-center gap-4 text-xs text-slate-500 font-light">
+        <a href="privacidad.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.privacy">Privacidad</a>
+        <a href="terminos.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.terms">Términos</a>
+        <a href="https://github.com/zodhub-app/clean" target="_blank" rel="noopener" class="hover:text-blue-600 transition-colors">GitHub</a>
+      </div>
+      <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.app</span></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+
+  var I18N = { en: {
+    "foot.privacy":"Privacy","foot.terms":"Terms","nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
+    "tc.badge":"TERMS","tc.title":"Terms of use",
+    "tc.sub":"No small print, no hidden clauses. The important part fits on one screen.",
+    "tc.updated":"Last updated: 19 July 2026",
+    "tc.k1t":"Genuinely free","tc.k1d":"No accounts, no fees, no locked features.",
+    "tc.k2t":"You decide what goes","tc.k2d":"Nothing is deleted without your confirmation.",
+    "tc.k3t":"Inspectable code","tc.k3d":"You can check what it does before trusting it.",
+    "tc.h1":"1. Acceptance",
+    "tc.p1":"By downloading, installing or using ZodHub CleanPC (\"the app\") you accept these terms. If you disagree with any of them, don't use it and uninstall it.",
+    "tc.h2":"2. What the app is",
+    "tc.p2":"A maintenance utility for your computer: it locates caches, temporary files, duplicates and space-hogging items, shows system information and lets you remove whatever you select. <strong>It is not an antivirus</strong>, it does not protect against malware and it does not repair hardware faults. Any claim to the contrary you may see elsewhere does not come from us.",
+    "tc.h3":"3. Licence to use",
+    "tc.p3":"We grant you a personal, free, non-exclusive, revocable licence to install and use the app on as many devices as you like, for personal or professional purposes. The software is the property of ZodHub. <strong>You may not</strong> redistribute it, sell it, publish it under another name or create derivative works without written permission. The source code can be inspected in the public repository, and that implies no transfer of rights. Full terms are in the <a href=\"https://github.com/zodhub-app/clean/blob/main/LICENSE\" target=\"_blank\" rel=\"noopener\">licence file</a>.",
+    "tc.h4":"4. Your responsibility when deleting",
+    "tc.p4":"This is the most important part of the page. The app shows you what it found and <strong>only removes what you tick and confirm</strong>. Even so, deletion is irreversible: once the bin is emptied, a file does not come back.",
+    "tc.p4a":"Review your selection before confirming. If you don't recognise something, leave it.",
+    "tc.p4b":"Keep your backups current. No cleaning tool replaces a backup.",
+    "tc.p4c":"Some actions ask for administrator permissions. They're requested only when the operation genuinely needs them, and you can refuse.",
+    "tc.h5":"5. No warranty",
+    "tc.p5":"The app is provided \"as is\", without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose and absence of errors. We do not guarantee uninterrupted operation or that it will free any particular amount of space.",
+    "tc.h6":"6. Limitation of liability",
+    "tc.p6":"To the extent permitted by applicable law, ZodHub is not liable for indirect, incidental or consequential damages, nor for data loss, arising from the use or inability to use the app. Nothing in these terms excludes liability that cannot lawfully be excluded, such as wilful misconduct or personal injury. Nor does it limit any rights consumer law grants you as a consumer.",
+    "tc.h7":"7. Updates",
+    "tc.p7":"The app periodically checks whether a new version exists and tells you; installing is your decision. Updates may add, change or remove features. You can turn automatic checking off in the settings.",
+    "tc.h8":"8. Donations",
+    "tc.p8":"Donations are voluntary, grant no additional features, priority support or any consideration whatsoever, and are <strong>non-refundable</strong> except in the event of a manifest billing error. They are processed through the relevant payment platform and are also subject to that platform's terms.",
+    "tc.h9":"9. Third-party software",
+    "tc.p9":"The app incorporates open-source components, each under its own licence (mostly MIT and Apache-2.0). The corresponding notices are collected in the project repository.",
+    "tc.h10":"10. Changes and governing law",
+    "tc.p10":"We may update these terms; the date in the header marks the latest version, and continuing to use the app means accepting the one in force. They are governed by Spanish law. If you are a consumer, you keep the right to bring proceedings before the courts of your place of residence.",
+    "tc.h11":"11. Contact",
+    "tc.p11":"For any question about these terms: <a href=\"mailto:info@zodhub.com\">info@zodhub.com</a> or through <a href=\"https://github.com/zodhub-app/clean/issues\" target=\"_blank\" rel=\"noopener\">the repository issues</a>.",
+    "tc.toPrivacy":"See the privacy policy"
+  }};
+  var currentLang='es', esCache={};
+  function cacheES(){document.querySelectorAll('[data-i18n]').forEach(function(el){esCache[el.getAttribute('data-i18n')]=el.innerHTML;});}
+  function applyLang(lang){var d=lang==='en'?I18N.en:null;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(lang==='es'){if(esCache[k]!==undefined)el.innerHTML=esCache[k];}else if(d&&d[k]!==undefined)el.innerHTML=d[k];});
+    document.documentElement.lang=lang;currentLang=lang;var b=document.getElementById('langToggle');if(b)b.textContent=lang==='es'?'EN':'ES';}
+  cacheES();
+  document.getElementById('langToggle').addEventListener('click',function(){applyLang(currentLang==='es'?'en':'es');});
+</script>
+</body>
+</html>

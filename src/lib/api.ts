@@ -221,6 +221,16 @@ export function osName(): Promise<string> {
   return invoke<string>("os_name");
 }
 
+/** ¿Está configurado el destino de las suscripciones? */
+export function subscribeAvailable(): Promise<boolean> {
+  return invoke<boolean>("subscribe_available");
+}
+
+/** Alta voluntaria en novedades. Único envío de datos que hace la app. */
+export function subscribe(name: string, email: string): Promise<void> {
+  return invoke<void>("subscribe", { name, email });
+}
+
 export function uninstallApp(
   appPath: string,
   leftovers: string[],

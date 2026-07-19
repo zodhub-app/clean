@@ -1,0 +1,92 @@
+ZodHub CleanPC
+Copyright (c) 2026 ZodHub. Todos los derechos reservados.
+All rights reserved.
+
+═══════════════════════════════════════════════════════════════════════════════
+ESPAÑOL
+═══════════════════════════════════════════════════════════════════════════════
+
+Este software y su código fuente son propiedad de ZodHub y están protegidos por
+las leyes de propiedad intelectual.
+
+QUÉ PUEDES HACER
+
+  • Descargar, instalar y usar la aplicación libremente, sin coste, tanto para
+    uso personal como profesional.
+  • Consultar el código fuente publicado en este repositorio con fines de
+    estudio, auditoría y verificación (es público precisamente para que puedas
+    comprobar que la aplicación hace lo que dice hacer).
+
+QUÉ NO PUEDES HACER SIN AUTORIZACIÓN ESCRITA
+
+  • Copiar, modificar o crear obras derivadas del código.
+  • Redistribuir el software o el código, con o sin modificaciones.
+  • Vender, sublicenciar o incorporar el código en otros productos.
+  • Descompilar o aplicar ingeniería inversa al binario, salvo en la medida en
+    que la ley lo permita expresamente.
+
+SIN GARANTÍA
+
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
+IMPLÍCITA, INCLUIDAS ENTRE OTRAS LAS GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD
+PARA UN FIN DETERMINADO Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O TITULARES
+DEL COPYRIGHT SERÁN RESPONSABLES DE NINGUNA RECLAMACIÓN, DAÑO U OTRA
+RESPONSABILIDAD DERIVADA DEL SOFTWARE O DE SU USO.
+
+Dado que ZodHub CleanPC elimina archivos de forma permanente, el usuario es
+responsable de revisar lo que borra. La aplicación previsualiza y pide
+confirmación antes de cada operación destructiva.
+
+SOFTWARE DE TERCEROS
+
+Esta aplicación incorpora componentes de código abierto de terceros, cada uno
+sujeto a su propia licencia (mayoritariamente MIT y Apache-2.0). Los avisos de
+copyright y licencias correspondientes se muestran en la propia aplicación, en
+«Tu espacio → Atribuciones».
+
+CONTACTO
+
+Para solicitar permisos o resolver dudas sobre esta licencia:
+https://github.com/zodhub-app
+
+═══════════════════════════════════════════════════════════════════════════════
+ENGLISH
+═══════════════════════════════════════════════════════════════════════════════
+
+This software and its source code are the property of ZodHub and are protected
+by intellectual property law.
+
+YOU MAY
+
+  • Download, install and use the application freely, at no cost, for personal
+    or professional use.
+  • Read the source code published in this repository for study, audit and
+    verification purposes (it is public precisely so you can check that the
+    application does what it claims to do).
+
+YOU MAY NOT, WITHOUT WRITTEN PERMISSION
+
+  • Copy, modify or create derivative works from the code.
+  • Redistribute the software or the code, with or without modifications.
+  • Sell, sublicense or incorporate the code into other products.
+  • Decompile or reverse engineer the binary, except to the extent expressly
+    permitted by law.
+
+NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+Because ZodHub CleanPC permanently deletes files, users are responsible for
+reviewing what they delete. The application previews and asks for confirmation
+before every destructive operation.
+
+THIRD-PARTY SOFTWARE
+
+This application bundles third-party open-source components, each subject to
+its own license (mostly MIT and Apache-2.0). The corresponding copyright and
+license notices are shown inside the application, under "Your space →
+Attributions".

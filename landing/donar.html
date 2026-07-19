@@ -119,11 +119,20 @@
         <span data-donate-label>Donar 5 €</span>
       </a>
 
+      <!-- Vías alternativas: solo se muestran las que estén configuradas -->
+      <div id="altPay" class="mt-4 hidden grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <a id="altKofi" href="#" target="_blank" rel="noopener" class="hidden items-center justify-center gap-2 rounded-full px-4 py-3 text-sm text-slate-700 bg-white border border-slate-200 shadow-[inset_0_1px_0_white] hover:border-blue-300 hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="simple-icons:kofi" class="text-base text-[#ff5e5b]"></iconify-icon><span>Ko-fi</span>
+        </a>
+        <a id="altSponsors" href="#" target="_blank" rel="noopener" class="hidden items-center justify-center gap-2 rounded-full px-4 py-3 text-sm text-slate-700 bg-white border border-slate-200 shadow-[inset_0_1px_0_white] hover:border-blue-300 hover:-translate-y-0.5 transition-all">
+          <iconify-icon icon="simple-icons:githubsponsors" class="text-base text-[#db61a2]"></iconify-icon><span>GitHub Sponsors</span>
+        </a>
+      </div>
+
       <!-- Methods -->
       <div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
         <span class="text-xs text-slate-400 font-light" data-i18n="do.methods">Métodos disponibles:</span>
         <div class="flex items-center gap-4 text-slate-400">
-          <iconify-icon icon="simple-icons:paypal" class="text-xl" title="PayPal"></iconify-icon>
           <iconify-icon icon="simple-icons:stripe" class="text-xl" title="Tarjeta / Stripe"></iconify-icon>
           <iconify-icon icon="simple-icons:kofi" class="text-xl" title="Ko-fi"></iconify-icon>
           <iconify-icon icon="simple-icons:githubsponsors" class="text-xl" title="GitHub Sponsors"></iconify-icon>
@@ -168,7 +177,7 @@
         <iconify-icon icon="solar:global-linear" class="text-2xl text-blue-500"></iconify-icon>
         <p class="mono text-2xl text-slate-900 mt-3">10%</p>
         <p class="text-sm font-medium text-slate-900 mt-1" data-i18n="do.tr2t">Dominio</p>
-        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr2d">Mantener zodhub.pro y los correos activos.</p>
+        <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.tr2d">Mantener zodhub.app y los correos activos.</p>
       </div>
       <div class="rounded-3xl bg-white/85 border border-slate-200 p-6">
         <iconify-icon icon="solar:code-linear" class="text-2xl text-blue-500"></iconify-icon>
@@ -220,12 +229,12 @@
         <h2 class="text-2xl md:text-3xl font-normal tracking-tight text-slate-950" data-i18n="do.freeHead">Ayudar es gratis. Cualquiera de estas suma.</h2>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        <a href="https://twitter.com/intent/tweet?text=ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%2C%20100%25%20gratis&url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
+        <a href="https://twitter.com/intent/tweet?text=ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%2C%20100%25%20gratis&url=https%3A%2F%2Fzodhub.app" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
           <iconify-icon icon="ri:twitter-x-fill" class="text-2xl text-slate-900"></iconify-icon>
           <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f1t">Compártelo en X</p>
           <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f1d">Un tuit hace que llegue a más gente que cualquier anuncio.</p>
         </a>
-        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fzodhub.pro" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fzodhub.app" target="_blank" rel="noopener" class="rounded-2xl bg-white border border-slate-200 p-5 hover:-translate-y-1 hover:border-blue-300 transition-all shadow-[inset_0_1px_0_white]">
           <iconify-icon icon="ri:linkedin-fill" class="text-2xl text-blue-600"></iconify-icon>
           <p class="text-sm font-medium text-slate-900 mt-3" data-i18n="do.f2t">Compártelo en LinkedIn</p>
           <p class="text-xs text-slate-500 font-light mt-1" data-i18n="do.f2d">Ideal si trabajas rodeado de gente con Mac o PC.</p>
@@ -258,7 +267,14 @@
       <span class="w-9 h-9 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-700 flex items-center justify-center"><span class="mono text-xs font-semibold text-white tracking-[-0.08em]">ZC</span></span>
       <span class="mono text-sm font-semibold text-slate-950 tracking-[-0.06em]">ZodHub CleanPC</span>
     </a>
-    <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.pro</span></p>
+    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+      <div class="flex items-center gap-4 text-xs text-slate-500 font-light">
+        <a href="privacidad.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.privacy">Privacidad</a>
+        <a href="terminos.html" class="hover:text-blue-600 transition-colors" data-i18n="foot.terms">Términos</a>
+        <a href="https://github.com/zodhub-app/clean" target="_blank" rel="noopener" class="hover:text-blue-600 transition-colors">GitHub</a>
+      </div>
+      <p class="text-xs text-slate-400 font-light">© <span id="year">2026</span> ZodHub · <span class="mono">zodhub.app</span></p>
+    </div>
   </div>
 </footer>
 
@@ -267,12 +283,64 @@
   // reveal + progress bar
   (function(){var io=new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');var b=e.target.querySelector('.bar-fill');if(b)b.classList.add('go');o.unobserve(e.target);}});},{threshold:.12});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
 
+  /* ══════════════════════════════════════════════════════════════════════
+     CONFIGURACIÓN DE PAGOS — lo único que hay que rellenar.
+     Mientras esté todo vacío, el botón se muestra desactivado y la página
+     dice la verdad: que las donaciones aún no están abiertas.
+
+     stripeOnce   → Payment Link de pago único. Créalo en Stripe con la
+                    opción «que el cliente elija el importe» (pay what you
+                    want) para que valga para cualquier cantidad.
+     stripeMonth  → Payment Link de suscripción mensual.
+     kofi         → https://ko-fi.com/TU_USUARIO
+     sponsors     → https://github.com/sponsors/TU_USUARIO
+     ══════════════════════════════════════════════════════════════════════ */
+  var PAY = {
+    stripeOnce:  '',
+    stripeMonth: '',
+    kofi:        '',
+    sponsors:    ''
+  };
+
   // Donation logic
   var amount = 5, monthly = false;
+
+  /** Destino del botón principal según la frecuencia elegida. */
+  function target(){
+    if (monthly) return PAY.stripeMonth || PAY.sponsors || PAY.kofi || '';
+    return PAY.stripeOnce || PAY.kofi || PAY.sponsors || '';
+  }
+
   function labels(){ return currentLang==='en'
-    ? {once:'Donate '+amount+' €', month:'Donate '+amount+' € / mo'}
-    : {once:'Donar '+amount+' €', month:'Donar '+amount+' € / mes'}; }
-  function updateBtn(){ var el=document.querySelector('[data-donate-label]'); if(el) el.textContent = monthly?labels().month:labels().once; }
+    ? {once:'Donate '+amount+' €', month:'Donate '+amount+' € / mo', soon:'Donations not open yet'}
+    : {once:'Donar '+amount+' €', month:'Donar '+amount+' € / mes', soon:'Donaciones aún no abiertas'}; }
+
+  function updateBtn(){
+    var btn = document.getElementById('donateBtn');
+    var el  = document.querySelector('[data-donate-label]');
+    var url = target();
+    var open = !!url;
+    if (el) el.textContent = open ? (monthly?labels().month:labels().once) : labels().soon;
+    if (btn){
+      btn.href = open ? url : '#';
+      if (open) { btn.setAttribute('target','_blank'); btn.setAttribute('rel','noopener'); }
+      else { btn.removeAttribute('target'); btn.removeAttribute('rel'); }
+      // Sin destino real no se pulsa: mejor un botón honesto que uno que engaña.
+      btn.classList.toggle('opacity-50', !open);
+      btn.classList.toggle('pointer-events-none', !open);
+      btn.setAttribute('aria-disabled', open ? 'false' : 'true');
+    }
+  }
+
+  /** Enlaces alternativos: solo aparecen los proveedores configurados. */
+  (function altLinks(){
+    var box = document.getElementById('altPay'), any = false;
+    [['altKofi', PAY.kofi], ['altSponsors', PAY.sponsors]].forEach(function(p){
+      var el = document.getElementById(p[0]);
+      if (el && p[1]) { el.href = p[1]; el.classList.remove('hidden'); el.classList.add('flex'); any = true; }
+    });
+    if (box && any) { box.classList.remove('hidden'); box.classList.add('grid'); }
+  })();
   document.querySelectorAll('.amt').forEach(function(b){
     b.addEventListener('click', function(){
       document.querySelectorAll('.amt').forEach(function(x){x.classList.remove('sel');});
@@ -300,7 +368,7 @@
 
   // i18n
   var I18N = { en: {
-    "nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
+    "foot.privacy":"Privacy","foot.terms":"Terms","nav.tagline":"Honest maintenance","nav.features":"Features","nav.how":"How it works","nav.security":"Security","nav.download":"Download","nav.support":"Support","nav.cta":"Download",
     "do.badge":"SUPPORT THE PROJECT","do.title":"Help us keep it free for everyone.",
     "do.sub":"ZodHub CleanPC is and will stay free. No walls, no paid features. If it saved you a headache and you'd like it to keep growing, a small gesture helps a lot — and it's 100% optional.",
     "do.once":"One-time","do.monthly":"Monthly","do.custom":"Other amount","do.methods":"Available methods:",
@@ -308,7 +376,7 @@
     "do.goalLabel":"MONTH GOAL · COSTS","do.goalDesc":"This covers the download server, the domain and development hours. Once we hit the goal, everything else goes into improving the app.",
     "do.goalNote":"Sample figures; we'll publish the real ones as soon as donations open.",
     "do.trLabel":"TRANSPARENCY","do.trHead":"Where every euro goes.","do.trSub":"No huge salaries, no smoke. This is what keeps the project alive:",
-    "do.tr1t":"Server & CDN","do.tr1d":"Hosting and serving downloads fast worldwide.","do.tr2t":"Domain","do.tr2d":"Keeping zodhub.pro and email running.",
+    "do.tr1t":"Server & CDN","do.tr1d":"Hosting and serving downloads fast worldwide.","do.tr2t":"Domain","do.tr2d":"Keeping zodhub.app and email running.",
     "do.tr3t":"Development","do.tr3d":"Hours for new features, Linux and Windows.","do.tr4t":"Coffee & extras","do.tr4d":"What keeps the person coding awake.",
     "do.dnLabel":"RECENT SUPPORTERS","do.dnHead":"Thanks to those who make it possible.",
     "do.dnNote":"Illustrative examples. Real supporters (with your permission) will appear here once donations open.",

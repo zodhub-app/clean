@@ -59,6 +59,48 @@ const EN: Record<string, string> = {
   "Versión {v}": "Version {v}",
   "comprobado {t}": "checked {t}",
 
+  // ── Tu espacio (cuenta, novedades, apoyo y legal) ─────────────────────
+  "Tu espacio": "Your space",
+  "Novedades, apoyo y legal": "News, support and legal",
+  "Hay una versión nueva disponible": "A new version is available",
+  "Visitar la web": "Visit the website",
+  "Aquí aparecerán las novedades del proyecto: funciones nuevas, mejoras y avisos importantes. Mientras tanto, puedes ver todos los cambios publicados en el historial de versiones.":
+    "Project news will appear here: new features, improvements and important notices. In the meantime, you can see every published change in the release history.",
+  "Ver historial de versiones": "See release history",
+  "Novedades por correo": "News by email",
+  "Si quieres, te avisamos de las funciones nuevas y las mejoras importantes. Es completamente opcional: la app ya se actualiza sola sin necesidad de esto.":
+    "If you like, we'll let you know about new features and important improvements. It's entirely optional: the app already updates itself without this.",
+  "La suscripción no está disponible por ahora.":
+    "Subscription isn't available right now.",
+  "Nombre (opcional)": "Name (optional)",
+  "Cómo quieres que te llamemos": "What we should call you",
+  "Correo electrónico": "Email address",
+  "Acepto recibir novedades de ZodHub CleanPC y he leído la política de privacidad. Puedo darme de baja cuando quiera.":
+    "I agree to receive ZodHub CleanPC news and I have read the privacy policy. I can unsubscribe at any time.",
+  "Enviando…": "Sending…",
+  Suscribirme: "Subscribe",
+  "¡Suscripción completada!": "You're subscribed!",
+  "No se pudo completar la suscripción": "Couldn't complete the subscription",
+  "¡Gracias por suscribirte!": "Thanks for subscribing!",
+  "Te escribiremos solo cuando haya algo que merezca la pena.":
+    "We'll only write when there's something worth saying.",
+  "ZodHub CleanPC no envía ningún dato de tu equipo. Lo único que sale de aquí es lo que escribas arriba, y solo si pulsas Suscribirme.":
+    "ZodHub CleanPC sends no data about your device. The only thing that leaves here is what you type above, and only if you press Subscribe.",
+  "Apoya el proyecto": "Support the project",
+  "ZodHub CleanPC es gratis, sin anuncios y sin suscripciones. Si te resulta útil y quieres que siga creciendo, puedes echar una mano.":
+    "ZodHub CleanPC is free, with no ads and no subscriptions. If you find it useful and want it to keep growing, you can lend a hand.",
+  "Hacer una donación": "Make a donation",
+  "Se abrirá en tu navegador. Sin compromiso y sin cuotas.":
+    "It opens in your browser. No commitment, no fees.",
+  "Acerca de y legal": "About and legal",
+  "Política de privacidad": "Privacy policy",
+  "Términos de uso": "Terms of use",
+  "Licencia y atribuciones": "Licence and attributions",
+  "ZodHub CleanPC funciona en local: los análisis y las limpiezas se hacen en tu equipo y no se envía información a ningún servidor.":
+    "ZodHub CleanPC runs locally: scans and cleanups happen on your device and no information is sent to any server.",
+  "Hecho con cuidado. Tu equipo, sencillamente limpio y seguro.":
+    "Made with care. Your device, simply clean and safe.",
+
   // ── Hero / Acerca de ─────────────────────────────────────────────────
   "Tu Mac, ": "Your Mac, ",
   "sencillamente seguro": "simply safe",
