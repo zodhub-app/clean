@@ -1,19 +1,32 @@
-# CI/CD — ZodHub CleanPC (build universal de macOS)
+# CI/CD — ZodHub CleanPC (release multiplataforma)
 #
-# Qué hace: en cada tag `v*` (y a mano vía "Run workflow") compila el .app/.dmg
-# UNIVERSAL (Intel x86_64 + Apple Silicon aarch64) y publica una Release de
-# GitHub con los artefactos adjuntos.
+# Qué hace: al empujar un tag `v*` compila la app para macOS y Windows y publica
+# UNA SOLA Release de GitHub (en borrador) con todos los instaladores y el
+# `latest.json` que alimenta las actualizaciones automáticas de ambos sistemas.
 #
-# Sin firma de código de momento: el .dmg se genera sin firmar ni notarizar. En
-# el Mac del usuario final macOS pedirá botón derecho > Abrir la primera vez
-# (Gatekeeper). Cuando tengas cuenta de Apple Developer, descomenta el bloque de
-# firma/notarización de abajo y añade los secrets al repo.
+#   macOS   → .dmg UNIVERSAL (Intel x86_64 + Apple Silicon aarch64)
+#   Windows → instalador NSIS (.exe) + .msi
+#
+# Cómo se combinan las dos plataformas en un único `latest.json`:
+# los dos jobs apuntan al MISMO `tagName`. El primero que termina crea la
+# Release y sube su `latest.json`; el segundo encuentra esa Release, lee el
+# archivo existente y AÑADE su plataforma en vez de sobrescribirlo. Por eso es
+# imprescindible que `tagName`, `releaseName` y `releaseDraft` sean idénticos en
+# los dos, y que `fail-fast` esté desactivado (si uno falla, el otro debe
+# terminar igualmente para no dejar una release a medias sin avisar).
+#
+# SIN FIRMA DE CÓDIGO todavía:
+#   - macOS: el .dmg no está notarizado → la primera vez, botón derecho > Abrir.
+#   - Windows: el instalador no lleva certificado → SmartScreen avisará
+#     («Más información» → «Ejecutar de todas formas»).
+# Ambos casos están explicados en la web de descargas. Los bloques de firma de
+# Apple quedan preparados abajo para cuando haya cuenta de desarrollador.
 name: release
 
 on:
   push:
     tags:
-      - "v*" # se dispara al empujar un tag como v0.1.0, v1.0.0, etc.
+      - "v*" # se dispara al empujar un tag como v0.2.0
   workflow_dispatch: {} # permite lanzarlo a mano desde la pestaña Actions
 
 # Permiso para que la acción pueda crear la Release y subir binarios.
@@ -21,8 +34,31 @@ permissions:
   contents: write
 
 jobs:
-  build-macos:
-    runs-on: macos-latest # runner Apple Silicon (arm64) de GitHub
+  release:
+    strategy:
+      # Nunca cancelar la otra plataforma si una falla: preferimos una release
+      # incompleta y visible a una cancelada a medias.
+      fail-fast: false
+      # DE UNO EN UNO, a propósito. Si los dos jobs arrancaran a la vez podrían
+      # intentar crear la misma Release simultáneamente y duplicarla, o pisarse
+      # el `latest.json` al subirlo. Secuencial, el segundo siempre encuentra el
+      # trabajo del primero y le añade su plataforma. Tarda más (la suma en vez
+      # del máximo), pero una release se publica una vez: importa que salga bien.
+      max-parallel: 1
+      matrix:
+        include:
+          - platform: macos-latest
+            label: macOS (universal)
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - platform: windows-latest
+            label: Windows
+            args: ""
+            rust-targets: ""
+
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.platform }}
+
     steps:
       - name: Checkout del código
         uses: actions/checkout@v7
@@ -33,10 +69,11 @@ jobs:
           node-version: 22
           cache: npm # cachea ~/.npm según package-lock.json
 
-      - name: Configurar Rust (targets Intel + Apple Silicon)
+      - name: Configurar Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
+          # En macOS hacen falta las dos arquitecturas para el binario universal.
+          targets: ${{ matrix.rust-targets }}
 
       - name: Caché de Rust (acelera compilaciones sucesivas)
         uses: swatinem/rust-cache@v2
@@ -47,8 +84,8 @@ jobs:
         run: npm ci
 
       # Compila el frontend (beforeBuildCommand: npm run build) y el binario
-      # Rust para ambas arquitecturas, y ensambla el .app/.dmg universal.
-      - name: Build universal + Release
+      # Rust, ensambla los instaladores y los sube a la Release.
+      - name: Build + Release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,10 +103,36 @@ jobs:
           # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}                       # contraseña específica de app (notarización)
           # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}                         # Team ID de 10 caracteres
         with:
-          # tagName/releaseName usan el tag que disparó el workflow.
+          # Estos tres valores DEBEN coincidir en ambos jobs: así el segundo
+          # encuentra la release del primero en vez de crear otra.
           tagName: ${{ github.ref_name }}
           releaseName: "ZodHub CleanPC ${{ github.ref_name }}"
-          releaseBody: "Build universal de macOS (Intel + Apple Silicon). Sin firmar todavía: la primera vez, botón derecho sobre la app > Abrir."
-          releaseDraft: true # se crea como borrador para que revises antes de publicar
+          releaseDraft: true # borrador, para revisar antes de publicar
           prerelease: false
-          args: --target universal-apple-darwin
+          releaseBody: |
+            Mantenimiento honesto para Mac y Windows. Local-first, sin telemetría, gratis.
+
+            ## Descargas
+
+            | Sistema | Archivo |
+            | --- | --- |
+            | macOS 12 o superior (Intel y Apple Silicon) | `.dmg` |
+            | Windows 10 y 11 (64 bits) | `-setup.exe` (recomendado) o `.msi` |
+
+            ## Primera instalación
+
+            Todavía no firmamos con certificado, así que el sistema avisará una vez:
+
+            - **macOS**: botón derecho sobre la app → *Abrir* → *Abrir*.
+            - **Windows**: *Más información* → *Ejecutar de todas formas*.
+
+            A partir de ahí la app se actualiza sola: te avisa con un indicador
+            en la campana de la barra superior y se instala con un clic.
+
+            Puedes revisar el código en este mismo repositorio para comprobar
+            qué hace el programa antes de fiarte de él.
+          # NSIS (.exe) para el actualizador de Windows: instala en modo pasivo,
+          # sin pedirle nada al usuario. El .msi sigue publicándose como
+          # alternativa para quien despliegue por directiva de grupo.
+          updaterJsonPreferNsis: true
+          args: ${{ matrix.args }}
