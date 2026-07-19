@@ -1,0 +1,58 @@
+# Compila la app de macOS (.dmg + .app) y la sube como ARTEFACTO descargable,
+# sin publicar ninguna Release ni crear tags. Gemelo de build-windows.yml: sirve
+# para probar una versión antes de decidir que merece un número.
+# Se lanza a mano: pestaña Actions → "build-macos" → Run workflow.
+#
+# Diferencia con el workflow "release": aquel se dispara con un tag `v*` y deja
+# una release en borrador con `latest.json` para el actualizador. Este NO toca
+# nada público; el artefacto caduca solo a los pocos días.
+name: build-macos
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v7
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configurar Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Universal: funciona en Apple Silicon y en Intel.
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Caché de Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Instalar dependencias JS
+        run: npm ci
+
+      - name: Compilar la app de macOS
+        run: npm run tauri build -- --target universal-apple-darwin
+        env:
+          # createUpdaterArtifacts está activo: el build firma los artefactos y
+          # necesita la clave del updater (los mismos secrets que el release).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Subir la app como artefacto
+        uses: actions/upload-artifact@v7
+        with:
+          name: zodhub-cleanpc-macos
+          if-no-files-found: warn
+          path: |
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
