@@ -156,12 +156,45 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # `write` y no `read`: las releases en BORRADOR solo son visibles para
+      # quien tiene permiso de escritura. Con `read` la API las oculta.
+      contents: write
     steps:
-      - name: Descargar los artefactos de la release
+      # OJO: no se puede usar `gh release download <tag>`. La release está en
+      # borrador y GitHub NO resuelve los borradores por su tag —el endpoint
+      # /releases/tags/<tag> devuelve 404 hasta que se publican—. Hay que
+      # localizarla por su ID en el listado y bajar los adjuntos uno a uno.
+      - name: Descargar los artefactos de la release (borrador)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release download "${{ github.ref_name }}" -R "$GITHUB_REPOSITORY" -p '*' -D art
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p art
+
+          ID=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+                 --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -1)
+          if [ -z "$ID" ]; then
+            echo "No existe ninguna release (ni borrador) para el tag $TAG."
+            exit 1
+          fi
+          echo "Release $TAG encontrada, id $ID"
+
+          gh api "repos/$GITHUB_REPOSITORY/releases/$ID/assets" --paginate \
+            --jq '.[] | "\(.id)\t\(.name)"' > lista.tsv
+          if [ ! -s lista.tsv ]; then
+            echo "La release no tiene ningun archivo adjunto."
+            exit 1
+          fi
+
+          while IFS=$'\t' read -r aid nombre; do
+            echo "  bajando $nombre"
+            gh api -H "Accept: application/octet-stream" \
+              "repos/$GITHUB_REPOSITORY/releases/assets/$aid" > "art/$nombre"
+          done < lista.tsv
+
+          echo
+          ls -la art
 
       - name: La firma del latest.json debe ser la del archivo publicado
         run: |
