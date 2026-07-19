@@ -164,6 +164,16 @@ Marcar lo verificado en cada repaso.
   normales al comparar. `platform::norm` retira el prefijo.
 - **No borrar carpetas contenedoras de caché, solo vaciarlas** (`keep_root`):
   borrar `…\Default\Cache` con el navegador abierto le rompe el perfil.
+- **NUNCA medir lo liberado con el espacio libre del disco.** Se intentó
+  `max(delta de espacio libre, bytes borrados)` para evitar un «Liberados 0 B»,
+  y el resultado fue que la app anunciaba 50 GB tras borrar 1,6 GB: en macOS ese
+  delta recoge el espacio purgable y las instantáneas APFS que suelta el propio
+  sistema. Se informa SOLO de bytes contados uno a uno al borrar; la Papelera se
+  mide justo antes de vaciarla. El estimado del panel y la cifra final usan la
+  MISMA medida, así que el resultado nunca puede ser mayor que lo estimado.
+- **Un solo redactor de avisos de limpieza**: `src/lib/clean-report.ts`, usado
+  por el botón de Inicio y por la página «Liberar espacio». Si cada pantalla
+  redacta lo suyo, acaban contando cosas distintas del mismo hecho.
 - **Avisos: separar `errors` de lo informativo.** Que queden archivos en uso al
   limpiar temporales es NORMAL; se devuelven como contadores
   (`skipped_in_use` / `skipped_denied`) para que el frontend los traduzca y los

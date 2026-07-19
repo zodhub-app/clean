@@ -14,6 +14,7 @@ import {
   listSchedules,
   setSchedule,
 } from "@/lib/api";
+import { reportClean } from "@/lib/clean-report";
 
 /** Tarjeta principal de Inicio: la limpieza de un botón (manual o automática).
  *  Es la operación más importante, por eso vive en la portada. */
@@ -68,7 +69,7 @@ export function CleanupHero() {
     setCleaning(true);
     try {
       const r = await cleanAllJunk();
-      toast.success(t("Liberados {n}", { n: formatBytes(r.freed) }));
+      reportClean(r, t);
       await scan();
     } catch (e) {
       toast.error(t("Error al limpiar"), { description: String(e) });

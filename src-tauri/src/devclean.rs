@@ -6,29 +6,7 @@
 
 use crate::platform;
 use serde::Serialize;
-use std::path::{Path, PathBuf};
-use std::time::Duration;
-use sysinfo::Disks;
-
-/// Espacio libre real del disco principal (para medir lo liberado de verdad).
-fn free_bytes() -> u64 {
-    let disks = Disks::new_with_refreshed_list();
-    #[cfg(target_os = "windows")]
-    let root = {
-        let d = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
-        PathBuf::from(format!("{d}\\"))
-    };
-    #[cfg(not(target_os = "windows"))]
-    let root = PathBuf::from("/");
-
-    disks
-        .list()
-        .iter()
-        .find(|d| d.mount_point() == root.as_path())
-        .or_else(|| disks.list().iter().max_by_key(|d| d.total_space()))
-        .map(|d| d.available_space())
-        .unwrap_or(0)
-}
+use std::path::Path;
 
 #[derive(Serialize)]
 pub struct DevItem {
@@ -481,20 +459,13 @@ fn wipe_files(key: &str, h: &str) -> crate::platform::Wipe {
     total
 }
 
-/// Espacio liberado, conciliando las dos formas de medirlo.
+/// Tamaño de la Papelera JUSTO ANTES de vaciarla.
 ///
-/// - El **delta de espacio libre** (antes/después) es la medida más completa:
-///   incluye la Papelera y todo lo que el sistema devuelve al disco. Pero en un
-///   equipo vivo hay otros programas escribiendo, y puede salir 0 o negativo
-///   aunque hayamos borrado de verdad.
-/// - Los **bytes borrados** que cuenta `wipe` son exactos para lo que tocamos,
-///   pero no ven lo que libera el propio sistema.
-///
-/// Nos quedamos con el mayor de los dos: nunca infla la cifra por encima de lo
-/// que realmente se ha eliminado, y evita el «Liberados 0 B» tras una limpieza
-/// que sí ha borrado archivos.
-fn freed_bytes(free_before: u64, wiped: u64) -> u64 {
-    free_bytes().saturating_sub(free_before).max(wiped)
+/// Al vaciar la Papelera es el sistema quien borra, así que no podemos contar
+/// los bytes uno a uno como en el resto. Lo honesto es medir cuánto había
+/// dentro inmediatamente antes: eso es exactamente lo que se va a eliminar.
+fn trash_bytes(h: &str) -> u64 {
+    trash_size(&existing("trash", h))
 }
 
 #[tauri::command]
@@ -532,21 +503,32 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
             return CleanResult { freed, errors, ..Default::default() };
         }
 
-        // Ficheros o Papelera: medimos el espacio libre REAL antes/después
-        // (du no puede con rutas protegidas como la Papelera y subestimaría).
-        let before = free_bytes();
+        // Ficheros o Papelera.
+        //
+        // Se informa SOLO de lo que la app elimina de verdad, contado byte a
+        // byte. Antes se comparaba con el espacio libre del disco antes/después
+        // y se tomaba la cifra mayor; eso hacía que la app se apuntara todo lo
+        // que el sistema soltaba por su cuenta en ese momento (espacio
+        // purgable, instantáneas APFS…) y anunciara decenas de gigas cuando
+        // había borrado unos pocos. Una cifra inflada es peor que una modesta.
         let mut errors = Vec::new();
         let mut w = crate::platform::Wipe::default();
+        let freed;
         if key == "trash" {
-            if let Err(e) = empty_trash() {
-                errors.push(e);
-            }
+            let inside = trash_bytes(&h); // medido ANTES de vaciarla
+            freed = match empty_trash() {
+                Ok(()) => inside,
+                Err(e) => {
+                    errors.push(e);
+                    0 // si no se pudo vaciar, no se ha liberado nada
+                }
+            };
         } else {
             w = wipe_files(&key, &h);
+            freed = w.freed;
         }
-        std::thread::sleep(Duration::from_millis(700));
         CleanResult {
-            freed: freed_bytes(before, w.freed),
+            freed,
             errors,
             skipped_in_use: w.in_use,
             skipped_denied: w.denied,
@@ -562,18 +544,25 @@ pub async fn clean_dev(key: String) -> Result<CleanResult, String> {
 pub async fn clean_all_junk() -> Result<CleanResult, String> {
     tauri::async_runtime::spawn_blocking(|| {
         let h = home();
-        let before = free_bytes();
         let mut errors = Vec::new();
         let mut w = crate::platform::Wipe::default();
         for key in FILE_KEYS {
             w.add(wipe_files(key, &h));
         }
-        if let Err(e) = empty_trash() {
-            errors.push(e);
-        }
-        std::thread::sleep(Duration::from_millis(900));
+
+        // La Papelera se mide antes de vaciarla; el resto se cuenta al borrar.
+        // Nada de deltas de espacio libre: ver el comentario en `clean_dev`.
+        let trash = trash_bytes(&h);
+        let freed = match empty_trash() {
+            Ok(()) => w.freed + trash,
+            Err(e) => {
+                errors.push(e);
+                w.freed
+            }
+        };
+
         CleanResult {
-            freed: freed_bytes(before, w.freed),
+            freed,
             errors,
             skipped_in_use: w.in_use,
             skipped_denied: w.denied,
