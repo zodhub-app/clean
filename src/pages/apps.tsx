@@ -80,6 +80,9 @@ export function AppsPage() {
       const r = await uninstallApp(
         app.path,
         lo.items.map((i) => i.path),
+        // En Windows `bundle_id` transporta el desinstalador oficial del
+        // registro; en macOS se ignora.
+        app.bundle_id,
       );
       if (r.moved > 0) {
         toast.success(t("Desinstalada · liberado {n}", { n: formatBytes(r.freed) }));

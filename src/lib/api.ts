@@ -219,8 +219,14 @@ export function appLeftovers(
 export function uninstallApp(
   appPath: string,
   leftovers: string[],
+  /** Windows: comando de desinstalación oficial (viene en `bundle_id`). */
+  uninstaller?: string,
 ): Promise<TrashResult> {
-  return invoke<TrashResult>("uninstall_app", { appPath, leftovers });
+  return invoke<TrashResult>("uninstall_app", {
+    appPath,
+    leftovers,
+    uninstaller,
+  });
 }
 
 /** Liberar espacio — basura del sistema, dev, IA, Docker y Papelera. */
