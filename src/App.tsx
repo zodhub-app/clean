@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useTheme } from "@/components/theme-provider";
 import { useLang } from "@/components/language-provider";
+import { UpdateBell } from "@/components/update-bell";
 import { NAV_ITEMS, type ViewId } from "@/lib/nav";
 import { DashboardPage } from "@/pages/dashboard";
 import { StoragePage } from "@/pages/storage";
@@ -115,6 +116,7 @@ function HeaderActions() {
       >
         {isDark ? <Sun /> : <Moon />}
       </Button>
+      <UpdateBell />
       <Button
         variant="ghost"
         size="icon-sm"

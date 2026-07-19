@@ -46,6 +46,18 @@ const EN: Record<string, string> = {
   "Instalando…": "Installing…",
   "Actualización lista. Reiniciando…": "Update ready. Restarting…",
   "No se pudo actualizar": "Update failed",
+  // ── Campana de notificaciones ────────────────────────────────────────
+  Notificaciones: "Notifications",
+  "Actualización disponible": "Update available",
+  "Actualizar ahora": "Update now",
+  "Descargando…": "Downloading…",
+  "Buscar actualizaciones": "Check for updates",
+  "Comprobando actualizaciones…": "Checking for updates…",
+  "No se pudo comprobar": "Couldn't check for updates",
+  Reintentar: "Retry",
+  "Estás al día": "You're up to date",
+  "Versión {v}": "Version {v}",
+  "comprobado {t}": "checked {t}",
 
   // ── Hero / Acerca de ─────────────────────────────────────────────────
   "Tu Mac, ": "Your Mac, ",

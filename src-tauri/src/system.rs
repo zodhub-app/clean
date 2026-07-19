@@ -1,5 +1,4 @@
 use serde::Serialize;
-use std::path::Path;
 use std::sync::Mutex;
 use sysinfo::{Components, Disks, ProcessRefreshKind, ProcessesToUpdate, System};
 
@@ -51,9 +50,18 @@ pub fn system_stats(state: tauri::State<AppState>) -> SystemStats {
     let mut disk_total = 0u64;
     let mut disk_used = 0u64;
 
-    // Prefer the root volume.
+    // Volumen principal: "/" en macOS/Linux; la unidad del sistema (p. ej. C:\)
+    // en Windows.
+    #[cfg(target_os = "windows")]
+    let root = {
+        let d = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
+        std::path::PathBuf::from(format!("{d}\\"))
+    };
+    #[cfg(not(target_os = "windows"))]
+    let root = std::path::PathBuf::from("/");
+
     for disk in disks.list() {
-        if disk.mount_point() == Path::new("/") {
+        if disk.mount_point() == root.as_path() {
             disk_total = disk.total_space();
             disk_used = disk.total_space().saturating_sub(disk.available_space());
             break;
@@ -112,8 +120,16 @@ pub fn system_stats(state: tauri::State<AppState>) -> SystemStats {
         disk_total,
         uptime_secs: System::uptime(),
         temp,
-        host_name: System::host_name().unwrap_or_else(|| "tu Mac".into()),
+        host_name: System::host_name().unwrap_or_else(|| "tu equipo".into()),
     }
+}
+
+/// Sistema operativo actual: "macos" | "windows" | "linux". El frontend lo usa
+/// para adaptar textos («tu Mac» / «tu PC» / «tu equipo») y ocultar funciones
+/// específicas de un SO.
+#[tauri::command]
+pub fn os_name() -> String {
+    std::env::consts::OS.to_string()
 }
 
 #[derive(Serialize)]

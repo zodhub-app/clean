@@ -1,0 +1,51 @@
+# Compila el instalador de Windows (.msi + .exe NSIS) y lo sube como ARTEFACTO
+# descargable, sin publicar ninguna Release. Sirve para probar la app en Windows
+# durante el port. Se lanza a mano: pestaña Actions → "build-windows" → Run workflow.
+name: build-windows
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Caché de Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Instalar dependencias JS
+        run: npm ci
+
+      - name: Compilar instalador de Windows
+        run: npm run tauri build
+        env:
+          # createUpdaterArtifacts está activo, así que el build firma los
+          # artefactos: necesita la clave (los mismos secrets que el resto).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Subir instaladores como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: zodhub-clean-windows
+          if-no-files-found: warn
+          path: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/nsis/*.exe

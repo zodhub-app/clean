@@ -25,7 +25,7 @@ use scanner::{move_to_trash, reveal_in_finder, scan_dir};
 use scheduler::{list_schedules, run_task_now, set_schedule};
 use snapshots::{list_snapshots, thin_snapshots};
 use storage::{storage_history, storage_stats};
-use system::{list_sensors, system_stats, top_processes, AppState};
+use system::{list_sensors, os_name, system_stats, top_processes, AppState};
 use tauri::Manager;
 use tray::{get_tray_visible, set_tray_visible};
 
@@ -73,6 +73,7 @@ pub fn run() {
             system_stats,
             list_sensors,
             top_processes,
+            os_name,
             scan_caches,
             clean_caches,
             network_stats,

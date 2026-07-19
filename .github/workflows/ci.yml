@@ -13,7 +13,13 @@ on:
 
 jobs:
   check:
-    runs-on: macos-latest
+    # Verifica que compila en macOS y en Windows. fail-fast: false para ver el
+    # resultado de ambos aunque uno falle.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4

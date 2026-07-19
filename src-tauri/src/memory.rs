@@ -1,5 +1,6 @@
 use crate::system::AppState;
 use serde::Serialize;
+#[cfg(target_os = "macos")]
 use std::process::Command;
 
 #[derive(Serialize)]
@@ -23,7 +24,7 @@ pub fn memory_stats(state: tauri::State<AppState>) -> MemoryStats {
     let mut sys = state.sys.lock().unwrap_or_else(|e| e.into_inner());
     sys.refresh_memory();
 
-    let (wired, active, inactive, compressed, cached) = parse_vm_stat();
+    let (wired, active, inactive, compressed, cached) = mem_breakdown();
 
     MemoryStats {
         total: sys.total_memory(),
@@ -40,9 +41,23 @@ pub fn memory_stats(state: tauri::State<AppState>) -> MemoryStats {
     }
 }
 
+/// Desglose de memoria por categorías. En macOS se lee de `vm_stat`; fuera de
+/// macOS esas categorías (wired/active/inactive/compressed/cached) no existen tal
+/// cual, así que devolvemos ceros y el frontend oculta el desglose (honestidad).
+#[cfg(target_os = "macos")]
+fn mem_breakdown() -> (u64, u64, u64, u64, u64) {
+    parse_vm_stat()
+}
+
+#[cfg(not(target_os = "macos"))]
+fn mem_breakdown() -> (u64, u64, u64, u64, u64) {
+    (0, 0, 0, 0, 0)
+}
+
 /// Returns (wired, active, inactive, compressed, cached) in bytes from `vm_stat`.
 /// Inactive groups inactive + speculative + purgeable (reclaimable). Degrades to
 /// zeros if vm_stat isn't available.
+#[cfg(target_os = "macos")]
 fn parse_vm_stat() -> (u64, u64, u64, u64, u64) {
     let output = match Command::new("vm_stat").output() {
         Ok(o) => o,
@@ -87,6 +102,7 @@ fn parse_vm_stat() -> (u64, u64, u64, u64, u64) {
 
 /// Frees inactive/cached memory via `purge` (needs admin). macOS shows the
 /// standard password dialog. Rarely necessary — surfaced honestly in the UI.
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn purge_memory() -> Result<(), String> {
     let out = Command::new("osascript")
@@ -99,4 +115,12 @@ pub fn purge_memory() -> Result<(), String> {
     } else {
         Err(String::from_utf8_lossy(&out.stderr).trim().to_string())
     }
+}
+
+/// Fuera de macOS la purga manual de RAM no aplica del mismo modo (el SO ya la
+/// gestiona). Se devuelve un error claro; el frontend oculta el botón según el SO.
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+pub fn purge_memory() -> Result<(), String> {
+    Err("La liberación manual de memoria solo está disponible en macOS".into())
 }
