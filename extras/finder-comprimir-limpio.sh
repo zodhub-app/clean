@@ -1,9 +1,9 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# "Comprimir con ZodHub CleanPC" — cuerpo de la Acción Rápida (Quick Action) de Finder.
+# "Comprimir con ZodHub Pulse" — cuerpo de la Acción Rápida (Quick Action) de Finder.
 #
 # Comprime cada elemento seleccionado en un .zip LIMPIO, sin .DS_Store,
-# sin __MACOSX y sin resource forks (igual que el "Comprimir limpio" de ZodHub CleanPC).
+# sin __MACOSX y sin resource forks (igual que el "Comprimir limpio" de ZodHub Pulse).
 #
 # Cómo instalarlo como opción del clic derecho (1 minuto, una sola vez):
 #   1. Abre la app  Automator  →  Archivo  →  Nuevo  →  "Acción rápida".
@@ -12,10 +12,10 @@
 #      al área de la derecha.
 #   4. En esa acción:  Shell = /bin/bash   y   "Pasar entrada" = "como argumentos".
 #      Borra lo que haya y pega TODO el contenido de este archivo (de aquí abajo).
-#   5. Guarda con  ⌘S  y ponle el nombre:  Comprimir con ZodHub CleanPC
+#   5. Guarda con  ⌘S  y ponle el nombre:  Comprimir con ZodHub Pulse
 #
 # A partir de ahí: clic derecho sobre carpetas/archivos en Finder →
-#   "Acciones rápidas" → "Comprimir con ZodHub CleanPC".
+#   "Acciones rápidas" → "Comprimir con ZodHub Pulse".
 # (En Ajustes del sistema → Extensiones → Finder puedes ordenarla/activarla.)
 # ─────────────────────────────────────────────────────────────────────────────
 

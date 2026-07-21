@@ -1,4 +1,4 @@
-# ZodHub CleanPC — Checklist de verificación
+# ZodHub Pulse — Checklist de verificación
 
 Lista viva de comprobaciones antes de dar por buena una tarea y, sobre todo,
 **antes de un build/empaquetado**. Si algo cambia en la app, se actualiza aquí.
@@ -39,10 +39,10 @@ Marcar lo verificado en cada repaso.
 
 ## 3. Integraciones macOS (requieren build/empaquetado)
 
-- [ ] **Icono en la barra de menús**: aparece arriba; el menú *Abrir ZodHub CleanPC /
+- [ ] **Icono en la barra de menús**: aparece arriba; el menú *Abrir ZodHub Pulse /
       Salir* funciona; el interruptor de Ajustes lo activa/desactiva; con el icono
       activo, cerrar la ventana la **oculta** (la app sigue en la barra), no cierra.
-- [ ] **«Comprimir con ZodHub CleanPC» (clic derecho)**: la Acción Rápida aparece en
+- [ ] **«Comprimir con ZodHub Pulse» (clic derecho)**: la Acción Rápida aparece en
       *Acciones rápidas* y produce un zip limpio. (Versión nativa integrada =
       pendiente de empaquetar el `.app` con el Servicio del sistema.)
 
@@ -86,8 +86,8 @@ Marcar lo verificado en cada repaso.
       pública está en `tauri.conf.json` (`plugins.updater.pubkey`); la privada,
       como secret `TAURI_SIGNING_PRIVATE_KEY` en GitHub (+ `_PASSWORD` si tiene).
 - [ ] **Endpoint correcto**: `plugins.updater.endpoints` apunta a
-      `https://github.com/zodhub-app/clean/releases/latest/download/latest.json`
-      (el repo NO se renombra aunque el producto sea «CleanPC»: esa URL va grabada
+      `https://github.com/zodhub-app/pulse/releases/latest/download/latest.json`
+      (el repo NO se renombra aunque el producto sea «Clean»: esa URL va grabada
       en las versiones ya publicadas).
 - [ ] **`createUpdaterArtifacts: true`**: OJO, `npm run tauri build` **exige** la
       clave privada en el entorno (`export TAURI_SIGNING_PRIVATE_KEY=…`). `tauri
@@ -108,7 +108,7 @@ Marcar lo verificado en cada repaso.
       debe quedar ninguna ocurrencia). Contacto provisional: `info@zodhub.com`.
 - [ ] **Páginas legales existen y enlazan**: `landing/privacidad.html` y
       `landing/terminos.html`. Los enlaces desde la app («Tu espacio → legal»)
-      apuntan a `https://zodhub-app.github.io/clean/…`: si se cambia el nombre de
+      apuntan a `https://zodhub-app.github.io/pulse/…`: si se cambia el nombre de
       un archivo, hay que tocar `LINKS` en `src/pages/account.tsx`.
 - [ ] **Coherencia legal ↔ código**: la política de privacidad afirma que las
       únicas salidas de red son la comprobación de actualizaciones y la

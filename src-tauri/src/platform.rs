@@ -22,7 +22,7 @@ pub fn home_dir() -> PathBuf {
 ///   Windows → %APPDATA%\com.viper.macup
 ///   Linux   → ~/.local/share/com.viper.macup
 ///
-/// El identificador se mantiene aunque el producto se llame «ZodHub CleanPC»:
+/// El identificador se mantiene aunque el producto se llame «ZodHub Pulse»:
 /// cambiarlo haría que los usuarios existentes perdieran sus ajustes.
 pub fn app_data_dir() -> Option<PathBuf> {
     let h = home_dir();

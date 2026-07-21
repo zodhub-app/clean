@@ -1,6 +1,6 @@
 // SecurityGlobe — radar de red sobre el <Globe> genérico.
 //
-// Honestidad ante todo: ZodHub CleanPC no es un cortafuegos ni un IDS. Este panel NO
+// Honestidad ante todo: ZodHub Pulse no es un cortafuegos ni un IDS. Este panel NO
 // inventa un feed de ataques reales. Lo que muestra es:
 //   1. Una REPRESENTACIÓN del ruido constante de escaneos/ataques automáticos
 //      que recibe cualquier equipo conectado a internet (fenómeno real).

@@ -55,7 +55,7 @@ fn user_cache_root() -> Option<PathBuf> {
     }
 }
 
-/// Raíces de caché que ZodHub CleanPC puede tocar. Cualquier ruta fuera de
+/// Raíces de caché que ZodHub Pulse puede tocar. Cualquier ruta fuera de
 /// estas se rechaza (guarda de seguridad).
 fn allowed_roots() -> Vec<PathBuf> {
     let mut v: Vec<PathBuf> = Vec::new();

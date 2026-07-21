@@ -44,7 +44,7 @@ jobs:
       - name: Subir instaladores como artefacto
         uses: actions/upload-artifact@v7
         with:
-          name: zodhub-clean-windows
+          name: zodhub-pulse-windows
           if-no-files-found: warn
           path: |
             src-tauri/target/release/bundle/msi/*.msi

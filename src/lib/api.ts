@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { API_BASE, APP_HEADERS } from "./config";
 
 export type SystemStats = {
   cpu_usage: number; // 0..100 (global average)
@@ -240,12 +241,21 @@ export function osName(): Promise<string> {
 
 /** ¿Está configurado el destino de las suscripciones? */
 export function subscribeAvailable(): Promise<boolean> {
-  return invoke<boolean>("subscribe_available");
+  // El backend decide si las suscripciones están abiertas; aquí siempre ofrecible.
+  return Promise.resolve(true);
 }
 
 /** Alta voluntaria en novedades. Único envío de datos que hace la app. */
-export function subscribe(name: string, email: string): Promise<void> {
-  return invoke<void>("subscribe", { name, email });
+export async function subscribe(name: string, email: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/app/newsletter`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...APP_HEADERS },
+    body: JSON.stringify({ email, name: name || undefined }),
+  });
+  if (!res.ok) {
+    const j = (await res.json().catch(() => ({}))) as { error?: string };
+    throw new Error(j.error || `subscribe_failed_${res.status}`);
+  }
 }
 
 export function uninstallApp(
@@ -324,11 +334,41 @@ export function findDuplicates(path: string): Promise<DupGroup[]> {
   return invoke<DupGroup[]>("find_duplicates", { path });
 }
 
-/** Icono de ZodHub CleanPC en la barra de menús de macOS. */
+/** Icono de ZodHub Pulse en la barra de menús de macOS. */
 export function getTrayVisible(): Promise<boolean> {
   return invoke<boolean>("get_tray_visible");
 }
 
 export function setTrayVisible(visible: boolean): Promise<void> {
   return invoke<void>("set_tray_visible", { visible });
+}
+
+// ── Donaciones in-app (Stripe Elements) ──────────────────────────────────────
+export type DonationIntent = { clientSecret: string; publishableKey: string };
+
+/**
+ * Pide al backend un PaymentIntent de donación. `amountMinor` va en unidades
+ * menores (céntimos): el servidor lo acota a su rango; el cliente no decide el
+ * cobro. Devuelve el client_secret + la publishable key para Stripe Elements.
+ */
+export async function createDonationIntent(
+  amountMinor: number,
+  opts: { currency?: string; frequency?: "once" | "monthly"; email?: string; donorName?: string } = {},
+): Promise<DonationIntent> {
+  const res = await fetch(`${API_BASE}/api/app/donations/intent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...APP_HEADERS },
+    body: JSON.stringify({
+      amount: amountMinor,
+      currency: opts.currency ?? "EUR",
+      frequency: opts.frequency ?? "once",
+      email: opts.email,
+      donorName: opts.donorName,
+    }),
+  });
+  if (!res.ok) {
+    const j = (await res.json().catch(() => ({}))) as { error?: string };
+    throw new Error(j.error || `donation_intent_failed_${res.status}`);
+  }
+  return (await res.json()) as DonationIntent;
 }

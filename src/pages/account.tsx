@@ -20,15 +20,16 @@ import { useLang } from "@/components/language-provider";
 import { useUpdates } from "@/components/updates-provider";
 import { subscribe, subscribeAvailable } from "@/lib/api";
 import { openUrl } from "@/lib/links";
+import { DonateDialog } from "@/components/donate-dialog";
 
 /** Enlaces públicos del proyecto. Un único sitio donde cambiarlos. */
 const LINKS = {
-  web: "https://zodhub-app.github.io/clean/",
-  donate: "https://zodhub-app.github.io/clean/donar.html",
-  privacy: "https://zodhub-app.github.io/clean/privacidad.html",
-  terms: "https://zodhub-app.github.io/clean/terminos.html",
-  repo: "https://github.com/zodhub-app/clean",
-  releases: "https://github.com/zodhub-app/clean/releases",
+  web: "https://zodhub-app.github.io/pulse/",
+  donate: "https://zodhub-app.github.io/pulse/donar.html",
+  privacy: "https://zodhub-app.github.io/pulse/privacidad.html",
+  terms: "https://zodhub-app.github.io/pulse/terminos.html",
+  repo: "https://github.com/zodhub-app/pulse",
+  releases: "https://github.com/zodhub-app/pulse/releases",
 };
 
 export function AccountPage() {
@@ -76,7 +77,7 @@ function Hero() {
           <Sparkles className="size-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-medium leading-tight">ZodHub CleanPC</h2>
+          <h2 className="text-lg font-medium leading-tight">ZodHub Pulse</h2>
           <p className="text-sm text-muted-foreground">
             {u.currentVersion ? `v${u.currentVersion} · ` : ""}
             {state}
@@ -224,7 +225,7 @@ function Subscribe() {
             />
             <span>
               {t(
-                "Acepto recibir novedades de ZodHub CleanPC y he leído la política de privacidad. Puedo darme de baja cuando quiera.",
+                "Acepto recibir novedades de ZodHub Pulse y he leído la política de privacidad. Puedo darme de baja cuando quiera.",
               )}
             </span>
           </label>
@@ -247,7 +248,7 @@ function Subscribe() {
           <p className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
             <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-emerald-500" />
             {t(
-              "ZodHub CleanPC no envía ningún dato de tu equipo. Lo único que sale de aquí es lo que escribas arriba, y solo si pulsas Suscribirme.",
+              "ZodHub Pulse no envía ningún dato de tu equipo. Lo único que sale de aquí es lo que escribas arriba, y solo si pulsas Suscribirme.",
             )}
           </p>
         </div>
@@ -260,6 +261,7 @@ function Subscribe() {
 
 function Support() {
   const { t } = useLang();
+  const [donateOpen, setDonateOpen] = useState(false);
   return (
     <section className="relative overflow-hidden rounded-xl border bg-card p-5">
       {/* Halo suave, en la línea del módulo de la web. */}
@@ -273,19 +275,20 @@ function Support() {
       </header>
       <p className="relative mb-4 text-sm leading-6 text-muted-foreground">
         {t(
-          "ZodHub CleanPC es gratis, sin anuncios y sin suscripciones. Si te resulta útil y quieres que siga creciendo, puedes echar una mano.",
+          "ZodHub Pulse es gratis, sin anuncios y sin suscripciones. Si te resulta útil y quieres que siga creciendo, puedes echar una mano.",
         )}
       </p>
       <Button
         className="relative w-full bg-rose-500 text-white hover:bg-rose-600"
-        onClick={() => openUrl(LINKS.donate)}
+        onClick={() => setDonateOpen(true)}
       >
         <Heart className="size-4" />
         {t("Hacer una donación")}
       </Button>
       <p className="relative mt-2.5 text-center text-xs text-muted-foreground">
-        {t("Se abrirá en tu navegador. Sin compromiso y sin cuotas.")}
+        {t("Pago seguro con tarjeta, dentro de la app. Sin compromiso ni cuotas.")}
       </p>
+      <DonateDialog open={donateOpen} onOpenChange={setDonateOpen} />
     </section>
   );
 }
@@ -321,7 +324,7 @@ function Legal() {
       <Separator className="my-3" />
       <p className="text-xs leading-5 text-muted-foreground">
         {t(
-          "ZodHub CleanPC funciona en local: los análisis y las limpiezas se hacen en tu equipo y no se envía información a ningún servidor.",
+          "ZodHub Pulse funciona en local: los análisis y las limpiezas se hacen en tu equipo y no se envía información a ningún servidor.",
         )}
       </p>
     </section>

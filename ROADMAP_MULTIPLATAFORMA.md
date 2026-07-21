@@ -1,4 +1,4 @@
-# ZodHub CleanPC — Roadmap multiplataforma (macOS · Windows · Linux)
+# ZodHub Pulse — Roadmap multiplataforma (macOS · Windows · Linux)
 
 Plan por fases para llevar la app —hoy 100% macOS— a Windows y Linux
 **manteniendo un solo proyecto**: un frontend compartido (React/TS, portable tal
@@ -316,7 +316,7 @@ Actualizar `tauri.conf.json` con `bundle.targets` por SO y el workflow con una
   helper de "esto necesita permisos de administrador" con backend por SO.
 - **Barra de menús vs. bandeja:** el texto "barra de menús" (macOS) → "bandeja
   del sistema" (Windows) / "área de notificación" (Linux).
-- **Marca:** revisar que "ZodHub CleanPC" y los textos legales/ayuda no asuman
+- **Marca:** revisar que "ZodHub Pulse" y los textos legales/ayuda no asuman
   macOS. El identificador `com.viper.macup` es interno y **no se cambia**.
 
 ---

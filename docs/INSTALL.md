@@ -1,6 +1,6 @@
-# Install guide — ZodHub CleanPC
+# Install guide — ZodHub Pulse
 
-Everything you need to install and use ZodHub CleanPC on **macOS** and **Windows**,
+Everything you need to install and use ZodHub Pulse on **macOS** and **Windows**,
 including what to do about the security warnings each system shows and how to check for
 yourself that the file you downloaded is really ours.
 
@@ -23,14 +23,14 @@ yourself that the file you downloaded is really ours.
 
 ## Choosing the right file
 
-All files live on **[the latest release](https://github.com/zodhub-app/clean/releases/latest)**,
+All files live on **[the latest release](https://github.com/zodhub-app/pulse/releases/latest)**,
 under *Assets*.
 
 | Your system | Download | Why |
 | --- | --- | --- |
-| macOS 12 (Monterey) or later | `ZodHub.CleanPC_x.y.z_universal.dmg` | A single file that works on both Intel and Apple Silicon |
-| Windows 10 or 11, 64-bit | `ZodHub.CleanPC_x.y.z_x64-setup.exe` | The normal installer, and the recommended one |
-| Windows in a company | `ZodHub.CleanPC_x.y.z_x64_en-US.msi` | For silent deployment via group policy |
+| macOS 12 (Monterey) or later | `ZodHub.Clean_x.y.z_universal.dmg` | A single file that works on both Intel and Apple Silicon |
+| Windows 10 or 11, 64-bit | `ZodHub.Clean_x.y.z_x64-setup.exe` | The normal installer, and the recommended one |
+| Windows in a company | `ZodHub.Clean_x.y.z_x64_en-US.msi` | For silent deployment via group policy |
 
 You don't need to know which processor your Mac has: the `.dmg` is universal and works on
 both.
@@ -43,7 +43,7 @@ makes sense if you administer several machines and deploy software centrally.
 ## Installing on macOS
 
 1. Open the downloaded `.dmg`. A window appears with the app and a shortcut to *Applications*.
-2. **Drag ZodHub CleanPC into the Applications folder.**
+2. **Drag ZodHub Pulse into the Applications folder.**
 3. The first time, **don't double-click it**: **right-click the app → Open**, then confirm
    with **Open** in the dialog.
 4. Eject the `.dmg` window (the icon on your desktop or in the Finder sidebar).
@@ -58,7 +58,7 @@ mean the app is dangerous: it means Apple hasn't reviewed it. We haven't paid fo
 and we'd rather say so than gloss over it.
 
 If the right-click doesn't work for you, there's a second route:
-**System Settings → Privacy & Security →** scroll down to the notice about ZodHub CleanPC
+**System Settings → Privacy & Security →** scroll down to the notice about ZodHub Pulse
 **→ Open Anyway**.
 
 ### Permissions it may ask for
@@ -77,7 +77,7 @@ The app requests access to specific folders when it needs them, not before:
 1. Run the `...-setup.exe` file you downloaded.
 2. A blue screen will appear: **"Windows protected your PC"**.
    Click **More info** and then **Run anyway**.
-3. Follow the installer. When it finishes you'll find ZodHub CleanPC in the **Start menu**.
+3. Follow the installer. When it finishes you'll find ZodHub Pulse in the **Start menu**.
 
 It takes about 12 MB installed.
 
@@ -95,13 +95,13 @@ give you two ways to check, explained under [Verifying your download](#verifying
 With the `.msi`, to deploy without interaction:
 
 ```powershell
-msiexec /i "ZodHub.CleanPC_x.y.z_x64_en-US.msi" /quiet /norestart
+msiexec /i "ZodHub.Clean_x.y.z_x64_en-US.msi" /quiet /norestart
 ```
 
 And to uninstall the same way:
 
 ```powershell
-msiexec /x "ZodHub.CleanPC_x.y.z_x64_en-US.msi" /quiet /norestart
+msiexec /x "ZodHub.Clean_x.y.z_x64_en-US.msi" /quiet /norestart
 ```
 
 The app installs **per user**, needs no administrator rights to run, and installs no services
@@ -160,7 +160,7 @@ You don't have to take our word for anything. There are three ways to check, fro
 most effort:
 
 **1. Read the code.** The entire source is in
-[this repository](https://github.com/zodhub-app/clean). You can review exactly what the
+[this repository](https://github.com/zodhub-app/pulse). You can review exactly what the
 program does, network requests included.
 
 **2. Scan the file.** Upload the installer to
@@ -171,12 +171,12 @@ than seventy antivirus engines.
 
 ```bash
 # macOS
-shasum -a 256 ~/Downloads/ZodHub.CleanPC_0.2.0_universal.dmg
+shasum -a 256 ~/Downloads/ZodHub.Clean_0.2.0_universal.dmg
 ```
 
 ```powershell
 # Windows
-Get-FileHash .\ZodHub.CleanPC_0.2.0_x64-setup.exe -Algorithm SHA256
+Get-FileHash .\ZodHub.Clean_0.2.0_x64-setup.exe -Algorithm SHA256
 ```
 
 If the result matches, the file is exactly what we published and nobody altered it along the
@@ -186,12 +186,12 @@ way.
 
 ## Uninstalling
 
-**macOS** — drag ZodHub CleanPC from *Applications* to the Bin. Its preferences remain in
+**macOS** — drag ZodHub Pulse from *Applications* to the Bin. Its preferences remain in
 `~/Library/Application Support/com.viper.macup`; delete that folder if you want to leave no
 trace. If you scheduled any tasks, remove them first from the *Tasks* section so no orphaned
 `launchd` agents are left behind.
 
-**Windows** — *Settings → Apps → Installed apps → ZodHub CleanPC → Uninstall*. Its
+**Windows** — *Settings → Apps → Installed apps → ZodHub Pulse → Uninstall*. Its
 preferences remain in `%APPDATA%\com.viper.macup`. As on macOS, it's worth disabling
 scheduled tasks first.
 
@@ -202,7 +202,7 @@ scheduled tasks first.
 **"The app is damaged and can't be opened" (macOS).**
 This usually happens if the `.dmg` downloaded partially or if the browser applied the
 quarantine attribute. Download it again from the releases page. If it persists, in Terminal:
-`xattr -dr com.apple.quarantine /Applications/ZodHub\ CleanPC.app`.
+`xattr -dr com.apple.quarantine /Applications/ZodHub\ Clean.app`.
 
 **The Windows installer won't start.**
 Check that the `-setup.exe` downloaded completely (the size should match the one on the
@@ -224,4 +224,4 @@ to say so rather than assume you're up to date.
 ---
 
 Something this guide doesn't cover? Open an issue on
-[the repository](https://github.com/zodhub-app/clean/issues) or write to `info@zodhub.com`.
+[the repository](https://github.com/zodhub-app/pulse/issues) or write to `info@zodhub.com`.

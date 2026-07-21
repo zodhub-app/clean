@@ -1,5 +1,5 @@
-# Publica la web de ZodHub CleanPC (carpeta landing/) en GitHub Pages.
-# Resultado: https://zodhub-app.github.io/clean/
+# Publica la web de ZodHub Pulse (carpeta landing/) en GitHub Pages.
+# Resultado: https://zodhub-app.github.io/pulse/
 #
 # Requiere activarlo una vez: repo → Settings → Pages → Source: "GitHub Actions".
 name: pages

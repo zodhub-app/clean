@@ -1,4 +1,4 @@
-# Capturas de ZodHub CleanPC
+# Capturas de ZodHub Pulse
 
 Imágenes usadas en el README y el perfil de la organización. Nombres esperados:
 

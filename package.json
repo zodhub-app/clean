@@ -29,7 +29,9 @@
     "react-dom": "^19.1.0",
     "recharts": "^3.8.0",
     "sonner": "^1.7.4",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "@stripe/stripe-js": "^9.4.0",
+    "@stripe/react-stripe-js": "^6.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

@@ -40,10 +40,10 @@ Dos variables CSS, con valores por defecto ya buenos:
 - `--macup-blur` (px) — desenfoque del cristal (por defecto 16px).
 - `--macup-noise` (0–1) — opacidad del grano del cristal mate (por defecto 0.1).
 
-Si no las defines, Hera usa los valores por defecto. En ZodHub CleanPC se controlan con
+Si no las defines, Hera usa los valores por defecto. En ZodHub Pulse se controlan con
 sliders desde Ajustes.
 
-## Estilo por defecto recomendado (el "look" de ZodHub CleanPC)
+## Estilo por defecto recomendado (el "look" de ZodHub Pulse)
 
 Configuración por defecto validada (ThemeProvider + tauri.conf.json):
 
@@ -56,7 +56,7 @@ Configuración por defecto validada (ThemeProvider + tauri.conf.json):
   `titleBarStyle: "Overlay"`, `hiddenTitle: true`,
   `trafficLightPosition: { x: 26, y: 27 }`.
 
-En ZodHub CleanPC esto se fija en `src/components/theme-provider.tsx` (constantes
+En ZodHub Pulse esto se fija en `src/components/theme-provider.tsx` (constantes
 `DEFAULT_*`) con una migración de una sola vez (`macup.defaultsV`).
 
 ## Convertirlo en "skill"

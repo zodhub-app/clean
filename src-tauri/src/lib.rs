@@ -55,7 +55,7 @@ pub fn run() {
                 tray::build_tray(app.handle())?;
             }
             // Con el icono de la barra de menús activo, cerrar la ventana solo
-            // la oculta: ZodHub CleanPC sigue vivo en la barra (como CleanMyMac). Sin el
+            // la oculta: ZodHub Pulse sigue vivo en la barra (como CleanMyMac). Sin el
             // icono, cerrar cierra la app como siempre.
             if let Some(win) = app.get_webview_window("main") {
                 let handle = app.handle().clone();

@@ -43,7 +43,7 @@ export function AppSidebar({
           </div>
           <div className="grid leading-tight">
             <span className="gradient-text text-[13px] font-semibold">
-              ZodHub CleanPC
+              ZodHub Pulse
             </span>
             <span className="text-[10px] text-muted-foreground">
               {t("Mantenimiento del equipo")}

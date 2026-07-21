@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="src-tauri/icons/128x128@2x.png" width="96" alt="ZodHub CleanPC" />
+<img src="src-tauri/icons/128x128@2x.png" width="96" alt="ZodHub Pulse" />
 
-# ZodHub CleanPC
+# ZodHub Pulse
 
 **Tu equipo, sencillamente limpio y seguro.**
 
@@ -13,21 +13,21 @@ los limpiadores comerciales.
 
 🇬🇧 [Read in English](README.md)
 
-[![Descargar para Mac](https://img.shields.io/badge/⬇%20Mac-Intel%20%2B%20Apple%20Silicon-0A84FF?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
-[![Descargar para Windows](https://img.shields.io/badge/⬇%20Windows-10%20y%2011%20(64%20bits)-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/zodhub-app/clean/releases/latest)
+[![Descargar para Mac](https://img.shields.io/badge/⬇%20Mac-Intel%20%2B%20Apple%20Silicon-0A84FF?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/zodhub-app/pulse/releases/latest)
+[![Descargar para Windows](https://img.shields.io/badge/⬇%20Windows-10%20y%2011%20(64%20bits)-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/zodhub-app/pulse/releases/latest)
 
 ![macOS](https://img.shields.io/badge/macOS-12%2B-black?logo=apple)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows)
 ![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri)
 ![local-first](https://img.shields.io/badge/local--first-privado-2ea44f)
-[![Última versión](https://img.shields.io/github/v/release/zodhub-app/clean?label=versión)](https://github.com/zodhub-app/clean/releases/latest)
+[![Última versión](https://img.shields.io/github/v/release/zodhub-app/pulse?label=versión)](https://github.com/zodhub-app/pulse/releases/latest)
 
 </div>
 
 ---
 
 <div align="center">
-  <img src="docs/screenshot-resumen.png" alt="ZodHub CleanPC — pantalla de Resumen" width="860" />
+  <img src="docs/screenshot-resumen.png" alt="ZodHub Pulse — pantalla de Resumen" width="860" />
   <br><em>Resumen: telemetría en vivo, radar de red y monitor de procesos.</em>
 </div>
 
@@ -48,7 +48,7 @@ los limpiadores comerciales.
 
 ## Descargar
 
-Todo está en **[la última versión](https://github.com/zodhub-app/clean/releases/latest)**.
+Todo está en **[la última versión](https://github.com/zodhub-app/pulse/releases/latest)**.
 
 | Sistema | Archivo | Notas |
 | --- | --- | --- |
@@ -105,7 +105,7 @@ vacías o fingir que hacen algo.
 
 ## Actualizaciones automáticas
 
-ZodHub CleanPC lleva un actualizador integrado. En la barra superior hay una **campana**: cuando
+ZodHub Pulse lleva un actualizador integrado. En la barra superior hay una **campana**: cuando
 hay una versión nueva se enciende un **punto rojo con el número** de actualizaciones, y al pulsarla
 puedes instalarla con un clic (descarga, **verifica la firma**, instala y reinicia). Nada de
 reinstalar a mano.
@@ -145,7 +145,7 @@ Tauri 2 · React 19 · Vite · TypeScript · Tailwind v4 · shadcn/ui · Rust (s
 
 Software propietario de ZodHub. Puedes usarlo gratis y leer su código; no puedes
 redistribuirlo ni crear obras derivadas. Ver [LICENSE](LICENSE),
-[términos de uso](https://zodhub-app.github.io/clean/terminos.html) y
-[política de privacidad](https://zodhub-app.github.io/clean/privacidad.html).
+[términos de uso](https://zodhub-app.github.io/pulse/terminos.html) y
+[política de privacidad](https://zodhub-app.github.io/pulse/privacidad.html).
 
 <div align="center"><sub>Hecho con cuidado por <a href="https://github.com/zodhub-app">ZodHub</a> · Tu equipo, sencillamente limpio y seguro.</sub></div>

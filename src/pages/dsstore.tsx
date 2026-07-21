@@ -50,7 +50,7 @@ export function DSStorePage() {
     if (!paths.length) return;
     const first = paths[0];
     const defaultName =
-      (paths.length === 1 ? baseName(first).replace(/\.[^.]+$/, "") : "ZodHub CleanPC") +
+      (paths.length === 1 ? baseName(first).replace(/\.[^.]+$/, "") : "ZodHub Pulse") +
       ".zip";
     const parent = parentDir(first);
     const dest = await save({
@@ -220,7 +220,7 @@ export function DSStorePage() {
           </div>
           <p className="text-[11px] text-muted-foreground">
             {t(
-              "Próximamente: «Comprimir con ZodHub CleanPC» en el clic derecho de Finder (al empaquetar la app).",
+              "Próximamente: «Comprimir con ZodHub Pulse» en el clic derecho de Finder (al empaquetar la app).",
             )}
           </p>
         </CardContent>

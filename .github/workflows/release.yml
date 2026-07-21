@@ -1,4 +1,4 @@
-# CI/CD — ZodHub CleanPC (release multiplataforma)
+# CI/CD — ZodHub Pulse (release multiplataforma)
 #
 # Qué hace: al empujar un tag `v*` compila la app para macOS y Windows y publica
 # UNA SOLA Release de GitHub (en borrador) con todos los instaladores y el
@@ -106,7 +106,7 @@ jobs:
           # Estos tres valores DEBEN coincidir en ambos jobs: así el segundo
           # encuentra la release del primero en vez de crear otra.
           tagName: ${{ github.ref_name }}
-          releaseName: "ZodHub CleanPC ${{ github.ref_name }}"
+          releaseName: "ZodHub Pulse ${{ github.ref_name }}"
           releaseDraft: true # borrador, para revisar antes de publicar
           prerelease: false
           releaseBody: |

@@ -39,29 +39,29 @@ PAGES = ["index.html", "descargas.html", "donar.html", "privacidad.html", "termi
 # que merecen estar escritas, no traducidas a máquina.
 META = {
     "index.html": (
-        "ZodHub CleanPC — honest maintenance for Mac and Windows",
-        "ZodHub CleanPC: honest maintenance for Mac and Windows. Clear out caches, "
+        "ZodHub Pulse — honest maintenance for Mac and Windows",
+        "ZodHub Pulse: honest maintenance for Mac and Windows. Clear out caches, "
         "free up space, find duplicates and automate the boring parts. Local-first, "
         "no telemetry, 100% free.",
     ),
     "descargas.html": (
-        "Download ZodHub CleanPC — Mac and Windows",
-        "Download ZodHub CleanPC free and direct, no middlemen. Clear install guide "
+        "Download ZodHub Pulse — Mac and Windows",
+        "Download ZodHub Pulse free and direct, no middlemen. Clear install guide "
         "for Mac (Apple Silicon and Intel) and Windows 10 and 11. Linux on the way.",
     ),
     "donar.html": (
-        "Support ZodHub CleanPC — Donations",
-        "Help keep ZodHub CleanPC free for everyone. Transparent, 100% optional "
+        "Support ZodHub Pulse — Donations",
+        "Help keep ZodHub Pulse free for everyone. Transparent, 100% optional "
         "donations. See exactly where every euro goes.",
     ),
     "privacidad.html": (
-        "Privacy policy — ZodHub CleanPC",
-        "What data ZodHub CleanPC handles and what it doesn't. The app runs locally, "
+        "Privacy policy — ZodHub Pulse",
+        "What data ZodHub Pulse handles and what it doesn't. The app runs locally, "
         "with no telemetry, and makes only two connections. Explained without small print.",
     ),
     "terminos.html": (
-        "Terms and conditions of use — ZodHub CleanPC",
-        "Terms of use for ZodHub CleanPC: what the app is and isn't, what each module "
+        "Terms and conditions of use — ZodHub Pulse",
+        "Terms of use for ZodHub Pulse: what the app is and isn't, what each module "
         "does, your responsibility when deleting, licence, “as is” delivery and "
         "liability limits.",
     ),
@@ -73,9 +73,9 @@ META = {
 # inglés compartía la página con un texto en español.
 RAW = {
     "ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%20y%20Windows%2C%20100%25%20gratis":
-        "ZodHub%20CleanPC%20%E2%80%94%20honest%20maintenance%20for%20Mac%20and%20Windows%2C%20100%25%20free",
+        "ZodHub%20Pulse%20%E2%80%94%20honest%20maintenance%20for%20Mac%20and%20Windows%2C%20100%25%20free",
     "ZodHub%20Clean%20%E2%80%94%20mantenimiento%20honesto%20para%20Mac%2C%20100%25%20gratis":
-        "ZodHub%20CleanPC%20%E2%80%94%20honest%20maintenance%20for%20Mac%2C%20100%25%20free",
+        "ZodHub%20Pulse%20%E2%80%94%20honest%20maintenance%20for%20Mac%2C%20100%25%20free",
 }
 
 TOGGLE_CLASSES = (

@@ -28,7 +28,7 @@ const EN: Record<string, string> = {
   "Limpiar todo mi equipo": "Clean my whole device",
   "sin sensores en este equipo": "no sensors on this device",
   Novedades: "What's new",
-  "Bienvenido a ZodHub CleanPC": "Welcome to ZodHub CleanPC",
+  "Bienvenido a ZodHub Pulse": "Welcome to ZodHub Pulse",
   "Este espacio mostrará novedades y avisos nuestros, en tu idioma.":
     "This space will show our news and announcements, in your language.",
   "Saber más": "Learn more",
@@ -91,8 +91,8 @@ const EN: Record<string, string> = {
   "Nombre (opcional)": "Name (optional)",
   "Cómo quieres que te llamemos": "What we should call you",
   "Correo electrónico": "Email address",
-  "Acepto recibir novedades de ZodHub CleanPC y he leído la política de privacidad. Puedo darme de baja cuando quiera.":
-    "I agree to receive ZodHub CleanPC news and I have read the privacy policy. I can unsubscribe at any time.",
+  "Acepto recibir novedades de ZodHub Pulse y he leído la política de privacidad. Puedo darme de baja cuando quiera.":
+    "I agree to receive ZodHub Pulse news and I have read the privacy policy. I can unsubscribe at any time.",
   "Enviando…": "Sending…",
   Suscribirme: "Subscribe",
   "¡Suscripción completada!": "You're subscribed!",
@@ -100,11 +100,11 @@ const EN: Record<string, string> = {
   "¡Gracias por suscribirte!": "Thanks for subscribing!",
   "Te escribiremos solo cuando haya algo que merezca la pena.":
     "We'll only write when there's something worth saying.",
-  "ZodHub CleanPC no envía ningún dato de tu equipo. Lo único que sale de aquí es lo que escribas arriba, y solo si pulsas Suscribirme.":
-    "ZodHub CleanPC sends no data about your device. The only thing that leaves here is what you type above, and only if you press Subscribe.",
+  "ZodHub Pulse no envía ningún dato de tu equipo. Lo único que sale de aquí es lo que escribas arriba, y solo si pulsas Suscribirme.":
+    "ZodHub Pulse sends no data about your device. The only thing that leaves here is what you type above, and only if you press Subscribe.",
   "Apoya el proyecto": "Support the project",
-  "ZodHub CleanPC es gratis, sin anuncios y sin suscripciones. Si te resulta útil y quieres que siga creciendo, puedes echar una mano.":
-    "ZodHub CleanPC is free, with no ads and no subscriptions. If you find it useful and want it to keep growing, you can lend a hand.",
+  "ZodHub Pulse es gratis, sin anuncios y sin suscripciones. Si te resulta útil y quieres que siga creciendo, puedes echar una mano.":
+    "ZodHub Pulse is free, with no ads and no subscriptions. If you find it useful and want it to keep growing, you can lend a hand.",
   "Hacer una donación": "Make a donation",
   "Se abrirá en tu navegador. Sin compromiso y sin cuotas.":
     "It opens in your browser. No commitment, no fees.",
@@ -112,8 +112,8 @@ const EN: Record<string, string> = {
   "Política de privacidad": "Privacy policy",
   "Términos de uso": "Terms of use",
   "Licencia y atribuciones": "Licence and attributions",
-  "ZodHub CleanPC funciona en local: los análisis y las limpiezas se hacen en tu equipo y no se envía información a ningún servidor.":
-    "ZodHub CleanPC runs locally: scans and cleanups happen on your device and no information is sent to any server.",
+  "ZodHub Pulse funciona en local: los análisis y las limpiezas se hacen en tu equipo y no se envía información a ningún servidor.":
+    "ZodHub Pulse runs locally: scans and cleanups happen on your device and no information is sent to any server.",
   "Hecho con cuidado. Tu equipo, sencillamente limpio y seguro.":
     "Made with care. Your device, simply clean and safe.",
 
@@ -125,11 +125,11 @@ const EN: Record<string, string> = {
   "Limpiar todo mi Mac": "Clean my whole Mac",
   "Mantenimiento claro y en local — tus datos nunca salen de tu equipo.":
     "Clear, local maintenance — your data never leaves your computer.",
-  "Sobre ZodHub CleanPC": "About ZodHub CleanPC",
+  "Sobre ZodHub Pulse": "About ZodHub Pulse",
   Cerrar: "Close",
   "Tu Mac, sencillamente seguro.": "Your Mac, simply safe.",
-  "ZodHub CleanPC es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.":
-    "ZodHub CleanPC is a no-nonsense Mac maintenance utility: it clears caches, frees space, tidies .DS_Store files and automates maintenance. The essentials, done well.",
+  "ZodHub Pulse es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.":
+    "ZodHub Pulse is a no-nonsense Mac maintenance utility: it clears caches, frees space, tidies .DS_Store files and automates maintenance. The essentials, done well.",
   "Sencillo de verdad": "Truly simple",
   "Solo las operaciones que tu Mac necesita para ir fino. Sin menús interminables ni funciones de relleno.":
     "Only the operations your Mac needs to run smoothly. No endless menus or filler features.",
@@ -139,11 +139,11 @@ const EN: Record<string, string> = {
   Transparente: "Transparent",
   "Te enseña qué va a hacer y con qué datos antes de tocar nada. Sin cajas negras: lo que ves es lo que pasa.":
     "It shows what it will do and with what data before touching anything. No black boxes: what you see is what happens.",
-  "¿Por qué ZodHub CleanPC?": "Why ZodHub CleanPC?",
+  "¿Por qué ZodHub Pulse?": "Why ZodHub Pulse?",
   "Ligera, clara y respetuosa con tus datos, frente a los limpiadores pesados llenos de avisos y suscripciones. Hace lo justo, y lo hace bien.":
     "Lightweight, clear and respectful of your data, unlike the heavy cleaners full of warnings and subscriptions. It does just enough, and does it well.",
-  "Nota honesta: ZodHub CleanPC no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0":
-    "Honest note: ZodHub CleanPC is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door. · Version 0.1.0",
+  "Nota honesta: ZodHub Pulse no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0":
+    "Honest note: ZodHub Pulse is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door. · Version 0.1.0",
 
   // ── Dashboard ────────────────────────────────────────────────────────
   "Temperatura estable": "Stable temperature",
@@ -324,8 +324,8 @@ const EN: Record<string, string> = {
     "or click to choose a folder · zip without .DS_Store, __MACOSX or resource forks",
   "Elegir carpeta": "Choose folder",
   "Elegir archivos": "Choose files",
-  "Próximamente: «Comprimir con ZodHub CleanPC» en el clic derecho de Finder (al empaquetar la app).":
-    "Coming soon: “Compress with ZodHub CleanPC” in Finder's right-click menu (once the app is packaged).",
+  "Próximamente: «Comprimir con ZodHub Pulse» en el clic derecho de Finder (al empaquetar la app).":
+    "Coming soon: “Compress with ZodHub Pulse” in Finder's right-click menu (once the app is packaged).",
   "Barrido de .DS_Store": ".DS_Store sweep",
   "Elimina los archivos .DS_Store existentes en las carpetas que elijas (Finder los regenera al abrirlas).":
     "Removes existing .DS_Store files in the folders you choose (Finder recreates them when reopened).",
@@ -355,8 +355,8 @@ const EN: Record<string, string> = {
   "Papelera vaciada": "Trash emptied",
   "Cachés limpiadas": "Caches cleaned",
   ".DS_Store eliminados": ".DS_Store removed",
-  "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub CleanPC esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.":
-    "Scheduled tasks run on their own at 03:00 via launchd, even when ZodHub CleanPC is closed. Memory purge isn't schedulable because it requires admin permission.",
+  "Las tareas programadas se ejecutan solas a las 03:00 con launchd, aunque ZodHub Pulse esté cerrada. La purga de memoria no se programa porque requiere permiso de administrador.":
+    "Scheduled tasks run on their own at 03:00 via launchd, even when ZodHub Pulse is closed. Memory purge isn't schedulable because it requires admin permission.",
   "Ejecutar ahora": "Run now",
   "Programación desactivada": "Schedule disabled",
   "Programada: {cadence}": "Scheduled: {cadence}",
@@ -399,15 +399,15 @@ const EN: Record<string, string> = {
   Fuerte: "Strong",
   "Muy fuerte": "Very strong",
   "Tema de color": "Color theme",
-  "ZodHub CleanPC 0.1.0 · mantenimiento sencillo y honesto.":
-    "ZodHub CleanPC 0.1.0 · simple, honest maintenance.",
+  "ZodHub Pulse 0.1.0 · mantenimiento sencillo y honesto.":
+    "ZodHub Pulse 0.1.0 · simple, honest maintenance.",
   "Barra de menús": "Menu bar",
-  "Icono de acceso rápido de ZodHub CleanPC en la barra superior de macOS.":
-    "ZodHub CleanPC quick-access icon in the macOS menu bar.",
-  "Con el icono activo, cerrar la ventana deja ZodHub CleanPC en la barra de menús.":
-    "With the icon on, closing the window keeps ZodHub CleanPC in the menu bar.",
-  "Barra de menús: muestra el icono de ZodHub CleanPC en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub CleanPC en la barra.":
-    "Menu bar: shows the ZodHub CleanPC icon in the macOS menu bar for quick access. With it on, closing the window keeps ZodHub CleanPC in the menu bar.",
+  "Icono de acceso rápido de ZodHub Pulse en la barra superior de macOS.":
+    "ZodHub Pulse quick-access icon in the macOS menu bar.",
+  "Con el icono activo, cerrar la ventana deja ZodHub Pulse en la barra de menús.":
+    "With the icon on, closing the window keeps ZodHub Pulse in the menu bar.",
+  "Barra de menús: muestra el icono de ZodHub Pulse en la barra superior de macOS para acceso rápido. Con él activo, cerrar la ventana deja ZodHub Pulse en la barra.":
+    "Menu bar: shows the ZodHub Pulse icon in the macOS menu bar for quick access. With it on, closing the window keeps ZodHub Pulse in the menu bar.",
 
   // ── Almacenamiento (Fase 0) ──────────────────────────────────────────
   Almacenamiento: "Storage",

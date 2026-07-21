@@ -1,6 +1,6 @@
-# Guía de instalación — ZodHub CleanPC
+# Guía de instalación — ZodHub Pulse
 
-Todo lo que necesitas para instalar y usar ZodHub CleanPC en **macOS** y en **Windows**,
+Todo lo que necesitas para instalar y usar ZodHub Pulse en **macOS** y en **Windows**,
 incluido qué hacer con los avisos de seguridad del sistema y cómo comprobar por tu cuenta
 que el archivo que has descargado es el nuestro.
 
@@ -23,14 +23,14 @@ que el archivo que has descargado es el nuestro.
 
 ## Elegir el archivo correcto
 
-Todos los archivos están en **[la última versión](https://github.com/zodhub-app/clean/releases/latest)**,
+Todos los archivos están en **[la última versión](https://github.com/zodhub-app/pulse/releases/latest)**,
 en la sección *Assets*.
 
 | Tu sistema | Descarga | Por qué |
 | --- | --- | --- |
-| macOS 12 (Monterey) o superior | `ZodHub.CleanPC_x.y.z_universal.dmg` | Un solo archivo válido para Intel y Apple Silicon |
-| Windows 10 u 11, 64 bits | `ZodHub.CleanPC_x.y.z_x64-setup.exe` | Instalador normal, el recomendado |
-| Windows en empresa | `ZodHub.CleanPC_x.y.z_x64_en-US.msi` | Para despliegue silencioso por directiva de grupo |
+| macOS 12 (Monterey) o superior | `ZodHub.Clean_x.y.z_universal.dmg` | Un solo archivo válido para Intel y Apple Silicon |
+| Windows 10 u 11, 64 bits | `ZodHub.Clean_x.y.z_x64-setup.exe` | Instalador normal, el recomendado |
+| Windows en empresa | `ZodHub.Clean_x.y.z_x64_en-US.msi` | Para despliegue silencioso por directiva de grupo |
 
 No hace falta saber qué procesador tiene tu Mac: el `.dmg` es universal y funciona en los dos.
 
@@ -42,7 +42,7 @@ administras varios equipos y despliegas software de forma centralizada.
 ## Instalación en macOS
 
 1. Abre el `.dmg` descargado. Se monta una ventana con la app y un acceso a *Aplicaciones*.
-2. **Arrastra ZodHub CleanPC a la carpeta Aplicaciones.**
+2. **Arrastra ZodHub Pulse a la carpeta Aplicaciones.**
 3. La primera vez, **no la abras con doble clic**: haz **clic derecho sobre la app → Abrir**,
    y confirma con **Abrir** en el diálogo que aparece.
 4. Expulsa la ventana del `.dmg` (el icono en el escritorio o en la barra lateral del Finder).
@@ -57,7 +57,7 @@ No significa que la app sea peligrosa: significa que Apple no la ha revisado. No
 hemos pagado ese trámite y preferimos decirlo antes que disimularlo.
 
 Si el clic derecho no te funciona, hay una segunda vía:
-**Ajustes del Sistema → Privacidad y seguridad →** baja hasta el aviso sobre ZodHub CleanPC
+**Ajustes del Sistema → Privacidad y seguridad →** baja hasta el aviso sobre ZodHub Pulse
 **→ Abrir de todos modos**.
 
 ### Permisos que puede pedir
@@ -76,7 +76,7 @@ La app solicita acceso a carpetas concretas cuando lo necesita, no antes:
 1. Ejecuta el archivo `...-setup.exe` que has descargado.
 2. Aparecerá una pantalla azul: **«Windows protegió tu PC»**.
    Pulsa **Más información** y después **Ejecutar de todas formas**.
-3. Sigue el instalador. Al terminar tendrás ZodHub CleanPC en el **menú Inicio**.
+3. Sigue el instalador. Al terminar tendrás ZodHub Pulse en el **menú Inicio**.
 
 Ocupa alrededor de 12 MB instalado.
 
@@ -94,13 +94,13 @@ comprobarlo tú mismo, explicadas en [Verificar la descarga](#verificar-la-desca
 Con el `.msi`, para desplegar sin interacción:
 
 ```powershell
-msiexec /i "ZodHub.CleanPC_x.y.z_x64_en-US.msi" /quiet /norestart
+msiexec /i "ZodHub.Clean_x.y.z_x64_en-US.msi" /quiet /norestart
 ```
 
 Y para desinstalar del mismo modo:
 
 ```powershell
-msiexec /x "ZodHub.CleanPC_x.y.z_x64_en-US.msi" /quiet /norestart
+msiexec /x "ZodHub.Clean_x.y.z_x64_en-US.msi" /quiet /norestart
 ```
 
 La app se instala **por usuario**, no requiere derechos de administrador para funcionar y no
@@ -160,7 +160,7 @@ No hace falta que confíes en nuestra palabra. Hay tres formas de comprobarlo, d
 esfuerzo:
 
 **1. Leer el código.** Todo el código fuente está en
-[este repositorio](https://github.com/zodhub-app/clean). Puedes revisar exactamente qué hace
+[este repositorio](https://github.com/zodhub-app/pulse). Puedes revisar exactamente qué hace
 el programa, incluidas las peticiones de red.
 
 **2. Analizar el archivo.** Sube el instalador a
@@ -171,12 +171,12 @@ motores antivirus.
 
 ```bash
 # macOS
-shasum -a 256 ~/Downloads/ZodHub.CleanPC_0.2.0_universal.dmg
+shasum -a 256 ~/Downloads/ZodHub.Clean_0.2.0_universal.dmg
 ```
 
 ```powershell
 # Windows
-Get-FileHash .\ZodHub.CleanPC_0.2.0_x64-setup.exe -Algorithm SHA256
+Get-FileHash .\ZodHub.Clean_0.2.0_x64-setup.exe -Algorithm SHA256
 ```
 
 Si el resultado coincide, el archivo es exactamente el que publicamos y nadie lo ha alterado
@@ -186,12 +186,12 @@ por el camino.
 
 ## Desinstalar
 
-**macOS** — arrastra ZodHub CleanPC de *Aplicaciones* a la Papelera. Sus preferencias quedan en
+**macOS** — arrastra ZodHub Pulse de *Aplicaciones* a la Papelera. Sus preferencias quedan en
 `~/Library/Application Support/com.viper.macup`; puedes borrar esa carpeta si quieres no dejar
 rastro. Si programaste tareas, quítalas antes desde la sección *Tareas* para que no queden
 agentes de `launchd` huérfanos.
 
-**Windows** — *Configuración → Aplicaciones → Aplicaciones instaladas → ZodHub CleanPC →
+**Windows** — *Configuración → Aplicaciones → Aplicaciones instaladas → ZodHub Pulse →
 Desinstalar*. Sus preferencias quedan en `%APPDATA%\com.viper.macup`. Igual que en macOS,
 conviene desactivar antes las tareas programadas.
 
@@ -202,7 +202,7 @@ conviene desactivar antes las tareas programadas.
 **«La app está dañada y debería moverse a la papelera» (macOS).**
 Suele ocurrir si el `.dmg` se descargó a medias o si el navegador le puso el atributo de
 cuarentena. Vuelve a descargarlo desde la página de versiones. Si persiste, en el Terminal:
-`xattr -dr com.apple.quarantine /Applications/ZodHub\ CleanPC.app`.
+`xattr -dr com.apple.quarantine /Applications/ZodHub\ Clean.app`.
 
 **El instalador de Windows no arranca.**
 Comprueba que descargaste el `-setup.exe` completo (el tamaño debe coincidir con el de la
@@ -225,4 +225,4 @@ decirlo a dar por hecho que estás al día.
 ---
 
 ¿Algo que esta guía no resuelve? Abre un asunto en
-[el repositorio](https://github.com/zodhub-app/clean/issues) o escribe a `info@zodhub.com`.
+[el repositorio](https://github.com/zodhub-app/pulse/issues) o escribe a `info@zodhub.com`.

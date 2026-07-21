@@ -5,8 +5,8 @@
   <!-- Nombre visible de la app (dock, barra de menús, "Forzar salida", tooltip).
        Sin esto, macOS usa el nombre del binario ("macup", en minúscula). -->
   <key>CFBundleName</key>
-  <string>ZodHub CleanPC</string>
+  <string>ZodHub Pulse</string>
   <key>CFBundleDisplayName</key>
-  <string>ZodHub CleanPC</string>
+  <string>ZodHub Pulse</string>
 </dict>
 </plist>

@@ -143,7 +143,7 @@ fn task_script(task: &str, home: &str) -> Option<String> {
         //
         // Finder shows its own "are you sure?" warning before emptying; we
         // silence it for the duration (guarded by `try`) and restore it after,
-        // so ZodHub CleanPC's own flow controls the confirmation, not a stray dialog.
+        // so ZodHub Pulse's own flow controls the confirmation, not a stray dialog.
         //
         // Also: when the Trash is ALREADY empty, `empty the trash` itself
         // returns error -128. We swallow exactly that code (empty = success) and
