@@ -12,7 +12,12 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme-provider";
 import { useLang } from "@/components/language-provider";
+import { useUpdates } from "@/components/updates-provider";
 import { getTrayVisible, setTrayVisible } from "@/lib/api";
+import {
+  autoRefreshEnabled,
+  setAutoRefreshEnabled,
+} from "@/hooks/use-cached-resource";
 import { THEMES } from "@/lib/themes";
 
 const SCALES = [
@@ -184,6 +189,9 @@ export function SettingsPage() {
     setSmoothScroll,
   } = useTheme();
   const { t } = useLang();
+  const u = useUpdates();
+  // Auto-refresh de la caché de pestañas (persistido en localStorage).
+  const [cacheAuto, setCacheAuto] = useState(autoRefreshEnabled());
 
   const shadowNames = [
     t("Ninguna"),
@@ -395,10 +403,27 @@ export function SettingsPage() {
             ))}
           </div>
         </SettingCard>
+
+        {/* Datos y caché — última opción, en una sola línea y a todo el ancho. */}
+        <div
+          data-slot="card"
+          className="flex items-center justify-between gap-3 rounded-lg border bg-card px-4 py-3 md:col-span-2"
+        >
+          <span className="text-sm font-medium">{t("Datos y caché")}</span>
+          <MiniCheck
+            checked={cacheAuto}
+            onChange={(v) => {
+              setCacheAuto(v);
+              setAutoRefreshEnabled(v);
+            }}
+            label={t("Auto-refresco cada 24 h")}
+          />
+        </div>
       </div>
 
       <p className="px-1 text-[11px] text-muted-foreground">
-        {t("ZodHub Pulse 0.1.0 · mantenimiento sencillo y honesto.")}
+        ZodHub Pulse{u.currentVersion ? ` v${u.currentVersion}` : ""} ·{" "}
+        {t("mantenimiento sencillo y honesto.")}
       </p>
     </div>
   );

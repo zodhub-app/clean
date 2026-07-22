@@ -36,6 +36,8 @@ walkdir = "2"
 trash = "5"
 # SHA-256 en proceso, en vez de depender del binario `shasum` de macOS.
 sha2 = "0.10"
+# Notificaciones del sistema (aviso de disco lleno aunque la ventana esté oculta).
+tauri-plugin-notification = "2"
 # NO añadir `reqwest` aquí sin leer esto.
 #
 # Estuvo declarado en la v0.2.0 y la v0.2.2 para la suscripción a novedades, con

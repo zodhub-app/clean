@@ -176,6 +176,12 @@ export function getStorageHistory(): Promise<StorageSample[]> {
   return invoke<StorageSample[]>("storage_history");
 }
 
+/** Mapa real de la carpeta del usuario (equivale a `du -sh ~/*`). */
+export type DiskItem = { name: string; path: string; size: number };
+export function getHomeBreakdown(): Promise<DiskItem[]> {
+  return invoke<DiskItem[]>("home_breakdown");
+}
+
 /** Explorador de archivos/carpetas grandes (Fase 1, solo lectura). */
 export type ScanEntry = {
   name: string;
@@ -297,6 +303,10 @@ export function listDevJunk(): Promise<DevItem[]> {
 }
 export function cleanDev(key: string): Promise<DevCleanResult> {
   return invoke<DevCleanResult>("clean_dev", { key });
+}
+/** Limpieza con permisos de administrador: cachés/logs del sistema (root). */
+export function cleanSystemAdmin(): Promise<DevCleanResult> {
+  return invoke<DevCleanResult>("clean_system_admin");
 }
 export function cleanAllJunk(): Promise<DevCleanResult> {
   return invoke<DevCleanResult>("clean_all_junk");

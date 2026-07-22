@@ -76,22 +76,18 @@ export function DashboardPage() {
       : 0;
 
   return (
-    <div className="flex min-h-0 w-full flex-1 flex-col gap-2.5 overflow-hidden p-2.5">
-      <div className="shrink-0">
-        <HeroBanner />
-      </div>
+    <div className="flex w-full flex-col gap-2.5">
+      <HeroBanner />
 
-      <div className="shrink-0">
-        <CleanupHero />
-      </div>
+      <CleanupHero />
 
       {error && (
-        <p className="shrink-0 text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           {t("No se pudieron leer las métricas del sistema.")}
         </p>
       )}
 
-      <div className="grid shrink-0 grid-cols-2 gap-2.5 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         <Metric
           icon={<Cpu className="size-3.5" />}
           label="CPU"
@@ -154,9 +150,10 @@ export function DashboardPage() {
 
       {ready ? (
         <>
-          <div className="flex min-h-0 flex-1 flex-col gap-2.5 lg:flex-row">
-            {/* Izquierda: gráficos apilados; se reparten el alto disponible. */}
-            <div className="flex min-h-0 flex-1 flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 lg:flex-row">
+            {/* Izquierda: los dos gráficos reparten EXACTAMENTE la misma altura
+                que el globo (columna de alto fijo; cada gráfico flex-1). */}
+            <div className="flex h-[420px] flex-1 flex-col gap-2.5">
               <Trend
                 title="CPU"
                 dataKey="cpu"
@@ -173,20 +170,22 @@ export function DashboardPage() {
               />
             </div>
 
-            {/* Derecha: globo de amenazas de seguridad. */}
-            <SecurityGlobe net={net} className="min-h-0 flex-1" />
+            {/* Derecha: globo de amenazas. Altura FIJA (misma que la columna):
+                el lienzo puede exceder su caja, así que con alto automático se
+                retroalimentaría y crecería sin fin. */}
+            <SecurityGlobe net={net} className="h-[420px] lg:flex-1" />
           </div>
 
           {/* Abajo: red en formato Monitor de Actividad. */}
-          <NetworkMonitor net={net} className="shrink-0" />
+          <NetworkMonitor net={net} />
         </>
       ) : (
         <>
-          <div className="flex min-h-0 flex-1 flex-col gap-2.5 lg:flex-row">
-            <div className="min-h-0 flex-1 animate-pulse rounded-lg border bg-card/40" />
-            <div className="min-h-0 flex-1 animate-pulse rounded-lg border bg-card/40" />
+          <div className="flex flex-col gap-2.5 lg:flex-row">
+            <div className="h-[320px] flex-1 animate-pulse rounded-lg border bg-card/40" />
+            <div className="h-[320px] flex-1 animate-pulse rounded-lg border bg-card/40" />
           </div>
-          <div className="h-28 shrink-0 animate-pulse rounded-lg border bg-card/40" />
+          <div className="h-28 animate-pulse rounded-lg border bg-card/40" />
         </>
       )}
     </div>

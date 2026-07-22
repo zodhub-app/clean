@@ -1,6 +1,7 @@
 mod apps;
 mod cache;
 mod devclean;
+mod diskwatch;
 mod dsstore;
 mod duplicates;
 mod memory;
@@ -16,7 +17,7 @@ mod tray;
 
 use apps::{app_leftovers, list_apps, uninstall_app};
 use cache::{clean_caches, scan_caches};
-use devclean::{clean_all_junk, clean_dev, list_dev_junk};
+use devclean::{clean_all_junk, clean_dev, clean_system_admin, list_dev_junk};
 use duplicates::find_duplicates;
 use dsstore::{
     clean_zip, get_network_stores_disabled, set_network_stores_disabled, sweep_ds_store,
@@ -26,17 +27,19 @@ use network::network_stats;
 use scanner::{move_to_trash, reveal_in_finder, scan_dir};
 use scheduler::{list_schedules, run_task_now, set_schedule};
 use snapshots::{list_snapshots, thin_snapshots};
-use storage::{storage_history, storage_stats};
+use storage::{home_breakdown, storage_history, storage_stats};
 use subscribe::{subscribe, subscribe_available};
 use system::{list_sensors, os_name, system_stats, top_processes, AppState};
 use tauri::Manager;
+use tauri_plugin_notification::NotificationExt;
 use tray::{get_tray_visible, set_tray_visible};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_dialog::init());
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init());
 
     // Updater + process solo en escritorio (macOS/Windows/Linux). El frontend
     // llama a `check()` al arrancar; la descarga/verificación/instalación real la
@@ -54,6 +57,10 @@ pub fn run() {
             if tray::tray_enabled() {
                 tray::build_tray(app.handle())?;
             }
+            // Pide permiso de notificaciones (macOS lo pregunta una vez) y arranca
+            // el vigilante de disco lleno: avisa aunque la ventana esté oculta.
+            let _ = app.notification().request_permission();
+            diskwatch::spawn(app.handle().clone());
             // Con el icono de la barra de menús activo, cerrar la ventana solo
             // la oculta: ZodHub Pulse sigue vivo en la barra (como CleanMyMac). Sin el
             // icono, cerrar cierra la app como siempre.
@@ -93,6 +100,7 @@ pub fn run() {
             set_tray_visible,
             storage_stats,
             storage_history,
+            home_breakdown,
             scan_dir,
             reveal_in_finder,
             move_to_trash,
@@ -102,6 +110,7 @@ pub fn run() {
             list_dev_junk,
             clean_dev,
             clean_all_junk,
+            clean_system_admin,
             list_snapshots,
             thin_snapshots,
             find_duplicates,

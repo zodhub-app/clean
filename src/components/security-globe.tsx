@@ -8,7 +8,7 @@
 //      conexiones activas y puertos a la escucha). Es decir, el nivel refleja la
 //      actividad/exposición real de tu red, no un dato fabricado.
 
-import { useEffect, useRef, useState, type WheelEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Maximize2, Shield, X } from "lucide-react";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@/components/Globe";
 import { useTheme } from "@/components/theme-provider";
 import { useLang } from "@/components/language-provider";
+import { useOs, deviceNoun } from "@/components/os-provider";
 import type { NetworkLive, ThreatLevel } from "@/hooks/use-network-stats";
 import { formatBytes } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -135,6 +136,7 @@ export function SecurityGlobe({
 }) {
   const { resolvedMode, theme, skin } = useTheme();
   const { t: tr } = useLang();
+  const os = useOs();
   const isDark = resolvedMode === "dark";
   const meta = LEVEL_META[net.level];
 
@@ -146,13 +148,10 @@ export function SecurityGlobe({
 
   const [expanded, setExpanded] = useState(false);
 
-  // Zoom del globo con la rueda del ratón (suave). Por defecto ampliado para
-  // que ocupe todo el espacio mostrando la parte de arriba (donde están los
-  // arcos), en vez de la Tierra entera y pequeña.
-  const [zoom, setZoom] = useState(1.1);
-  const onWheel = (e: WheelEvent) => {
-    setZoom((z) => Math.min(2.2, Math.max(1, z - e.deltaY * 0.0012)));
-  };
+  // Ampliación fija del globo: ocupa bien su caja mostrando la parte de arriba
+  // (donde están los arcos), en vez de la Tierra entera y pequeña. Sin zoom con
+  // la rueda: sobre una página con scroll molestaba y no aporta.
+  const zoom = 1.1;
 
   // Conjunto de amenazas rotatorio: cambia las ciudades/ataques cada ~14s para
   // que el radar se vea vivo (representación, no detección real).
@@ -171,7 +170,7 @@ export function SecurityGlobe({
       location: DEFAULT_HOME,
       size: 0.09,
       color: colors.home,
-      label: tr("Tu Mac"),
+      label: tr(`Tu ${deviceNoun(os)}`),
       sublabel: tr("Este equipo"),
     },
     ...shown.map((t) => ({
@@ -249,7 +248,7 @@ export function SecurityGlobe({
 
         <div className="chart-well grid-bg relative m-2 flex min-h-0 flex-1">
           {!expanded && (
-            <MeasuredGlobe globeProps={globeProps} zoom={zoom} onWheel={onWheel} />
+            <MeasuredGlobe globeProps={globeProps} zoom={zoom} />
           )}
           <button
             type="button"
@@ -318,12 +317,7 @@ export function SecurityGlobe({
               {tr("Cerrar")}
             </button>
           </div>
-          <MeasuredGlobe
-            globeProps={globeProps}
-            zoom={zoom}
-            onWheel={onWheel}
-            className="flex-1"
-          />
+          <MeasuredGlobe globeProps={globeProps} zoom={zoom} className="flex-1" />
         </div>,
           document.body,
         )}
@@ -335,12 +329,10 @@ export function SecurityGlobe({
 function MeasuredGlobe({
   globeProps,
   zoom,
-  onWheel,
   className,
 }: {
   globeProps: Omit<GlobeProps, "size" | "align">;
   zoom: number;
-  onWheel?: (e: WheelEvent) => void;
   className?: string;
 }) {
   const boxRef = useRef<HTMLDivElement>(null);
@@ -368,22 +360,28 @@ function MeasuredGlobe({
 
   const side = Math.round(base * zoom);
 
+  // El lienzo va en una capa ABSOLUTA (fuera del flujo) y recortada. Así el
+  // tamaño de la caja lo fija SOLO el CSS: por grande que sea el lienzo (zoom),
+  // no puede empujar ni agrandar el contenedor, y el ResizeObserver mide un
+  // valor estable. Sin esto, lienzo→caja→lienzo se retroalimentaban y con la
+  // rueda del ratón el contenido crecía sin fin.
   return (
     <div
       ref={boxRef}
-      onWheel={onWheel}
       className={cn(
-        "flex min-h-0 flex-1 items-center justify-center overflow-hidden p-2",
+        "relative flex min-h-0 flex-1 overflow-hidden p-2",
         className,
       )}
     >
       {side > 0 && (
-        <Globe
-          size={side}
-          align="center"
-          {...globeProps}
-          offset={[0, side * 0.1]}
-        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Globe
+            size={side}
+            align="center"
+            {...globeProps}
+            offset={[0, side * 0.1]}
+          />
+        </div>
       )}
     </div>
   );

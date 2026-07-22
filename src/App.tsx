@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Moon, Sun, UserRound } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 import {
   SidebarInset,
   SidebarProvider,
@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AppSidebar } from "@/components/app-sidebar";
-import { useTheme } from "@/components/theme-provider";
 import { useLang } from "@/components/language-provider";
 import { UpdateBell } from "@/components/update-bell";
 import { NAV_ITEMS, type ViewId } from "@/lib/nav";
@@ -48,13 +47,20 @@ export default function App() {
             <active.icon className="size-3.5 text-muted-foreground" />
             <h1 className="text-xs font-medium">{t(active.title)}</h1>
           </div>
-          <HeaderActions onOpenAccount={() => setView("account")} />
+          <HeaderActions
+            onOpenAccount={() => setView("account")}
+            onOpenSettings={() => setView("settings")}
+          />
         </header>
         {/* Área de contenido. Las páginas con scroll usan <ScrollPage> (scrollbar
             temático); Caché y .DS_Store ocupan todo el alto (flex-1) y gestionan
             su propio scroll interno. */}
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          {view === "dashboard" && <DashboardPage />}
+          {view === "dashboard" && (
+            <ScrollPage>
+              <DashboardPage />
+            </ScrollPage>
+          )}
           {view === "storage" && (
             <ScrollPage>
               <StoragePage />
@@ -106,21 +112,25 @@ function ScrollPage({ children }: { children: ReactNode }) {
   );
 }
 
-function HeaderActions({ onOpenAccount }: { onOpenAccount: () => void }) {
-  const { resolvedMode, setMode } = useTheme();
+function HeaderActions({
+  onOpenAccount,
+  onOpenSettings,
+}: {
+  onOpenAccount: () => void;
+  onOpenSettings: () => void;
+}) {
   const { lang, toggle, t } = useLang();
-  const isDark = resolvedMode === "dark";
   return (
     <div className="ml-auto flex items-center gap-1.5">
       <Button
         variant="ghost"
         size="icon-sm"
         className="rounded-full bg-white/[0.05] hover:bg-white/10"
-        aria-label={isDark ? t("Modo claro") : t("Modo oscuro")}
-        title={isDark ? t("Modo claro") : t("Modo oscuro")}
-        onClick={() => setMode(isDark ? "light" : "dark")}
+        aria-label={t("Ajustes")}
+        title={t("Ajustes")}
+        onClick={onOpenSettings}
       >
-        {isDark ? <Sun /> : <Moon />}
+        <Settings />
       </Button>
       <UpdateBell />
       {/* Tu espacio: novedades, suscripción, apoyo y legal. */}

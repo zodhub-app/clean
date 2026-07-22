@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
+import { useCachedResource } from "@/hooks/use-cached-resource";
 import { Camera, Info, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -31,26 +32,14 @@ function fmtSnap(d: string) {
 
 export function SnapshotsPage() {
   const { t } = useLang();
-  const [snaps, setSnaps] = useState<Snapshot[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Caché de pestaña: al volver a Instantáneas, la lista aparece al instante.
+  const {
+    data: snaps,
+    loading,
+    refresh,
+  } = useCachedResource<Snapshot[]>("snapshots", listSnapshots);
   const [thinning, setThinning] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  async function refresh() {
-    setLoading(true);
-    try {
-      setSnaps(await listSnapshots());
-    } catch {
-      /* dev web */
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function doThin() {
     setConfirmOpen(false);

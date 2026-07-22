@@ -491,6 +491,136 @@ fn empty_trash() -> Result<(), String> {
     }
 }
 
+/// Escapa una cadena para incrustarla en un literal de AppleScript
+/// (`do shell script "..."`): primero las barras invertidas, luego las comillas.
+#[cfg(target_os = "macos")]
+fn applescript_escape(s: &str) -> String {
+    s.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+/// ¿Es seguro barrer esta carpeta como root? Filtro deliberadamente estricto:
+/// debe ser una carpeta existente, dentro de un ámbito permitido (la Library del
+/// usuario o las cachés/logs del sistema), sin caracteres que puedan romper el
+/// script, y nunca una ruta peligrosamente corta o de datos.
+#[cfg(target_os = "macos")]
+fn admin_path_ok(p: &str, h: &str) -> bool {
+    if !Path::new(p).is_dir() {
+        return false;
+    }
+    // Solo caracteres seguros para incrustar entre comillas dobles en el shell.
+    if p.contains(|c: char| matches!(c, '"' | '\'' | '\\' | '$' | '`' | '*' | '\n' | '\r'))
+        || p.contains("..")
+    {
+        return false;
+    }
+    let lib = format!("{h}/Library/");
+    let in_user_lib = p.starts_with(&lib);
+    let in_sys = p == "/Library/Caches"
+        || p == "/Library/Logs"
+        || p.starts_with("/Library/Caches/")
+        || p.starts_with("/Library/Logs/");
+    (in_user_lib || in_sys) && p.len() > 8 && p != "/Library"
+}
+
+/// Carpetas de basura del SISTEMA que la limpieza normal no puede tocar por
+/// permisos: cachés y logs de root (dentro de las carpetas del usuario y en
+/// `/Library`). Solo cachés/logs regenerables; jamás datos ni modelos de IA.
+#[cfg(target_os = "macos")]
+fn admin_targets(h: &str) -> Vec<String> {
+    let mut dirs: Vec<String> = Vec::new();
+    // Las mismas carpetas de caché/log del usuario, para barrer lo que dentro
+    // pertenece a root y la pasada normal dejó intacto (los "N necesitan admin").
+    for key in [
+        "user-caches",
+        "browser-caches",
+        "logs",
+        "xcode-derived",
+        "xcode-archives",
+        "xcode-devicesupport",
+        "coresimulator",
+    ] {
+        dirs.extend(existing(key, h));
+    }
+    // Cachés y logs del propio sistema (fuera del usuario; exigen admin).
+    dirs.push("/Library/Caches".to_string());
+    dirs.push("/Library/Logs".to_string());
+
+    // Filtro de seguridad + sin duplicados.
+    let mut seen = std::collections::HashSet::new();
+    dirs.into_iter()
+        .filter(|p| admin_path_ok(p, h))
+        .filter(|p| seen.insert(p.clone()))
+        .collect()
+}
+
+/// Fuera de macOS aún no está: en Windows/Linux la elevación y las rutas de
+/// caché del sistema son distintas. Se dice claramente en vez de fingir.
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+pub async fn clean_system_admin() -> Result<CleanResult, String> {
+    Err("La limpieza con permisos de administrador solo está disponible en macOS por ahora".into())
+}
+
+/// Limpieza CON PERMISOS DE ADMINISTRADOR: vacía el contenido de las cachés y
+/// logs del sistema (propiedad de root) que la limpieza normal deja intactas —
+/// justo lo que la app reporta como «necesitan permisos de administrador». Pide
+/// la contraseña UNA vez (osascript) y reporta el espacio realmente liberado
+/// (libre antes/después, la misma fuente que el panel). Conserva las carpetas;
+/// solo borra su contenido regenerable. Nunca toca datos del usuario.
+#[cfg(target_os = "macos")]
+#[tauri::command]
+pub async fn clean_system_admin() -> Result<CleanResult, String> {
+    tauri::async_runtime::spawn_blocking(|| {
+        let h = home();
+        let targets = admin_targets(&h);
+        if targets.is_empty() {
+            return Ok(CleanResult::default());
+        }
+
+        let (_t0, _u0, free_before) = crate::storage::disk_usage();
+
+        // Un solo comando elevado: por cada carpeta, borra su CONTENIDO
+        // (mindepth 1, se conserva la carpeta). `find … -delete` va en
+        // profundidad y no sigue enlaces simbólicos; los errores por fichero
+        // suelto se ignoran para no abortar todo el barrido.
+        // `|| true` por carpeta: si un fichero suelto no se puede borrar, `find`
+        // devuelve error y `do shell script` lo tomaría como fallo TOTAL. Con
+        // esto seguimos con el resto y no reportamos un error falso; lo liberado
+        // se mide igualmente por el espacio libre antes/después.
+        let shell = targets
+            .iter()
+            .map(|d| format!("/usr/bin/find \"{d}\" -mindepth 1 -delete 2>/dev/null || true"))
+            .collect::<Vec<_>>()
+            .join("; ");
+        let script = format!(
+            "do shell script \"{}\" with administrator privileges",
+            applescript_escape(&shell)
+        );
+
+        let out = crate::platform::cmd("osascript")
+            .arg("-e")
+            .arg(&script)
+            .output()
+            .map_err(|e| e.to_string())?;
+        if !out.status.success() {
+            let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
+            // -128 = el usuario canceló el diálogo de contraseña: no es un fallo.
+            if err.contains("-128") || err.to_lowercase().contains("user canceled") {
+                return Ok(CleanResult::default());
+            }
+            return Err(err);
+        }
+
+        let (_t1, _u1, free_after) = crate::storage::disk_usage();
+        Ok(CleanResult {
+            freed: free_after.saturating_sub(free_before),
+            ..Default::default()
+        })
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 /// Borra permanentemente las rutas de una categoría de ficheros. Devuelve el
 /// espacio liberado (tamaño medido antes) y los errores.
 fn wipe_files(key: &str, h: &str) -> crate::platform::Wipe {

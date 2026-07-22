@@ -2,7 +2,6 @@ import { Sparkles } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -10,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { navFor, NAV_ITEMS, type ViewId } from "@/lib/nav";
+import { navFor, type ViewId } from "@/lib/nav";
 import { useLang } from "@/components/language-provider";
 import { useOs } from "@/components/os-provider";
 import { SidebarPromo } from "@/components/sidebar-promo";
@@ -24,10 +23,10 @@ export function AppSidebar({
 }) {
   const { t } = useLang();
   const os = useOs();
-  // Solo las secciones que existen en este sistema.
+  // Solo las secciones que existen en este sistema. Ajustes ya no vive en el
+  // sidebar: se abre desde el botón de la barra superior.
   const items = navFor(os);
   const main = items.filter((i) => i.id !== "settings" && !i.hideInSidebar);
-  const settings = NAV_ITEMS.find((i) => i.id === "settings")!;
 
   return (
     <Sidebar>
@@ -72,24 +71,10 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Espacio de novedades/banner (hendidura), encima de Ajustes. */}
-        <SidebarPromo />
+        {/* Banner de novedades (hendidura), pegado abajo del sidebar.
+            «Saber más» abre «Tu espacio» (por defecto en la pestaña Novedades). */}
+        <SidebarPromo onOpen={() => onNavigate("account")} />
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={active === settings.id}
-              tooltip={t(settings.title)}
-              onClick={() => onNavigate(settings.id)}
-            >
-              <settings.icon />
-              <span>{t(settings.title)}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }

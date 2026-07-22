@@ -58,7 +58,7 @@ fn now_secs() -> u64 {
 
 /// Disco principal: el volumen del sistema ("/" en macOS/Linux, la unidad del
 /// sistema en Windows). Si no se identifica, el de mayor capacidad.
-fn disk_usage() -> (u64, u64, u64) {
+pub(crate) fn disk_usage() -> (u64, u64, u64) {
     let disks = Disks::new_with_refreshed_list();
     #[cfg(target_os = "windows")]
     let root = {
@@ -273,16 +273,18 @@ fn read_history() -> Vec<Sample> {
         .and_then(|s| serde_json::from_str(&s).ok())
         .unwrap_or_default()
 }
-/// Añade una muestra como mucho una vez cada ~12 h (para ver el crecimiento
-/// real sin ensuciar con muchas muestras del mismo día).
-fn record_sample(total: u64, used: u64, free: u64) {
+/// Añade una muestra al histórico, respetando un intervalo mínimo desde la
+/// última (para no ensuciar con muchas muestras seguidas). `min_secs` controla
+/// la resolución: el panel usa 12 h; el vigilante de fondo usa ~25 min, para
+/// captar el llenado/vaciado que ocurre mientras no miras (p. ej. de noche).
+fn record_sample_gap(total: u64, used: u64, free: u64, min_secs: u64) {
     let path = match history_path() {
         Some(p) => p,
         None => return,
     };
     let mut samples = read_history();
     let now = now_secs();
-    let recent = samples.last().map_or(false, |s| now.saturating_sub(s.t) < 12 * 3600);
+    let recent = samples.last().map_or(false, |s| now.saturating_sub(s.t) < min_secs);
     if recent {
         return;
     }
@@ -295,6 +297,17 @@ fn record_sample(total: u64, used: u64, free: u64) {
         let _ = std::fs::create_dir_all(dir);
     }
     let _ = std::fs::write(&path, serde_json::to_string(&samples).unwrap_or_default());
+}
+
+/// Muestreo del panel: como mucho una cada ~12 h.
+fn record_sample(total: u64, used: u64, free: u64) {
+    record_sample_gap(total, used, free, 12 * 3600);
+}
+
+/// Muestreo del vigilante de fondo: resolución fina (~25 min) para que el
+/// histórico capte los vaivenes de espacio del sistema entre aperturas del panel.
+pub(crate) fn record_sample_watch(total: u64, used: u64, free: u64) {
+    record_sample_gap(total, used, free, 25 * 60);
 }
 
 #[tauri::command]
@@ -325,4 +338,58 @@ pub async fn storage_stats() -> StorageStats {
 #[tauri::command]
 pub fn storage_history() -> Vec<Sample> {
     read_history()
+}
+
+#[derive(Serialize)]
+pub struct DiskItem {
+    name: String,
+    path: String,
+    size: u64,
+}
+
+/// Mapa REAL de la carpeta del usuario: el tamaño de cada entrada de primer
+/// nivel (equivale a `du -sh ~/*`), ordenado de mayor a menor. Es lo que de
+/// verdad responde «¿dónde está mi espacio?»: aquí salen Proyectos, Recursos,
+/// Library, Movies… con su peso real en disco.
+///
+/// - No sigue enlaces simbólicos al medir (regla del proyecto: evitar contar
+///   dos veces o salirse del ámbito).
+/// - Puede tardar unos segundos en discos con mucho contenido; por eso corre en
+///   un hilo aparte y el frontend lo carga sin bloquear el resto del panel.
+#[tauri::command]
+pub async fn home_breakdown() -> Vec<DiskItem> {
+    tauri::async_runtime::spawn_blocking(|| {
+        let home = platform::home_dir();
+        let mut items = Vec::new();
+        if let Ok(rd) = std::fs::read_dir(&home) {
+            for e in rd.flatten() {
+                let md = match e.metadata() {
+                    Ok(m) => m,
+                    Err(_) => continue,
+                };
+                if md.file_type().is_symlink() {
+                    continue; // no seguimos symlinks al medir
+                }
+                let p = e.path();
+                let size = if md.is_dir() {
+                    platform::dir_size(&p)
+                } else {
+                    platform::size_on_disk(&md)
+                };
+                if size == 0 {
+                    continue;
+                }
+                items.push(DiskItem {
+                    name: e.file_name().to_string_lossy().to_string(),
+                    path: p.to_string_lossy().to_string(),
+                    size,
+                });
+            }
+        }
+        items.sort_by(|a, b| b.size.cmp(&a.size));
+        items.truncate(12);
+        items
+    })
+    .await
+    .unwrap_or_default()
 }

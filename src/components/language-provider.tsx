@@ -20,7 +20,6 @@ const EN: Record<string, string> = {
   Memoria: "Memory",
   Tareas: "Tasks",
   Ajustes: "Settings",
-  "Mantenimiento del Mac": "Mac maintenance",
   "Mantenimiento del equipo": "Device maintenance",
   "Tu equipo, ": "Your device, ",
   "Tu equipo, sencillamente limpio y seguro.":
@@ -80,6 +79,8 @@ const EN: Record<string, string> = {
   "Novedades, apoyo y legal": "News, support and legal",
   "Hay una versión nueva disponible": "A new version is available",
   "Visitar la web": "Visit the website",
+  "Ver en GitHub": "View on GitHub",
+  "Tu nombre": "Your name",
   "Aquí aparecerán las novedades del proyecto: funciones nuevas, mejoras y avisos importantes. Mientras tanto, puedes ver todos los cambios publicados en el historial de versiones.":
     "Project news will appear here: new features, improvements and important notices. In the meantime, you can see every published change in the release history.",
   "Ver historial de versiones": "See release history",
@@ -109,6 +110,7 @@ const EN: Record<string, string> = {
   "Se abrirá en tu navegador. Sin compromiso y sin cuotas.":
     "It opens in your browser. No commitment, no fees.",
   "Acerca de y legal": "About and legal",
+  "Acerca de": "About",
   "Política de privacidad": "Privacy policy",
   "Términos de uso": "Terms of use",
   "Licencia y atribuciones": "Licence and attributions",
@@ -117,22 +119,133 @@ const EN: Record<string, string> = {
   "Hecho con cuidado. Tu equipo, sencillamente limpio y seguro.":
     "Made with care. Your device, simply clean and safe.",
 
+  // ── Tu espacio · pestañas nuevas (novedades, suscripción, apoyo) ──────
+  Suscripción: "Subscribe",
+  Apoyar: "Support",
+  "Lo último que hemos traído": "The latest we've shipped",
+  "Ver más": "Show more",
+  "Ver menos": "Show less",
+  "Ver historial completo de versiones": "See full release history",
+  "Jul 2026": "Jul 2026",
+  "Jun 2026": "Jun 2026",
+  "May 2026": "May 2026",
+  "Abr 2026": "Apr 2026",
+  "Mar 2026": "Mar 2026",
+  "Aviso de disco lleno y vigilante en segundo plano":
+    "Full-disk alert and background watcher",
+  "Ahora la app vigila tu disco y te avisa —con una notificación del sistema— antes de que te quedes sin espacio, aunque la ventana esté cerrada en la barra.":
+    "The app now watches your disk and warns you —with a system notification— before you run out of space, even when the window is hidden in the menu bar.",
+  "Comprueba el espacio cada media hora y, si el disco suelta mucho de golpe, te lo explica: es «basura del sistema» que macOS acumula y libera sola, no la limpieza de la app. Así el número de Inicio y el del disco dejan de contradecirse.":
+    "It checks space every half hour and, if the disk releases a lot at once, explains it: that's “system junk” macOS builds up and frees on its own, not the app's cleanup. So the Home number and the disk number stop contradicting each other.",
+  "Mapa real de tu disco en Almacenamiento": "Real map of your disk in Storage",
+  "El panel de Almacenamiento ya no muestra una lista de basura que no cuadraba: ahora ves dónde está de verdad tu espacio, con tus carpetas reales, y las barras suman el total usado.":
+    "The Storage panel no longer shows a junk list that didn't add up: now you see where your space really is, with your real folders, and the bars add up to the total used.",
+  "Mide tu carpeta de usuario como lo haría el sistema (Proyectos, Recursos, Library…), añade Aplicaciones y el resto del sistema, y lo ordena de mayor a menor. Para bajar al detalle carpeta a carpeta, tienes el Explorador.":
+    "It measures your home folder the way the system would (Projects, Resources, Library…), adds Applications and the rest of the system, and sorts largest first. For folder-by-folder detail, use the Explorer.",
+  "Limpieza con permisos de administrador": "Cleanup with admin permissions",
+  "Añadido un botón que, con tu contraseña, vacía las cachés y logs del sistema (de root) que la limpieza normal no puede tocar, y te dice los GB reales que libera.":
+    "Added a button that, with your password, empties the system caches and logs (owned by root) the normal cleanup can't touch, and tells you the real GB it frees.",
+  "Limpieza más clara y honesta en Inicio": "Clearer, more honest cleanup on Home",
+  "El estimado de «Liberar espacio» ahora enseña de qué se compone (cachés, npm, logs, Papelera…), así el número no aparece de la nada y cuadra con lo que de verdad se elimina.":
+    "The “Free up space” estimate now shows what it's made of (caches, npm, logs, Trash…), so the number doesn't appear out of nowhere and matches what actually gets deleted.",
+  "Buscador de duplicados por contenido": "Duplicate finder by content",
+  "Encuentra archivos idénticos comparando su contenido real (huella SHA-256), no solo el nombre. Nunca borra nada: te muestra los grupos y decides tú.":
+    "Finds identical files by comparing their real content (SHA-256 hash), not just the name. It never deletes anything: it shows you the groups and you decide.",
+  "Primero agrupa por tamaño (rapidísimo) y solo calcula la huella de los candidatos. Distingue los clones de APFS y los enlaces duros, que comparten disco, para no prometerte un espacio recuperable que no existe.":
+    "It first groups by size (very fast) and only hashes the candidates. It tells apart APFS clones and hard links, which share disk, so it won't promise reclaimable space that doesn't exist.",
+  "Desinstalador de aplicaciones": "App uninstaller",
+  "Lista tus apps con su peso y la basura que dejan (cachés, soportes, preferencias) y las desinstala del todo, sin restos olvidados por el sistema.":
+    "Lists your apps with their size and the leftovers they leave (caches, support files, preferences) and uninstalls them completely, with no forgotten remnants.",
+  "Instantáneas locales de Time Machine": "Local Time Machine snapshots",
+  "Un panel para ver y liberar las copias locales que macOS guarda en tu disco aunque no tengas disco externo, y que suelen ocupar espacio «que aparece sin motivo».":
+    "A panel to view and free the local copies macOS keeps on your disk even without an external drive, which often take up space that “appears for no reason”.",
+  "Radar de red y monitor del sistema en vivo": "Live network radar and system monitor",
+  "Inicio muestra CPU, memoria, disco y temperatura en tiempo real, más un radar de red honesto cuya intensidad usa la actividad real de tu equipo.":
+    "Home shows CPU, memory, disk and temperature in real time, plus an honest network radar whose intensity uses your device's real activity.",
+  "Explorador de archivos y carpetas grandes": "Large files and folders explorer",
+  "Recorre cualquier carpeta y te enseña qué ocupa más, ordenado por tamaño, para encontrar de un vistazo lo que llena el disco. Puedes abrir en Finder o mover a la Papelera.":
+    "Browse any folder and see what takes up most, sorted by size, to spot at a glance what's filling the disk. You can open in Finder or move to Trash.",
+  "Limpieza de .DS_Store y «Comprimir limpio»": ".DS_Store cleanup and “Clean zip”",
+  "Barre los .DS_Store que macOS esparce por tus carpetas y comprime en .zip sin metadatos ni __MACOSX, ideal para compartir con Windows o Linux.":
+    "Sweeps the .DS_Store files macOS scatters across your folders and zips without metadata or __MACOSX, ideal for sharing with Windows or Linux.",
+  "Puedes también evitar que se creen .DS_Store en unidades de red. Todo se hace en local, en tu equipo, sin enviar nada a ningún servidor.":
+    "You can also stop .DS_Store from being created on network drives. Everything runs locally, on your device, sending nothing to any server.",
+  "¿Por qué suscribirte?": "Why subscribe?",
+  "Funciones nuevas primero": "New features first",
+  "Te contamos las mejoras que valen la pena en cuanto salen.":
+    "We tell you about worthwhile improvements as soon as they land.",
+  "Solo lo importante": "Only what matters",
+  "Sin spam ni correos de relleno: escribimos poco y con motivo.":
+    "No spam or filler emails: we write little, and only when there's a reason.",
+  "Baja cuando quieras": "Unsubscribe anytime",
+  "Un clic y fuera. Tus datos son tuyos, siempre.":
+    "One click and you're out. Your data is yours, always.",
+  "La app se actualiza sola: suscribirte es solo para enterarte de las novedades, nunca un requisito.":
+    "The app updates itself: subscribing is only to hear about news, never a requirement.",
+  "Ayúdanos a mantenerlo gratis": "Help us keep it free",
+  "ZodHub Pulse es y será gratis: sin anuncios, sin suscripciones y sin funciones de pago. Si te ha ahorrado un dolor de cabeza y quieres que siga creciendo, un pequeño gesto ayuda muchísimo — y es 100% opcional.":
+    "ZodHub Pulse is and will stay free: no ads, no subscriptions, no paid features. If it's saved you a headache and you want it to keep growing, a small gesture helps a lot — and it's 100% optional.",
+  "Pago seguro con tarjeta, dentro de la app. Donar no desbloquea nada.":
+    "Secure card payment, inside the app. Donating unlocks nothing.",
+  "A dónde va cada euro": "Where each euro goes",
+  "Sin sueldos millonarios ni humo. Esto es lo que sostiene el proyecto:":
+    "No sky-high salaries or smoke. This is what keeps the project going:",
+  "Servidor y CDN": "Server and CDN",
+  "Alojar y servir las descargas rápido en todo el mundo.":
+    "Hosting and serving downloads fast worldwide.",
+  "Horas para funciones nuevas, Linux y Windows.":
+    "Hours for new features, Linux and Windows.",
+  Dominio: "Domain",
+  "Mantener zodhub.app y los correos activos.":
+    "Keeping zodhub.app and the emails running.",
+  "Café e imprevistos": "Coffee and surprises",
+  "Lo que mantiene despierto a quien lo programa.":
+    "What keeps the person coding it awake.",
+  "¿Sin presupuesto? Igual ayudas": "No budget? You still help",
+  "Ayudar es gratis. Cualquiera de estas suma un montón:":
+    "Helping is free. Any of these adds up a lot:",
+  "Compártelo en X": "Share it on X",
+  "Compártelo en LinkedIn": "Share it on LinkedIn",
+  "Reporta un fallo": "Report a bug",
+  "Donéis o no, gracias por usar ZodHub Pulse. De verdad.":
+    "Whether you donate or not, thanks for using ZodHub Pulse. Really.",
+  "Una vez": "One-time",
+  "Cada mes": "Monthly",
+  "Otra cantidad": "Other amount",
+  "Donar {s}": "Donate {s}",
+  "Donaciones aún no abiertas": "Donations not open yet",
+  "Iniciando…": "Starting…",
+  "Métodos disponibles:": "Available methods:",
+  "Pago seguro a través del proveedor. Sin recompensas de pago ni funciones bloqueadas: donar no desbloquea nada, solo nos ayuda a seguir.":
+    "Secure payment through the provider. No paid rewards or locked features: donating unlocks nothing, it just helps us keep going.",
+  "Meta del mes · Costes": "Monthly goal · Costs",
+  "Esto cubre el servidor de descargas, el dominio y las horas de desarrollo. Cuando llegamos a la meta, todo lo demás va a mejorar la app.":
+    "This covers the download server, the domain and development hours. Once we hit the goal, everything else goes to improving the app.",
+  "Cifras de ejemplo; publicaremos las reales en cuanto abramos donaciones.":
+    "Example figures; we'll publish the real ones as soon as donations open.",
+  "Procesando…": "Processing…",
+  "Cambiar importe": "Change amount",
+  "No se pudo iniciar la donación. Inténtalo de nuevo.":
+    "Couldn't start the donation. Please try again.",
+  "El pago no está configurado en el servidor todavía.":
+    "Payments aren't configured on the server yet.",
+  "Pago seguro con tarjeta, dentro de la app.":
+    "Secure card payment, inside the app.",
+  "¡Gracias por tu apoyo!": "Thanks for your support!",
+  "El pago no se completó.": "The payment didn't complete.",
+  "No se pudo completar el pago.": "The payment couldn't be completed.",
+
   // ── Hero / Acerca de ─────────────────────────────────────────────────
-  "Tu Mac, ": "Your Mac, ",
   "sencillamente seguro": "simply safe",
   "sencillamente limpio y seguro": "simply clean and safe",
-  "Tu Mac, sencillamente limpio y seguro.": "Your Mac, simply clean and safe.",
-  "Limpiar todo mi Mac": "Clean my whole Mac",
   "Mantenimiento claro y en local — tus datos nunca salen de tu equipo.":
     "Clear, local maintenance — your data never leaves your computer.",
-  "Sobre ZodHub Pulse": "About ZodHub Pulse",
   Cerrar: "Close",
-  "Tu Mac, sencillamente seguro.": "Your Mac, simply safe.",
-  "ZodHub Pulse es una utilidad de mantenimiento para Mac directa y sin humo: limpia cachés, libera espacio, ordena los .DS_Store y automatiza el mantenimiento. Lo esencial, bien hecho.":
-    "ZodHub Pulse is a no-nonsense Mac maintenance utility: it clears caches, frees space, tidies .DS_Store files and automates maintenance. The essentials, done well.",
+  "ZodHub Pulse es una utilidad de mantenimiento para tu equipo, directa y sin humo: limpia cachés, libera espacio y automatiza el mantenimiento en Mac, Windows y Linux. Lo esencial, bien hecho.":
+    "ZodHub Pulse is a no-nonsense maintenance utility for your device: it clears caches, frees space and automates maintenance on Mac, Windows and Linux. The essentials, done well.",
   "Sencillo de verdad": "Truly simple",
-  "Solo las operaciones que tu Mac necesita para ir fino. Sin menús interminables ni funciones de relleno.":
-    "Only the operations your Mac needs to run smoothly. No endless menus or filler features.",
+  "Solo las operaciones que tu equipo necesita para ir fino. Sin menús interminables ni funciones de relleno.":
+    "Only the operations your device needs to run smoothly. No endless menus or filler features.",
   "Privado y en local": "Private and local",
   "Todo se ejecuta en tu equipo. Tus archivos y métricas nunca se suben a la nube. Cero telemetría por defecto.":
     "Everything runs on your computer. Your files and metrics are never uploaded to the cloud. Zero telemetry by default.",
@@ -142,8 +255,9 @@ const EN: Record<string, string> = {
   "¿Por qué ZodHub Pulse?": "Why ZodHub Pulse?",
   "Ligera, clara y respetuosa con tus datos, frente a los limpiadores pesados llenos de avisos y suscripciones. Hace lo justo, y lo hace bien.":
     "Lightweight, clear and respectful of your data, unlike the heavy cleaners full of warnings and subscriptions. It does just enough, and does it well.",
-  "Nota honesta: ZodHub Pulse no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera. · Versión 0.1.0":
-    "Honest note: ZodHub Pulse is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door. · Version 0.1.0",
+  "Nota honesta: ZodHub Pulse no es un antivirus ni un cortafuegos. El radar de red representa el ruido constante de escaneos de internet que recibe cualquier equipo conectado; su intensidad, en vivo, refleja la actividad real de tu red para mantenerte al tanto de lo que pasa de puertas afuera.":
+    "Honest note: ZodHub Pulse is not an antivirus or a firewall. The network radar represents the constant noise of internet scans any connected computer receives; its live intensity reflects your network's real activity to keep you aware of what's happening outside your door.",
+  "Versión": "Version",
 
   // ── Dashboard ────────────────────────────────────────────────────────
   "Temperatura estable": "Stable temperature",
@@ -156,7 +270,6 @@ const EN: Record<string, string> = {
   Temperatura: "Temperature",
   "uso global": "global usage",
   "{a} de {b}": "{a} of {b}",
-  "sin sensores en este Mac": "no sensors on this Mac",
 
   // ── Monitor de red ───────────────────────────────────────────────────
   Red: "Network",
@@ -174,6 +287,8 @@ const EN: Record<string, string> = {
     "A representation of the constant noise of internet scans. The intensity uses your network's real activity.",
   "En vivo": "Live",
   "Tu Mac": "Your Mac",
+  "Tu PC": "Your PC",
+  "Tu equipo": "Your computer",
   "Este equipo": "This computer",
   Tranquila: "Calm",
   Normal: "Normal",
@@ -228,6 +343,7 @@ const EN: Record<string, string> = {
     "{n} need administrator permissions",
   "{n} no se pudieron borrar": "{n} couldn't be deleted",
   "Error al limpiar": "Cleanup error",
+  Continuar: "Continue",
   Escanear: "Scan",
   "Limpiar ({n})": "Clean ({n})",
   Seleccionado: "Selected",
@@ -377,6 +493,13 @@ const EN: Record<string, string> = {
   Plano: "Flat",
   Filigrana: "Filigree",
   "Scroll suave": "Smooth scroll",
+  "Datos y caché": "Data & cache",
+  "Al abrir una pestaña (Almacenamiento, Aplicaciones…), sus datos se muestran al instante desde la última vez; pulsa «Actualizar» para releerlos.":
+    "When you open a tab (Storage, Applications…), its data shows instantly from last time; press “Refresh” to re-read it.",
+  "Auto 24 h": "Auto 24 h",
+  "Auto-refresco cada 24 h": "Auto-refresh every 24 h",
+  "Con «Auto 24 h» activo, los datos se refrescan solos en segundo plano cada 24 horas. Si lo desactivas, solo se recargan cuando pulses «Actualizar».":
+    "With “Auto 24 h” on, data refreshes on its own in the background every 24 hours. If you turn it off, it only reloads when you press “Refresh”.",
   Fondo: "Background",
   "Para el estilo Plano.": "For the Flat style.",
   Liso: "Solid",
@@ -399,8 +522,7 @@ const EN: Record<string, string> = {
   Fuerte: "Strong",
   "Muy fuerte": "Very strong",
   "Tema de color": "Color theme",
-  "ZodHub Pulse 0.1.0 · mantenimiento sencillo y honesto.":
-    "ZodHub Pulse 0.1.0 · simple, honest maintenance.",
+  "mantenimiento sencillo y honesto.": "simple, honest maintenance.",
   "Barra de menús": "Menu bar",
   "Icono de acceso rápido de ZodHub Pulse en la barra superior de macOS.":
     "ZodHub Pulse quick-access icon in the macOS menu bar.",
@@ -417,9 +539,26 @@ const EN: Record<string, string> = {
   "{a} usados de {b} · {c} libres": "{a} used of {b} · {c} free",
   "{n} instantáneas APFS locales (ocupan espacio recuperable).":
     "{n} local APFS snapshots (they hold reclaimable space).",
+  "{n} instantáneas locales de Time Machine. Cuentan como «usado» pero son recuperables: al liberarlas (pestaña Instantáneas), macOS suelta el espacio poco a poco, así que verás el «usado» bajar solo durante un rato.":
+    "{n} local Time Machine snapshots. They count as “used” but are reclaimable: when you free them (Snapshots tab), macOS releases the space gradually, so you'll see “used” drop on its own for a while.",
   "Volúmenes APFS": "APFS volumes",
   "Sin datos": "No data",
   "Qué ocupa más": "What takes up most",
+  "En qué se usa tu disco": "Where your disk goes",
+  "Suma el total usado. Para el detalle carpeta a carpeta, usa el Explorador.":
+    "Adds up to the total used. For a folder-by-folder breakdown, use the Explorer.",
+  "Tus carpetas reales, Aplicaciones y el sistema. Suma el total usado; para bajar más al detalle, usa el Explorador.":
+    "Your real folders, Applications and the system. Adds up to the total used; for more detail, use the Explorer.",
+  "Sistema y otros (fuera de tu carpeta)":
+    "System & other (outside your home folder)",
+  "En los últimos días tu disco ha variado ~{s} solo. Es «basura del sistema»: macOS acumula espacio recuperable (cachés, instantáneas y archivos temporales) y lo suelta él mismo, así que el «usado» sube y baja aunque no borres nada. Por eso puede que la app limpie unos pocos GB y, aparte, el disco recupere muchos más: eso último lo hace el sistema, no la limpieza.":
+    "In the last few days your disk has swung ~{s} on its own. That's “system junk”: macOS builds up reclaimable space (caches, snapshots and temporary files) and releases it itself, so “used” goes up and down even when you delete nothing. That's why the app may clean a few GB while, separately, the disk recovers much more: that last part is the system, not the cleanup.",
+  "Resto: sistema, tus archivos y espacio recuperable":
+    "Rest: system, your files & reclaimable space",
+  "Tu disco está casi lleno.": "Your disk is almost full.",
+  "Tu disco se está llenando.": "Your disk is filling up.",
+  "Quedan {c} libres de {b} ({p} usado). Libera basura en «Liberar espacio» y revisa apps y archivos grandes en el Explorador.":
+    "{c} free of {b} ({p} used). Free up junk in “Free up space” and check large apps and files in the Explorer.",
   "Nada destacable por aquí.": "Nothing notable here.",
   "Cachés de usuario": "User caches",
   "Modelos HuggingFace": "HuggingFace models",
@@ -430,6 +569,8 @@ const EN: Record<string, string> = {
   "Evolución del espacio usado": "Used space over time",
   "Solo lectura: aquí nada se borra. Los tamaños son reales (medidos en disco) y las áreas pueden solaparse, así que no suman el total. El histórico se va formando cada vez que abres esta pestaña.":
     "Read-only: nothing is deleted here. Sizes are real (measured on disk) and areas can overlap, so they don't add up to the total. The history builds up each time you open this tab.",
+  "Solo lectura: aquí nada se borra. El «usado» lo da macOS e incluye espacio purgable (instantáneas y cachés que el sistema gestiona y suelta solo), por eso puede subir o bajar sin que hagas nada. Ojo: «Liberar espacio» solo elimina basura regenerable —lo que ahí ponga es lo que de verdad se limpia—; las bajadas grandes del disco son macOS soltando ese espacio purgable, no la limpieza. El histórico se va formando cada vez que abres esta pestaña.":
+    "Read-only: nothing is deleted here. “Used” comes from macOS and includes purgeable space (snapshots and caches the system manages and releases on its own), which is why it can go up or down without you doing anything. Note: “Free up space” only removes regenerable junk —whatever it shows is what actually gets cleaned—; big drops in the disk are macOS releasing that purgeable space, not the cleanup. The history builds up each time you open this tab.",
 
   // ── Explorador (Fase 1) ──────────────────────────────────────────────
   Explorador: "Explorer",
@@ -517,6 +658,16 @@ const EN: Record<string, string> = {
     "It will be permanently deleted ({size}) to free space now. It's regenerable junk: it's recreated when needed.",
   "Basura regenerable lista para eliminar (estimado).":
     "Regenerable junk ready to delete (estimated).",
+  "Solo cuenta lo que se elimina de verdad. Para recuperar más, mira Aplicaciones, Duplicados y el mapa de tu disco en Almacenamiento.":
+    "Only counts what actually gets deleted. To reclaim more, check Applications, Duplicates and your disk map in Storage.",
+  "Limpiar también lo del sistema (con contraseña)":
+    "Also clean the system's (needs password)",
+  "¿Limpiar la basura del sistema?": "Clean system junk?",
+  "macOS te pedirá tu contraseña. Se vaciará el contenido de las cachés y logs del sistema (de root) que la limpieza normal no puede tocar; son regenerables y no se toca ningún dato tuyo. Se te dirá cuánto espacio real se ha liberado.":
+    "macOS will ask for your password. It empties the system caches and logs (owned by root) that the normal cleanup can't touch; they're regenerable and none of your data is touched. You'll be told how much space was actually freed.",
+  "Liberados {s} del sistema": "Freed {s} from the system",
+  "Nada que liberar del sistema ahora mismo.":
+    "Nothing to free from the system right now.",
   "Liberar espacio ahora": "Free up space now",
   "Automático (semanal)": "Automatic (weekly)",
   "Limpieza automática activada (semanal)":

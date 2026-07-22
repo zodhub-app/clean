@@ -60,6 +60,28 @@ Marcar lo verificado en cada repaso.
       expandible; todo responsive a la resolución/ventana.
 - [ ] **Arranque sin lag**: las pestañas responden a la primera, la ventana se
       arrastra desde el inicio (widgets pesados diferidos con `useReady`).
+- [ ] **Color de borde de las tarjetas (IMPORTANTE)**: los skins (Hera/Zeus)
+      pintan el borde/fondo de las tarjetas sobre `[data-slot="card"]`
+      (`--hera-border` / `--ef-edge`). Una tarjeta con solo `border bg-card` pero
+      SIN `data-slot="card"` coge el borde gris por defecto → **color distinto al
+      resto de la app**. Regla: TODA tarjeta lleva `data-slot="card"` (o usa el
+      componente `Card`). Vale para páginas nuevas (p. ej. «Tu espacio»).
+- [ ] **`position: sticky` en una tarjeta NUNCA en el mismo div que
+      `data-slot="card"`**: el skin Hera define
+      `[data-skin="hera"] [data-slot="card"] { position: relative; ... }`, y esa
+      regla (dos selectores de atributo) tiene más especificidad CSS que la
+      utilidad `.lg:sticky` (una clase) — `position: relative` siempre gana y el
+      sticky no hace nada, sin error visible. Solución: el `sticky` va en un
+      `div` ENVOLVENTE sin `data-slot="card"`; el hijo con `data-slot="card"`
+      mantiene el estilo de cristal intacto. Bug real encontrado en la tarjeta
+      "Sobre ZodHub Pulse" de Tu espacio → Novedades (22 jul 2026).
+- [ ] **Radio de bordes**: tarjetas con `rounded-lg` (= `Card`, `--radius` 14px);
+      nunca `rounded-xl` para tarjetas. Al diseñar algo nuevo, copiar el estilo de
+      los elementos existentes (borde, radio, padding, `bg-card`, `data-slot`), no
+      inventar uno distinto.
+- [ ] **Inicio sin crecer sin fin**: el globo (`SecurityGlobe`) y cualquier
+      lienzo que pueda exceder su caja van con altura FIJA y `overflow-hidden`
+      (lienzo en capa absoluta); nunca alto automático/stretch → se retroalimenta.
 
 ## 5. Idiomas (i18n)
 

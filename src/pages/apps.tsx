@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useCachedResource } from "@/hooks/use-cached-resource";
 import { createPortal } from "react-dom";
 import { AppWindow, ChevronRight, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -21,8 +22,12 @@ import {
 
 export function AppsPage() {
   const { t } = useLang();
-  const [apps, setApps] = useState<AppInfo[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Caché de pestaña: al volver a Aplicaciones, la lista aparece al instante.
+  const {
+    data: apps,
+    loading,
+    refresh: refreshApps,
+  } = useCachedResource<AppInfo[]>("apps", listApps);
   const [uninstalling, setUninstalling] = useState(false);
   const [leftovers, setLeftovers] = useState<Record<string, LeftoverResult>>({});
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -31,23 +36,12 @@ export function AppsPage() {
     lo: LeftoverResult;
   } | null>(null);
 
+  // Al recargar la lista se limpian los «restos» calculados y lo desplegado.
   async function refresh() {
-    setLoading(true);
-    try {
-      setApps(await listApps());
-      setLeftovers({});
-      setExpanded(new Set());
-    } catch {
-      /* dev web */
-    } finally {
-      setLoading(false);
-    }
+    await refreshApps();
+    setLeftovers({});
+    setExpanded(new Set());
   }
-
-  useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function loadLeftovers(app: AppInfo): Promise<LeftoverResult> {
     if (leftovers[app.path]) return leftovers[app.path];

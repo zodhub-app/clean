@@ -9,7 +9,7 @@ import { useLang } from "@/components/language-provider";
  * (p. ej. GET /banner?lang=es&country=ES) y se refrescará en tiempo real, con
  * variantes por idioma y país. Se oculta cuando el sidebar está colapsado.
  */
-export function SidebarPromo() {
+export function SidebarPromo({ onOpen }: { onOpen?: () => void }) {
   const { t } = useLang();
   return (
     <div className="mt-auto px-2 pb-1 group-data-[collapsible=icon]:hidden">
@@ -40,6 +40,7 @@ export function SidebarPromo() {
 
           <button
             type="button"
+            onClick={onOpen}
             className="mt-1.5 flex items-center justify-center gap-1 rounded-md bg-primary/20 py-1 text-[10px] font-medium text-primary transition-colors hover:bg-primary/30"
           >
             {t("Saber más")}

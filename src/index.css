@@ -332,6 +332,17 @@
   box-shadow: 0 6px 16px -6px color-mix(in oklch, var(--primary) 60%, transparent);
 }
 
+/* ── Arreglo: `position: sticky` dentro de <ScrollArea> (Radix) ─────────────
+   Radix envuelve el contenido del viewport en un <div style="display:table">
+   (lo usa para medir overflow horizontal). Ese "display: table" rompe el
+   sticky de los descendientes: dejan de fijarse y se desplazan con el resto
+   del scroll. Como aquí el scroll siempre es vertical, forzamos ese div a
+   "block" para que el sticky (p. ej. la tarjeta "Sobre ZodHub Pulse" de Tu
+   espacio → Novedades) funcione de verdad. */
+[data-radix-scroll-area-viewport] > div {
+  display: block !important;
+}
+
 /* ── Efecto de vaciado/liberación: partículas que se drenan + barra ─────────
    Distinto del escaneo: representa que el espacio se libera (los bloques caen
    y se encogen como si se vaciaran) acompañado de una barra de progreso. */

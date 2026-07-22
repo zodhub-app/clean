@@ -8,8 +8,10 @@ import {
 } from "react";
 import { THEMES, type Mode, type ThemeName } from "@/lib/themes";
 
-const DEFAULT_THEME: ThemeName = THEMES.some((t) => t.name === "clean-slate")
-  ? "clean-slate"
+// Tema por defecto al abrir por primera vez (hasta que el usuario lo cambie en
+// Ajustes): "Elegant Luxury". Si no existiera, cae a otro disponible.
+const DEFAULT_THEME: ThemeName = THEMES.some((t) => t.name === "elegant-luxury")
+  ? "elegant-luxury"
   : (THEMES[0]?.name ?? ("twitter" as ThemeName));
 const DEFAULT_SCALE = 1;
 const DEFAULT_MATERIAL: Material = "matte";

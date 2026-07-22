@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useCachedResource } from "@/hooks/use-cached-resource";
 import { createPortal } from "react-dom";
 import { RefreshCw, Trash2, Container } from "lucide-react";
 import { toast } from "sonner";
@@ -15,7 +16,7 @@ import { listDevJunk, cleanDev, cleanAllJunk, type DevItem } from "@/lib/api";
 import { reportClean } from "@/lib/clean-report";
 
 
-const DEV_LABEL: Record<string, string> = {
+export const DEV_LABEL: Record<string, string> = {
   "user-caches": "Cachés del sistema y apps",
   "browser-caches": "Cachés de navegadores",
   "ios-backups": "Copias de seguridad de iOS",
@@ -38,27 +39,15 @@ const DEV_LABEL: Record<string, string> = {
 
 export function DevPage() {
   const { t } = useLang();
-  const [items, setItems] = useState<DevItem[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Caché de pestaña: al volver, la lista de basura aparece al instante.
+  const {
+    data: items,
+    loading,
+    refresh,
+  } = useCachedResource<DevItem[]>("dev-junk", listDevJunk);
   const [cleaning, setCleaning] = useState(false);
   const [confirm, setConfirm] = useState<DevItem | null>(null);
   const [confirmAll, setConfirmAll] = useState(false);
-
-  async function refresh() {
-    setLoading(true);
-    try {
-      setItems(await listDevJunk());
-    } catch {
-      /* dev web */
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function doClean() {
     if (!confirm) return;
