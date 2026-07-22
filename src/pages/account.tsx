@@ -184,6 +184,17 @@ function Changelog() {
   // (funciones que existen), redactado para que el usuario entienda el valor.
   const items: Update[] = [
     {
+      v: "0.2.5",
+      date: t("22 jul 2026"),
+      title: t("Donaciones dentro de la app y «Tu espacio» reorganizado"),
+      body: t(
+        "Ya puedes apoyar el proyecto pagando con tarjeta sin salir de la app, y «Tu espacio» se organiza en pestañas (Novedades, Suscripción, Apoyar) con un muro de novedades como este.",
+      ),
+      more: t(
+        "Además, cada pestaña recuerda sus datos y se abre al instante al volver (con auto-refresco opcional cada 24 h en Ajustes), la barra superior es más compacta y la app estrena el tema «Elegant Luxury» por defecto.",
+      ),
+    },
+    {
       v: "0.2.4",
       date: t("21 jul 2026"),
       title: t("Aviso de disco lleno y vigilante en segundo plano"),

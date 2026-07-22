@@ -131,6 +131,13 @@ const EN: Record<string, string> = {
   "May 2026": "May 2026",
   "Abr 2026": "Apr 2026",
   "Mar 2026": "Mar 2026",
+  "22 jul 2026": "22 Jul 2026",
+  "Donaciones dentro de la app y «Tu espacio» reorganizado":
+    "In-app donations and a reorganized “Your space”",
+  "Ya puedes apoyar el proyecto pagando con tarjeta sin salir de la app, y «Tu espacio» se organiza en pestañas (Novedades, Suscripción, Apoyar) con un muro de novedades como este.":
+    "You can now support the project by paying with a card without leaving the app, and “Your space” is organized into tabs (What's new, Subscribe, Support) with a news wall like this one.",
+  "Además, cada pestaña recuerda sus datos y se abre al instante al volver (con auto-refresco opcional cada 24 h en Ajustes), la barra superior es más compacta y la app estrena el tema «Elegant Luxury» por defecto.":
+    "Also, each tab remembers its data and opens instantly when you return (with optional 24 h auto-refresh in Settings), the top bar is more compact, and the app now ships with the “Elegant Luxury” theme by default.",
   "Aviso de disco lleno y vigilante en segundo plano":
     "Full-disk alert and background watcher",
   "Ahora la app vigila tu disco y te avisa —con una notificación del sistema— antes de que te quedes sin espacio, aunque la ventana esté cerrada en la barra.":
