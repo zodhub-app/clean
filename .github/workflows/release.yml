@@ -237,3 +237,24 @@ jobs:
 
           print("\nTodas las firmas corresponden a sus archivos.")
           PY
+
+      # Si hemos llegado hasta aquí, las firmas son correctas (el paso anterior
+      # habría cortado el job si no). Publicamos el borrador automáticamente y lo
+      # marcamos como «latest» para que el actualizador lo sirva. Si el chequeo
+      # de firmas fallara, este paso NO se ejecuta y la release se queda en
+      # borrador, como hasta ahora.
+      - name: Publicar la release (firmas verificadas)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          ID=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+                 --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -1)
+          if [ -z "$ID" ]; then
+            echo "No se encontró la release del tag $TAG."
+            exit 1
+          fi
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$ID" \
+            -F draft=false -f make_latest=true >/dev/null
+          echo "Release $TAG publicada automáticamente (firmas verificadas)."
