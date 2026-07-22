@@ -14,8 +14,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Path aliases */
-    "baseUrl": ".",
+    /* Path aliases (resueltos relativos a este archivo; no hace falta baseUrl
+       con moduleResolution "bundler") */
     "paths": {
       "@/*": ["./src/*"]
     },

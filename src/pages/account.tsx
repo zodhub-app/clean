@@ -36,6 +36,7 @@ import { useUpdates } from "@/components/updates-provider";
 import { subscribe, subscribeAvailable } from "@/lib/api";
 import { openUrl } from "@/lib/links";
 import { DonatePanel } from "@/components/donate-panel";
+import { changelog, localize } from "@/data/changelog";
 
 /** Enlaces públicos del proyecto. Un único sitio donde cambiarlos. */
 const LINKS = {
@@ -167,126 +168,9 @@ function Hero() {
 
 /* ───────────────────── Tab 1 · Muro de novedades (hilo) ─────────────────── */
 
-type Update = {
-  v: string;
-  date: string;
-  title: string;
-  body: string;
-  more?: string;
-};
-
 function Changelog() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [open, setOpen] = useState<string | null>(null);
-
-  // Historial de mejoras. Cada entrada resume, en pocas líneas, qué se trajo a
-  // la app; las que dan para más, se despliegan como acordeón. Contenido real
-  // (funciones que existen), redactado para que el usuario entienda el valor.
-  const items: Update[] = [
-    {
-      v: "0.2.5",
-      date: t("22 jul 2026"),
-      title: t("Donaciones dentro de la app y «Tu espacio» reorganizado"),
-      body: t(
-        "Ya puedes apoyar el proyecto pagando con tarjeta sin salir de la app, y «Tu espacio» se organiza en pestañas (Novedades, Suscripción, Apoyar) con un muro de novedades como este.",
-      ),
-      more: t(
-        "Además, cada pestaña recuerda sus datos y se abre al instante al volver (con auto-refresco opcional cada 24 h en Ajustes), la barra superior es más compacta y la app estrena el tema «Elegant Luxury» por defecto.",
-      ),
-    },
-    {
-      v: "0.2.4",
-      date: t("21 jul 2026"),
-      title: t("Aviso de disco lleno y vigilante en segundo plano"),
-      body: t(
-        "Ahora la app vigila tu disco y te avisa —con una notificación del sistema— antes de que te quedes sin espacio, aunque la ventana esté cerrada en la barra.",
-      ),
-      more: t(
-        "Comprueba el espacio cada media hora y, si el disco suelta mucho de golpe, te lo explica: es «basura del sistema» que macOS acumula y libera sola, no la limpieza de la app. Así el número de Inicio y el del disco dejan de contradecirse.",
-      ),
-    },
-    {
-      v: "0.2.3",
-      date: t("19 jul 2026"),
-      title: t("Mapa real de tu disco en Almacenamiento"),
-      body: t(
-        "El panel de Almacenamiento ya no muestra una lista de basura que no cuadraba: ahora ves dónde está de verdad tu espacio, con tus carpetas reales, y las barras suman el total usado.",
-      ),
-      more: t(
-        "Mide tu carpeta de usuario como lo haría el sistema (Proyectos, Recursos, Library…), añade Aplicaciones y el resto del sistema, y lo ordena de mayor a menor. Para bajar al detalle carpeta a carpeta, tienes el Explorador.",
-      ),
-    },
-    {
-      v: "0.2.2",
-      date: t("19 jul 2026"),
-      title: t("Limpieza con permisos de administrador"),
-      body: t(
-        "Añadido un botón que, con tu contraseña, vacía las cachés y logs del sistema (de root) que la limpieza normal no puede tocar, y te dice los GB reales que libera.",
-      ),
-    },
-    {
-      v: "0.2.1",
-      date: t("19 jul 2026"),
-      title: t("Limpieza más clara y honesta en Inicio"),
-      body: t(
-        "El estimado de «Liberar espacio» ahora enseña de qué se compone (cachés, npm, logs, Papelera…), así el número no aparece de la nada y cuadra con lo que de verdad se elimina.",
-      ),
-    },
-    {
-      v: "0.2.0",
-      date: t("19 jul 2026"),
-      title: t("Buscador de duplicados por contenido"),
-      body: t(
-        "Encuentra archivos idénticos comparando su contenido real (huella SHA-256), no solo el nombre. Nunca borra nada: te muestra los grupos y decides tú.",
-      ),
-      more: t(
-        "Primero agrupa por tamaño (rapidísimo) y solo calcula la huella de los candidatos. Distingue los clones de APFS y los enlaces duros, que comparten disco, para no prometerte un espacio recuperable que no existe.",
-      ),
-    },
-    {
-      v: "0.1.5",
-      date: t("12 jul 2026"),
-      title: t("Desinstalador de aplicaciones"),
-      body: t(
-        "Lista tus apps con su peso y la basura que dejan (cachés, soportes, preferencias) y las desinstala del todo, sin restos olvidados por el sistema.",
-      ),
-    },
-    {
-      v: "0.1.4",
-      date: t("12 jul 2026"),
-      title: t("Instantáneas locales de Time Machine"),
-      body: t(
-        "Un panel para ver y liberar las copias locales que macOS guarda en tu disco aunque no tengas disco externo, y que suelen ocupar espacio «que aparece sin motivo».",
-      ),
-    },
-    {
-      v: "0.1.3",
-      date: t("12 jul 2026"),
-      title: t("Radar de red y monitor del sistema en vivo"),
-      body: t(
-        "Inicio muestra CPU, memoria, disco y temperatura en tiempo real, más un radar de red honesto cuya intensidad usa la actividad real de tu equipo.",
-      ),
-    },
-    {
-      v: "0.1.2",
-      date: t("12 jul 2026"),
-      title: t("Explorador de archivos y carpetas grandes"),
-      body: t(
-        "Recorre cualquier carpeta y te enseña qué ocupa más, ordenado por tamaño, para encontrar de un vistazo lo que llena el disco. Puedes abrir en Finder o mover a la Papelera.",
-      ),
-    },
-    {
-      v: "0.1.0",
-      date: t("12 jul 2026"),
-      title: t("Limpieza de .DS_Store y «Comprimir limpio»"),
-      body: t(
-        "Barre los .DS_Store que macOS esparce por tus carpetas y comprime en .zip sin metadatos ni __MACOSX, ideal para compartir con Windows o Linux.",
-      ),
-      more: t(
-        "Puedes también evitar que se creen .DS_Store en unidades de red. Todo se hace en local, en tu equipo, sin enviar nada a ningún servidor.",
-      ),
-    },
-  ];
 
   return (
     <div data-slot="card" className="rounded-lg border bg-card p-5">
@@ -296,9 +180,10 @@ function Changelog() {
       </header>
 
       <ol className="relative">
-        {items.map((it, i) => {
+        {changelog.map((it, i) => {
           const isOpen = open === it.v;
-          const last = i === items.length - 1;
+          const last = i === changelog.length - 1;
+          const more = it.more ? localize(it.more, lang) : null;
           return (
             <li key={it.v} className="relative flex gap-3">
               {/* Hilo continuo: la línea se posiciona sobre el <li> y se prolonga
@@ -324,20 +209,22 @@ function Changelog() {
                   <span className="rounded-md bg-primary/12 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-primary">
                     v{it.v}
                   </span>
-                  <span className="text-[11px] text-muted-foreground">{it.date}</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {localize(it.date, lang)}
+                  </span>
                 </div>
                 <h4 className="mt-1.5 text-sm font-semibold leading-snug">
-                  {it.title}
+                  {localize(it.title, lang)}
                 </h4>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  {it.body}
+                  {localize(it.body, lang)}
                 </p>
 
-                {it.more && (
+                {more && (
                   <>
                     {isOpen && (
                       <p className="mt-2 border-t border-foreground/[0.07] pt-2 text-xs leading-5 text-muted-foreground">
-                        {it.more}
+                        {more}
                       </p>
                     )}
                     <button

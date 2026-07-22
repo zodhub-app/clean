@@ -59,6 +59,25 @@ considerar trabajo en hilos/`async` en Rust para no bloquear.
 - Modales: usar `createPortal` a `body` (para no quedar atrapados bajo el
   `backdrop-filter` de Hera).
 
+## Releases
+
+`npm run release -- <patch|minor|major|x.y.z> [--dry-run] [--local] [--build]`
+(`scripts/release.mjs`) sincroniza la versión en `package.json`,
+`src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` y `src-tauri/Cargo.lock`
+(crate `macup`), y commitea + tagea + pushea (`vX.Y.Z`). Empujar el tag dispara
+`.github/workflows/release.yml`, que compila los instaladores y publica la
+GitHub Release. `--local` añade `[skip ci]` al commit (bump sin disparar CI);
+`--build` compila el instalador de este SO en local tras tagear.
+
+El script **aborta** si no hay entrada en `src/data/changelog.ts` para la
+versión que se va a publicar (comprueba `v: "X.Y.Z"`). Por eso, antes de
+lanzar un release, el asistente debe añadir ahí la entrada bilingüe
+(`v`, `date`, `title`, `body`, `more?` — cada campo con `es`/`en`) que resume
+lo que trae esa versión: es el muro de "Novedades" de Tu espacio, no pasa por
+el diccionario genérico de `language-provider.tsx`. Usar
+`--no-changelog-check` solo si el release no tiene cambios de cara al
+usuario.
+
 ## Restricción de build
 
 El entorno del asistente tiene el registro npm bloqueado y no puede compilar; una

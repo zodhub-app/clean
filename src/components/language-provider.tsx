@@ -131,52 +131,6 @@ const EN: Record<string, string> = {
   "May 2026": "May 2026",
   "Abr 2026": "Apr 2026",
   "Mar 2026": "Mar 2026",
-  "22 jul 2026": "22 Jul 2026",
-  "Donaciones dentro de la app y «Tu espacio» reorganizado":
-    "In-app donations and a reorganized “Your space”",
-  "Ya puedes apoyar el proyecto pagando con tarjeta sin salir de la app, y «Tu espacio» se organiza en pestañas (Novedades, Suscripción, Apoyar) con un muro de novedades como este.":
-    "You can now support the project by paying with a card without leaving the app, and “Your space” is organized into tabs (What's new, Subscribe, Support) with a news wall like this one.",
-  "Además, cada pestaña recuerda sus datos y se abre al instante al volver (con auto-refresco opcional cada 24 h en Ajustes), la barra superior es más compacta y la app estrena el tema «Elegant Luxury» por defecto.":
-    "Also, each tab remembers its data and opens instantly when you return (with optional 24 h auto-refresh in Settings), the top bar is more compact, and the app now ships with the “Elegant Luxury” theme by default.",
-  "Aviso de disco lleno y vigilante en segundo plano":
-    "Full-disk alert and background watcher",
-  "Ahora la app vigila tu disco y te avisa —con una notificación del sistema— antes de que te quedes sin espacio, aunque la ventana esté cerrada en la barra.":
-    "The app now watches your disk and warns you —with a system notification— before you run out of space, even when the window is hidden in the menu bar.",
-  "Comprueba el espacio cada media hora y, si el disco suelta mucho de golpe, te lo explica: es «basura del sistema» que macOS acumula y libera sola, no la limpieza de la app. Así el número de Inicio y el del disco dejan de contradecirse.":
-    "It checks space every half hour and, if the disk releases a lot at once, explains it: that's “system junk” macOS builds up and frees on its own, not the app's cleanup. So the Home number and the disk number stop contradicting each other.",
-  "Mapa real de tu disco en Almacenamiento": "Real map of your disk in Storage",
-  "El panel de Almacenamiento ya no muestra una lista de basura que no cuadraba: ahora ves dónde está de verdad tu espacio, con tus carpetas reales, y las barras suman el total usado.":
-    "The Storage panel no longer shows a junk list that didn't add up: now you see where your space really is, with your real folders, and the bars add up to the total used.",
-  "Mide tu carpeta de usuario como lo haría el sistema (Proyectos, Recursos, Library…), añade Aplicaciones y el resto del sistema, y lo ordena de mayor a menor. Para bajar al detalle carpeta a carpeta, tienes el Explorador.":
-    "It measures your home folder the way the system would (Projects, Resources, Library…), adds Applications and the rest of the system, and sorts largest first. For folder-by-folder detail, use the Explorer.",
-  "Limpieza con permisos de administrador": "Cleanup with admin permissions",
-  "Añadido un botón que, con tu contraseña, vacía las cachés y logs del sistema (de root) que la limpieza normal no puede tocar, y te dice los GB reales que libera.":
-    "Added a button that, with your password, empties the system caches and logs (owned by root) the normal cleanup can't touch, and tells you the real GB it frees.",
-  "Limpieza más clara y honesta en Inicio": "Clearer, more honest cleanup on Home",
-  "El estimado de «Liberar espacio» ahora enseña de qué se compone (cachés, npm, logs, Papelera…), así el número no aparece de la nada y cuadra con lo que de verdad se elimina.":
-    "The “Free up space” estimate now shows what it's made of (caches, npm, logs, Trash…), so the number doesn't appear out of nowhere and matches what actually gets deleted.",
-  "Buscador de duplicados por contenido": "Duplicate finder by content",
-  "Encuentra archivos idénticos comparando su contenido real (huella SHA-256), no solo el nombre. Nunca borra nada: te muestra los grupos y decides tú.":
-    "Finds identical files by comparing their real content (SHA-256 hash), not just the name. It never deletes anything: it shows you the groups and you decide.",
-  "Primero agrupa por tamaño (rapidísimo) y solo calcula la huella de los candidatos. Distingue los clones de APFS y los enlaces duros, que comparten disco, para no prometerte un espacio recuperable que no existe.":
-    "It first groups by size (very fast) and only hashes the candidates. It tells apart APFS clones and hard links, which share disk, so it won't promise reclaimable space that doesn't exist.",
-  "Desinstalador de aplicaciones": "App uninstaller",
-  "Lista tus apps con su peso y la basura que dejan (cachés, soportes, preferencias) y las desinstala del todo, sin restos olvidados por el sistema.":
-    "Lists your apps with their size and the leftovers they leave (caches, support files, preferences) and uninstalls them completely, with no forgotten remnants.",
-  "Instantáneas locales de Time Machine": "Local Time Machine snapshots",
-  "Un panel para ver y liberar las copias locales que macOS guarda en tu disco aunque no tengas disco externo, y que suelen ocupar espacio «que aparece sin motivo».":
-    "A panel to view and free the local copies macOS keeps on your disk even without an external drive, which often take up space that “appears for no reason”.",
-  "Radar de red y monitor del sistema en vivo": "Live network radar and system monitor",
-  "Inicio muestra CPU, memoria, disco y temperatura en tiempo real, más un radar de red honesto cuya intensidad usa la actividad real de tu equipo.":
-    "Home shows CPU, memory, disk and temperature in real time, plus an honest network radar whose intensity uses your device's real activity.",
-  "Explorador de archivos y carpetas grandes": "Large files and folders explorer",
-  "Recorre cualquier carpeta y te enseña qué ocupa más, ordenado por tamaño, para encontrar de un vistazo lo que llena el disco. Puedes abrir en Finder o mover a la Papelera.":
-    "Browse any folder and see what takes up most, sorted by size, to spot at a glance what's filling the disk. You can open in Finder or move to Trash.",
-  "Limpieza de .DS_Store y «Comprimir limpio»": ".DS_Store cleanup and “Clean zip”",
-  "Barre los .DS_Store que macOS esparce por tus carpetas y comprime en .zip sin metadatos ni __MACOSX, ideal para compartir con Windows o Linux.":
-    "Sweeps the .DS_Store files macOS scatters across your folders and zips without metadata or __MACOSX, ideal for sharing with Windows or Linux.",
-  "Puedes también evitar que se creen .DS_Store en unidades de red. Todo se hace en local, en tu equipo, sin enviar nada a ningún servidor.":
-    "You can also stop .DS_Store from being created on network drives. Everything runs locally, on your device, sending nothing to any server.",
   "¿Por qué suscribirte?": "Why subscribe?",
   "Funciones nuevas primero": "New features first",
   "Te contamos las mejoras que valen la pena en cuanto salen.":
